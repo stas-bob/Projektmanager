@@ -36,9 +36,9 @@ public class MainServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
               HttpSession seas = request.getSession();
-              seas.setAttribute("login", request.getParameter("name"));
+              seas.setAttribute("login", request.getParameter("benutzer"));
               Connection c = DBConnector.getConnection();
-              System.out.println(c.getMetaData() + " " + request.getSession().getAttribute("login"));
+              System.out.println(c.getMetaData() + " " + seas.getAttribute("login"));
               seas.invalidate(); //Logout
         } catch (SQLException ex) {
             Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, null, ex);

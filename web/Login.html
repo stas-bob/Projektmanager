@@ -4,13 +4,58 @@ and open the template in the editor.
 -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-  <head>
-    <title></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-      <form action="/Projektmanager/MainServlet" method="post">
-          <input name="name" type="text"/>
-      </form>
-  </body>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <script language="javascript" type="text/javascript">
+
+            function createXMLHttpRequest() {
+                if (window.ActiveXObject) {
+                    xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                else if(window.XMLHttpRequest) {
+                    xmlHttp = new XMLHttpRequest();
+                }
+            }
+
+
+            function login()
+            {
+                createXMLHttpRequest();
+                xmlHttp.open('POST','/Projektmanager/MainServlet', true);
+                xmlHttp.onreadystatechange = callback;
+                xmlHttp.send(null);
+            }
+
+
+        </script>
+
+    </head>
+    <body>
+        <h1>Projektmanagmentool</h1>
+        <table>
+            <tr>
+                <th align="left">
+                    Benutzername:
+                </th>
+                <th>
+                    <input id="benutzer" type="text" />
+                </th>
+            </tr>
+            <tr>
+                <th align="left">
+                    Passwort:
+                </th>
+                <th>
+                    <input id="passwort" type="password">
+                    <br>
+                </th>
+            </tr>
+        </table>
+        <input id="btnLogin" type="button" value="Login" onclick="login()"/>
+        <br>
+        <br>
+        <input id="btnRegestrierung" type="button" value="Regestrieren" onclick="window.location.replace('regestrierung.html')"/>
+    </body>
 </html>
