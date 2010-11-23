@@ -3,6 +3,8 @@
  * and open the template in the editor.
  */
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -42,7 +44,7 @@ public class Registrieren extends HttpServlet {
             seas.setAttribute("email", request.getParameter("email"));
             seas.setAttribute("projektname", request.getParameter("projektname"));
             System.out.println("HALLO1");
-            sendMail("smtp.googlemail.com", "htw.projektmanager", "stas-thomas", "htw.projektmanager@googlemail.com", "altmeyer.thomas@googlemail.com", "Test", "Test123");
+            sendMail("smtp.googlemail.com", "htw.projektmanager", new BufferedReader(new FileReader("/pwEmail.txt")).readLine(), "htw.projektmanager@googlemail.com", "altmeyer.thomas@googlemail.com", "Test", "Test123");
             System.out.println("HALLO2");
             try {
                 out.println("<html>");
