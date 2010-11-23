@@ -8,6 +8,14 @@
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>Registrieren</servlet-name>
+        <servlet-class>Registrieren</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Registrieren</servlet-name>
+        <url-pattern>/Registrieren</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30

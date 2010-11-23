@@ -41,11 +41,20 @@ public class Registrieren extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             PrintWriter out = response.getWriter();
             HttpSession seas = request.getSession();
-            seas.setAttribute("email", request.getParameter("email"));
             seas.setAttribute("projektname", request.getParameter("projektname"));
-            System.out.println("HALLO1");
-            sendMail("smtp.googlemail.com", "htw.projektmanager", new BufferedReader(new FileReader("/pwEmail.txt")).readLine(), "htw.projektmanager@googlemail.com", "altmeyer.thomas@googlemail.com", "Test", "Test123");
-            System.out.println("HALLO2");
+            seas.setAttribute("name", request.getParameter("name"));
+            seas.setAttribute("vorname", request.getParameter("vorname"));
+            seas.setAttribute("email", request.getParameter("email"));
+
+            String smtp = "mail.gmx.net";
+            String fromEmail = "htw-projektmanager@gmx.de";
+            String pw = new BufferedReader(new FileReader("/pwEmail.txt")).readLine();
+            String toEmail = seas.getAttribute("email").toString();
+            String subject = "Anmeldung fuer das Projekt " + seas.getAttribute("projektname").toString();
+            String text = createText(seas);
+
+
+            sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
             try {
                 out.println("<html>");
                 out.println("<head>");
@@ -60,7 +69,7 @@ public class Registrieren extends HttpServlet {
             }
 
     }
-
+    
     public void sendMail(String smtpHost, String username, String password, String senderAddress, String recipientsAddress, String subject, String text) {
         MailAuthenticator auth = new MailAuthenticator(username, password);
 
@@ -68,6 +77,7 @@ public class Registrieren extends HttpServlet {
 
         // Den Properties wird die ServerAdresse hinzugefügt
         properties.put("mail.smtp.host", smtpHost);
+        properties.put("mail.smtp.port", 587);
 
         // !!Wichtig!! Falls der SMTP-Server eine Authentifizierung
         // verlangt
@@ -140,6 +150,14 @@ public class Registrieren extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private String createText(HttpSession seas) {
+        StringBuilder sb = new StringBuilder(100);
+        sb.append("Hallo ").append(seas.getAttribute("vorname").toString()).append(" ").append(seas.getAttribute("name").toString()).append(",\n\n")
+          .append("die Anmeldung fuer das Projekt ").append(seas.getAttribute("projektname").toString()).append(" war erfolgreich.\n\n")
+          .append("Ihr Entwickler Team");
+        return sb.toString();
+    }
 }
 
 class MailAuthenticator extends Authenticator {
