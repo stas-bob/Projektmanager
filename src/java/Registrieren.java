@@ -3,15 +3,12 @@
  * and open the template in the editor.
  */
 
-import com.sun.faces.facelets.tag.jsf.core.AjaxHandler;
 import db.DBConnector;
-import exceptions.MySQLException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -162,7 +159,7 @@ public class Registrieren extends HttpServlet {
         StringBuilder sb = new StringBuilder(100);
         sb.append("Hallo ").append(seas.getAttribute("vorname").toString()).append(" ").append(seas.getAttribute("name").toString()).append(",\n\n")
           .append("die Anmeldung fuer das Projekt ").append(seas.getAttribute("projektname").toString()).append(" war erfolgreich.\n\n")
-          .append("Ihr Passwort ist: " + pw + "\n\n")
+          .append("Ihr Passwort ist: ").append(pw).append("\n\n")
           .append("Ihr Entwickler Team");
         return sb.toString();
     }
