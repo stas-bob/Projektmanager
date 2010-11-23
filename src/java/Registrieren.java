@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author tA88
  */
-public class Regestrieren extends HttpServlet {
+public class Registrieren extends HttpServlet {
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -41,11 +41,13 @@ public class Regestrieren extends HttpServlet {
             HttpSession seas = request.getSession();
             seas.setAttribute("email", request.getParameter("email"));
             seas.setAttribute("projektname", request.getParameter("projektname"));
-            sendMail("smtp.googlemail.net", "htw.projektmanager", "stas-thomas", "T.Altmeyer1@gmx.de", "htw.projektmanager@googlemail.com", "Test", "Test123");
+            System.out.println("HALLO1");
+            sendMail("smtp.googlemail.com", "htw.projektmanager", "stas-thomas", "htw.projektmanager@googlemail.com", "altmeyer.thomas@googlemail.com", "Test", "Test123");
+            System.out.println("HALLO2");
             try {
                 out.println("<html>");
                 out.println("<head>");
-                out.println("<title>Servlet Regestrieren</title>");
+                out.println("<title>Servlet Registrieren</title>");
                 out.println("</head>");
                 out.println("<body>");
                 out.println("<h1>Servlet Regestrieren at " + request.getContextPath() + "</h1>");
