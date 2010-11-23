@@ -1,0 +1,44 @@
+#title
+{
+	background-color:#3A38D8;
+	width:600px;
+	height:30px;
+	padding-top:8px;
+	text-align:center;
+	font-family:Tahoma, Arial;
+	font-weight:bold;
+	color:white;
+}
+
+#Content{
+    width: 580px;
+    height:500px;
+    margin-top: 10px;
+    padding: 10px;
+    border: solid 1px black;
+    font-family: Arial;
+}
+
+.menuTopButton a
+{
+    position:relative;
+	width:120px;
+	float:left;
+	height:23px;
+	background-image:url(grafik/button.jpg);
+	background-position:right;
+	text-align:center;
+	background-repeat:no-repeat;
+    padding-top:8px;
+ 	font-family:Tahoma, Arial;
+	font-size:8pt;
+	color:white;
+	font-weight:bold;
+	text-decoration:none;
+}
+
+.menuTopButton a:hover
+{
+	background-image:url(grafik/button_hover.jpg);
+}
+
