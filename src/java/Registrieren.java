@@ -3,12 +3,19 @@
  * and open the template in the editor.
  */
 
+import com.sun.faces.facelets.tag.jsf.core.AjaxHandler;
+import db.DBConnector;
+import exceptions.MySQLException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -51,22 +58,22 @@ public class Registrieren extends HttpServlet {
             String pw = new BufferedReader(new FileReader("/pwEmail.txt")).readLine();
             String toEmail = seas.getAttribute("email").toString();
             String subject = "Anmeldung fuer das Projekt " + seas.getAttribute("projektname").toString();
-            String text = createText(seas);
+            String genPW = (int)(Math.random()*10000000) + "";
+            String text = createText(seas, genPW);
 
 
-            sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
-            try {
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet Registrieren</title>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h1>Servlet Regestrieren at " + request.getContextPath() + "</h1>");
-                out.println("</body>");
-                out.println("</html>");
-            } finally {
-                out.close();
+            if(validateProject(seas.getAttribute("projektname").toString(), seas.getAttribute("email").toString())) {
+               activate(seas.getAttribute("name").toString(),
+                       seas.getAttribute("vorname").toString(),
+                       seas.getAttribute("email").toString(),
+                       seas.getAttribute("projektname").toString(),
+                       genPW);
+                sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
+                out.write(" backToLogin ");
+            } else {
+                out.write("<font color=\"#990000\">Die Eingabe ist nicht zufriedenstellend</font>");
             }
+            out.close();
 
     }
     
@@ -151,12 +158,36 @@ public class Registrieren extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private String createText(HttpSession seas) {
+    private String createText(HttpSession seas, String pw) {
         StringBuilder sb = new StringBuilder(100);
         sb.append("Hallo ").append(seas.getAttribute("vorname").toString()).append(" ").append(seas.getAttribute("name").toString()).append(",\n\n")
           .append("die Anmeldung fuer das Projekt ").append(seas.getAttribute("projektname").toString()).append(" war erfolgreich.\n\n")
+          .append("Ihr Passwort ist: " + pw + "\n\n")
           .append("Ihr Entwickler Team");
         return sb.toString();
+    }
+
+    private void activate(String name, String surename, String email, String projectName, String password) {
+        try {
+            DBConnector.getConnection().createStatement().executeUpdate("insert into `Projekt` (Name) values ('" + projectName + "');");
+            DBConnector.getConnection().createStatement().executeUpdate("insert into `Benutzer` (Name, Vorname, Email, projektname, passwort) values ('" + name + "','" + surename + "','" + email + "','" + projectName + "','" + password + "');");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private boolean validateProject(String projectName, String email) {
+        try {
+            if (projectName.trim().isEmpty() || email.trim().isEmpty()) return false;
+            ResultSet rsPName = DBConnector.getConnection().createStatement().executeQuery("select * from `Projekt` where `Name`='" + projectName + "'");
+            ResultSet rsEmail = DBConnector.getConnection().createStatement().executeQuery("select * from `Benutzer` where `Email`='" + email + "'");
+            if ( rsPName.next() || rsEmail.next()) return false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
 

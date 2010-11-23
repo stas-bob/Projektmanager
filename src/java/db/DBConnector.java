@@ -40,6 +40,7 @@ public class DBConnector {
                 Class.forName(driver).newInstance();
                 return DriverManager.getConnection(host, username, pw);
             } catch(Exception e) {
+                e.printStackTrace();
                 return null;
             }
 	}
