@@ -1,33 +1,35 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<title>Regestrierung</title>
-                <script src="jsXMLHttpRequestHandle.js" type="text/javascript"></script>
-	</head>
-	<body>
-			<table>
-				<tr>
-					<th align="left">Projektname:</th>
-					<th><input id="projectname" onblur="printWait('statusProjectname');validateProjectServlet()" name="projectname" type="text" size="30" maxlength="30"/></th>
-                                        <td><div id="statusProjectname"></div></td>
-				</tr>
-				<tr>
-					<th align="left">Name:</th>
-					<th><input name="name" type="text" size="30" maxlength="40"/></th>
-				</tr>
-				<tr>
-					<th align="left">Vorname:</th>
-					<th><input name="vorname" type="text" size="30" maxlength="30"/></th>
-				</tr>
-				<tr align="left">
-					<th>E-Mail:</th>
-                                        <th><input id="email" onblur="printWait('statusEmail');validateEmailServlet()" name="email" type="text" size="30" maxlength="40"/></th>
-                                        <td><div id="statusEmail"></div></td>
-				</tr>
-			</table>
-        <span><input type="submit" value="Senden" onclick="printWait('statusSubmit');buildQuery('/Projektmanager/Registrieren')"/></span>
-        <span><div id="statusSubmit"></div></span><br><br>
-			<input type="button" value="Zur&uuml;ck" onclick="window.location.replace('Login.html')" />
-	</body>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <title>Regestrierung</title>
+        <script src="jsXMLHttpRequestHandle.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <th align="left">Projektname:</th>
+                <th><input id="projectname" onblur="printWait('statusProjectname');validateProjectServlet()" name="projectname" type="text" size="30" maxlength="30"/></th>
+                <th><div id="imgProjectname" /></th>
+                <th><div id="statusProjectname"></div></th>
+            </tr>
+            <tr>
+                <th align="left">Name:</th>
+                <th><input name="name" type="text" size="30" maxlength="40"/></th>
+            </tr>
+            <tr>
+                <th align="left">Vorname:</th>
+                <th><input name="vorname" type="text" size="30" maxlength="30"/></th>
+            </tr>
+            <tr>
+                <th align="left">E-Mail:</th>
+                <th><input id="email" onblur="printWait('statusEmail');validateEmailServlet()" name="email" type="text" size="30" maxlength="40"/></th>
+                <th><div id="imgEmail" /></th>
+                <th><div id="statusEmail"></div></th>
+            </tr>
+        </table>
+    <input type="submit" value="Senden" onclick="printWait('statusSubmit');buildQuery('/Projektmanager/Registrieren')"/>
+    <div id="statusSubmit"></div>
+    <input type="button" value="Zur&uuml;ck" onclick="window.location.replace('Login.html')" />
+</body>
 </html>

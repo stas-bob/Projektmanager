@@ -24,8 +24,10 @@ function callbackValidateProject() {
         if (xmlHttp.status == 200) {
             var status = xmlHttp.responseText;
             if (status == "0") {
+                document.getElementById('imgProjectname').innerHTML = "<img src=grafik/ok.gif />";
                 document.getElementById('statusProjectname').innerHTML = "Projektname noch nicht vergeben!";
             } else {
+                document.getElementById('imgProjectname').innerHTML = "<img src=grafik/error.gif />";
                 document.getElementById('statusProjectname').innerHTML = "Projektname schon vergeben!";
             }
         } else {
@@ -36,8 +38,17 @@ function callbackValidateProject() {
 
 function validateEmailServlet()
 {
+    var email = document.getElementById('email').value;
+    var emailRegxp =/^.+@.+\..{2,5}$/;
+
+    if(!email.match(emailRegxp)) {
+        document.getElementById('imgEmail').innerHTML = "<img src=grafik/error.gif />";
+        document.getElementById('statusEmail').innerHTML = "Keine regul&auml;re E-Mail eingegeben!";
+        return;
+    }
+
     var servlet = "/Projektmanager/ValidateEmailServlet";
-    servlet += "?email=" + document.getElementById('email').value;
+    servlet += "?email=" + email;
     createXMLHttpRequest();
     xmlHttp.open('POST',servlet, true);
     xmlHttp.onreadystatechange = callbackValidateEmail;
@@ -49,8 +60,10 @@ function callbackValidateEmail() {
         if (xmlHttp.status == 200) {
             var status = xmlHttp.responseText;
             if (status == "0") {
+                document.getElementById('imgEmail').innerHTML = "<img src=grafik/ok.gif />";
                 document.getElementById('statusEmail').innerHTML = "E-Mail noch nicht vergeben!";
             } else {
+                document.getElementById('imgEmail').innerHTML = "<img src=grafik/error.gif />";
                 document.getElementById('statusEmail').innerHTML = "E-Mail schon vergeben!";
             }
         } else {
