@@ -89,9 +89,10 @@ function callback()
 {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            document.write("<a href='Login.html'>ok hat gang</a>");
-       } else {
-             document.getElementById("statusSubmit").innerHTML = "Es gab einen Fehler";
+            if (xmlHttp.responseText == "0")
+                document.write("<a href='Login.html'>ok hat gang</a>");
+            else
+                document.getElementById("statusSubmit").innerHTML = "Es gab einen Fehler";
        }
     }
 }
