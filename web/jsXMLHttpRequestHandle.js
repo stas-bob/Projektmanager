@@ -8,8 +8,8 @@ function createXMLHttpRequest() {
         xmlHttp = new XMLHttpRequest();
         }
  }
- 
-function getDetail(servlet)
+
+function startAsync(servlet)
 {
     createXMLHttpRequest();
     xmlHttp.open('POST',servlet, true);
@@ -27,23 +27,32 @@ function buildQuery(servlet) {
             string += "&";
         }
         i++;
-
     }
-    getDetail(string);
+    startAsync(string);
 }
 
 function resetStatusText(id) {
-    document.getElementById(id).innerHTML = " ";
+    document.getElementById(id).innerHTML = "bitte warten ...";
 }
 
-function callback() 
-{   
+function validateProjectname(servlet) {
+    var input = document.getElementById("projektname").value;
+    servlet += "?projektname=" + input;
+    startAsync(servlet)
+
+}
+
+function callback()
+{
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            document.getElementById("async").innerHTML = xmlHttp.responseText;
-            if (xmlHttp.responseText.match(".*backToLogin.*")) {
-                window.location = "Login.html";
-            }
+            document.write("<a href=\"Login.html\">toll gemacht. sie sind registriert</a>")
+       } else {
+           if (xmlHttp.status == 1000) {
+               document.getElementById("async").innerHTML = xmlHttp.responseText;
+           } else {
+               document.getElementById("async").innerHTML = "Irgendwas stimmt bei Ihne net!";
+           }
        }
     }
 }

@@ -21,7 +21,6 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Registrieren extends HttpServlet {
 
-    /** 
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
@@ -41,43 +40,41 @@ public class Registrieren extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-  
+
             response.setContentType("text/html;charset=UTF-8");
+
             PrintWriter out = response.getWriter();
-            HttpSession seas = request.getSession();
-            seas.setAttribute("projektname", request.getParameter("projektname"));
-            seas.setAttribute("name", request.getParameter("name"));
-            seas.setAttribute("vorname", request.getParameter("vorname"));
-            seas.setAttribute("email", request.getParameter("email"));
 
             String smtp = "mail.gmx.net";
             String fromEmail = "htw-projektmanager@gmx.de";
             String pw = new BufferedReader(new FileReader("/pwEmail.txt")).readLine();
-            String toEmail = seas.getAttribute("email").toString();
-            String subject = "Anmeldung fuer das Projekt " + seas.getAttribute("projektname").toString();
+            String toEmail = request.getParameter("email");
+            String subject = "Anmeldung fuer das Projekt " + request.getParameter("projektname");
             String genPW = (int)(Math.random()*10000000) + "";
-            String text = createText(seas, genPW);
+            String text = createText(request.getParameter("vorname"),
+                    request.getParameter("name"),
+                    request.getParameter("projektname"),
+                    genPW);
 
 
-            if(validateProject(seas.getAttribute("projektname").toString(), seas.getAttribute("email").toString())) {
-               activate(seas.getAttribute("name").toString(),
-                       seas.getAttribute("vorname").toString(),
-                       seas.getAttribute("email").toString(),
-                       seas.getAttribute("projektname").toString(),
+            if(validateProject(request.getParameter("projektname"), request.getParameter("email"))) {
+               activate(request.getParameter("name"),
+                       request.getParameter("vorname"),
+                       request.getParameter("email"),
+                       request.getParameter("projektname"),
                        genPW);
-                sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
-                out.write(" backToLogin ");
+               sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
             } else {
+                response.setStatus(1000);
                 out.write("<font color=\"#990000\">Die Eingabe ist nicht zufriedenstellend</font>");
             }
             out.close();
-
     }
-    
+
     public void sendMail(String smtpHost, String username, String password, String senderAddress, String recipientsAddress, String subject, String text) {
         MailAuthenticator auth = new MailAuthenticator(username, password);
 
-        Properties properties = new Properties();
+        Properties properties = System.getProperties();
 
         // Den Properties wird die ServerAdresse hinzugefügt
         properties.put("mail.smtp.host", smtpHost);
@@ -120,7 +117,7 @@ public class Registrieren extends HttpServlet {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -133,7 +130,7 @@ public class Registrieren extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -146,7 +143,7 @@ public class Registrieren extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
      * @return a String containing servlet description
      */
@@ -155,10 +152,10 @@ public class Registrieren extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private String createText(HttpSession seas, String pw) {
+    private String createText(String vorname, String name, String projektname, String pw) {
         StringBuilder sb = new StringBuilder(100);
-        sb.append("Hallo ").append(seas.getAttribute("vorname").toString()).append(" ").append(seas.getAttribute("name").toString()).append(",\n\n")
-          .append("die Anmeldung fuer das Projekt ").append(seas.getAttribute("projektname").toString()).append(" war erfolgreich.\n\n")
+        sb.append("Hallo ").append(vorname).append(" ").append(name).append(",\n\n")
+          .append("die Anmeldung fuer das Projekt ").append(projektname).append(" war erfolgreich.\n\n")
           .append("Ihr Passwort ist: ").append(pw).append("\n\n")
           .append("Ihr Entwickler Team");
         return sb.toString();
@@ -223,6 +220,7 @@ class MailAuthenticator extends Authenticator {
      *
      * @see javax.mail.Authenticator#getPasswordAuthentication()
      */
+    @Override
     protected PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(this.user, this.password);
     }
