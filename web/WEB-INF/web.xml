@@ -5,8 +5,8 @@
         <servlet-class>MainServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ValideProjectServlet</servlet-name>
-        <servlet-class>ValideProjectServlet</servlet-class>
+        <servlet-name>ValidateProjectServlet</servlet-name>
+        <servlet-class>ValidateProjectServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
@@ -21,8 +21,8 @@
         <url-pattern>/Registrieren</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ValideProjectServlet</servlet-name>
-        <url-pattern>/ValideProjectServlet</url-pattern>
+        <servlet-name>ValidateProjectServlet</servlet-name>
+        <url-pattern>/ValidateProjectServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

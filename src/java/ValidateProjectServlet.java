@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bline
  */
-public class ValideProjectServlet extends HttpServlet {
+public class ValidateProjectServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -45,7 +45,7 @@ public class ValideProjectServlet extends HttpServlet {
             if (rs.next()) status = "1";
             out.write(status);
         } catch (Exception ex) {
-            Logger.getLogger(ValideProjectServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ValidateProjectServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         out.close();
     }

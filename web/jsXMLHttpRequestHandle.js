@@ -11,7 +11,7 @@ function createXMLHttpRequest() {
 
 function validateProjectServlet()
 {
-    var servlet = "/Projektmanager/ValideProjectServlet";
+    var servlet = "/Projektmanager/ValidateProjectServlet";
     servlet += "?projectname=" + document.getElementById('projectname').value;
     createXMLHttpRequest();
     xmlHttp.open('POST',servlet, true);
