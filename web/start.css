@@ -10,6 +10,12 @@
 	color:white;
 }
 
+#statusSubmit {
+    position: absolute;
+    margin-left: 170px;
+    margin-top: -25px;
+}
+
 #Content{
     width: 580px;
     height:500px;

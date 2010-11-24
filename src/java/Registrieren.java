@@ -65,7 +65,7 @@ public class Registrieren extends HttpServlet {
                     request.getParameter("email"),
                     request.getParameter("projectname"),
                     genPW);
-            //sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
+            sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
             out.write("0");
         } else {
             out.write("1");

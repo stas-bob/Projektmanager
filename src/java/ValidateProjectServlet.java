@@ -35,7 +35,6 @@ public class ValidateProjectServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String projectName = request.getParameter("projectname");
-        System.out.println(projectName);
         try {
             Connection c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("select * from `Project` where `Name`=?");
