@@ -167,7 +167,7 @@ public class Registrieren extends HttpServlet {
     private void activate(String name, String surename, String email, String projectName, String password) {
         try {
             DBConnector.getConnection().createStatement().executeUpdate("insert into `Projekt` (Name) values ('" + projectName + "');");
-            DBConnector.getConnection().createStatement().executeUpdate("insert into `Benutzer` (Name, Vorname, Email, projektname, passwort) values ('" + name + "','" + surename + "','" + email + "','" + projectName + "','" + password + "');");
+            DBConnector.getConnection().createStatement().executeUpdate("insert into `Benutzer` (Name, Vorname, Email, projektname, passwort, status) values ('" + name + "','" + surename + "','" + email + "','" + projectName + "','" + password + "','PL');");
         } catch (Exception ex) {
             ex.printStackTrace();
             Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
