@@ -19,8 +19,8 @@ import java.sql.SQLException;
  */
 public class DBConnector {
 
-	private static final String host = "jdbc:mysql://stud-i-pr2.htw-saarland.de:3306/Projektmanager";
-	private static final String username = "htwmaps";
+	private static final String host = "jdbc:mysql://stud-i-pr2.htw-saarland.de:3306/Projectmanager";
+	private static final String username = "projectmanager";
 	private static final String driver = "com.mysql.jdbc.Driver";
 
 

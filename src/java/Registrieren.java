@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
 import java.util.Properties;
@@ -41,74 +43,58 @@ public class Registrieren extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-            response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
 
-            PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter();
 
-            String smtp = "mail.gmx.net";
-            String fromEmail = "htw-projektmanager@gmx.de";
-            String pw = new BufferedReader(new FileReader("/pwEmail.txt")).readLine();
-            String toEmail = request.getParameter("email");
-            String subject = "Anmeldung fuer das Projekt " + request.getParameter("projectname");
-            String genPW = (int)(Math.random()*10000000) + "";
-            String text = createText(request.getParameter("vorname"),
-                    request.getParameter("name"),
+        String smtp = "mail.gmx.net";
+        String fromEmail = "htw-projektmanager@gmx.de";
+        String pw = new BufferedReader(new FileReader("/pw.txt")).readLine();
+        String toEmail = request.getParameter("email");
+        String subject = "Anmeldung fuer das Projekt " + request.getParameter("projectname");
+        String genPW = (int) (Math.random() * 10000000) + "";
+        String text = createText(request.getParameter("firstname"),
+                request.getParameter("name"),
+                request.getParameter("projectname"),
+                genPW);
+
+
+        if (validateProject(request.getParameter("projectname"), request.getParameter("email"))) {
+            activate(request.getParameter("name"),
+                    request.getParameter("firstname"),
+                    request.getParameter("email"),
                     request.getParameter("projectname"),
                     genPW);
-
-
-            if(validateProject(request.getParameter("projectname"), request.getParameter("email"))) {
-               activate(request.getParameter("name"),
-                       request.getParameter("vorname"),
-                       request.getParameter("email"),
-                       request.getParameter("projectname"),
-                       genPW);
-               //sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
-               out.write("0");
-            } else {
-                out.write("1");
-            }
-            out.close();
+            //sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
+            out.write("0");
+        } else {
+            out.write("1");
+        }
+        out.close();
     }
 
     public void sendMail(String smtpHost, String username, String password, String senderAddress, String recipientsAddress, String subject, String text) {
         MailAuthenticator auth = new MailAuthenticator(username, password);
 
         Properties properties = System.getProperties();
-
-        // Den Properties wird die ServerAdresse hinzugefügt
         properties.put("mail.smtp.host", smtpHost);
         properties.put("mail.smtp.port", 587);
-
-        // !!Wichtig!! Falls der SMTP-Server eine Authentifizierung
-        // verlangt
-        // muss an dieser Stelle die Property auf "true" gesetzt
-        // werden
         properties.put("mail.smtp.auth", "true");
 
-        // Hier wird mit den Properties und dem implements Contructor
-        // erzeugten
-        // MailAuthenticator eine Session erzeugt
         Session session = Session.getInstance(properties, auth);
-
         try {
-            // Eine neue Message erzeugen
             Message msg = new MimeMessage(session);
 
-            // Hier werden die Absender- und Empfängeradressen gesetzt
             msg.setFrom(new InternetAddress(senderAddress));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(
                     recipientsAddress, false));
 
-            // Der Betreff und Body der Message werden gesetzt
             msg.setSubject(subject);
             msg.setText(text);
 
-            // Hier lassen sich HEADER-Informationen hinzufügen
             msg.setHeader("Test", "Test");
             msg.setSentDate(new Date());
 
-            // Zum Schluss wird die Mail natürlich noch verschickt
             Transport.send(msg);
 
         } catch (Exception e) {
@@ -152,19 +138,29 @@ public class Registrieren extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private String createText(String vorname, String name, String projektname, String pw) {
-        StringBuilder sb = new StringBuilder(100);
-        sb.append("Hallo ").append(vorname).append(" ").append(name).append(",\n\n")
-          .append("die Anmeldung fuer das Projekt ").append(projektname).append(" war erfolgreich.\n\n")
-          .append("Ihr Passwort ist: ").append(pw).append("\n\n")
-          .append("Ihr Entwickler Team");
+    private String createText(String firstname, String name, String projectname, String pw) {
+        StringBuilder sb = new StringBuilder(200);
+        sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n").append("die Anmeldung fuer das Projekt ").append(projectname).append(" war erfolgreich.\n\n").append("Ihr Passwort ist: ").append(pw).append("\n\n").append("Ihr Entwickler Team");
         return sb.toString();
     }
 
-    private void activate(String name, String surename, String email, String projectName, String password) {
+    private void activate(String name, String firstname, String email, String projectName, String password) {
         try {
-            DBConnector.getConnection().createStatement().executeUpdate("insert into `Projekt` (Name) values ('" + projectName + "');");
-            DBConnector.getConnection().createStatement().executeUpdate("insert into `Benutzer` (Name, Vorname, Email, projektname, passwort, status) values ('" + name + "','" + surename + "','" + email + "','" + projectName + "','" + password + "','PL');");
+            Connection c = DBConnector.getConnection();
+            PreparedStatement ps = c.prepareStatement("insert into `Project` (Name) values (?)");
+            ps.setString(1, projectName);
+            ps.executeUpdate();
+            ps.close();
+
+            ps = c.prepareStatement("insert into `User` (Name, Firstname, Email, Projectname, Password, Status)"
+                    + " values (?,?,?,?,?,'PL')");
+            ps.setString(1, name);
+            ps.setString(2, firstname);
+            ps.setString(3, email);
+            ps.setString(4, projectName);
+            ps.setString(5, password);
+            ps.executeUpdate();
+            ps.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
@@ -173,10 +169,22 @@ public class Registrieren extends HttpServlet {
 
     private boolean validateProject(String projectName, String email) {
         try {
-            if (projectName.trim().isEmpty() || email.trim().isEmpty()) return false;
-            ResultSet rsPName = DBConnector.getConnection().createStatement().executeQuery("select * from `Projekt` where `Name`='" + projectName + "'");
-            ResultSet rsEmail = DBConnector.getConnection().createStatement().executeQuery("select * from `Benutzer` where `Email`='" + email + "'");
-            if ( rsPName.next() || rsEmail.next()) return false;
+            if (projectName.trim().isEmpty() || email.trim().isEmpty()) {
+                return false;
+            }
+            Connection c = DBConnector.getConnection();
+            PreparedStatement ps1 = c.prepareStatement("select * from `Project` where `Name`=?");
+            ps1.setString(1, projectName);
+            ResultSet rsPName = ps1.executeQuery();
+
+            PreparedStatement ps2 = c.prepareStatement("select * from `User` where `Email`=?");
+            ps2.setString(1, email);
+            ResultSet rsEmail = ps2.executeQuery();
+            if (rsPName.next() || rsEmail.next()) {
+                ps1.close();
+                ps2.close();
+                return false;
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;

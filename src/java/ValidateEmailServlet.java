@@ -34,14 +34,15 @@ public class ValidateEmailServlet extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String projektName = request.getParameter("email");
+        String emailName = request.getParameter("email");
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("select * from `Benutzer` where `EMail`=?");
-            ps.setString(1, projektName);
+            PreparedStatement ps = c.prepareStatement("select * from `User` where `EMail`=?");
+            ps.setString(1, emailName);
             ResultSet rs = ps.executeQuery();
             String status = "0";
             if (rs.next()) status = "1";
+            ps.close();
             out.write(status);
         } catch (Exception ex) {
             ex.printStackTrace();

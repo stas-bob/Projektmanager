@@ -3,11 +3,11 @@ var xmlHttp;
 function createXMLHttpRequest() {
     if (window.ActiveXObject) {
         xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
+    }
     else if(window.XMLHttpRequest) {
         xmlHttp = new XMLHttpRequest();
-        }
- }
+    }
+}
 
 function validateProjectServlet()
 {
@@ -17,6 +17,21 @@ function validateProjectServlet()
     xmlHttp.open('POST',servlet, true);
     xmlHttp.onreadystatechange = callbackValidateProject;
     xmlHttp.send(null);
+}
+
+function callbackValidateProject() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var status = xmlHttp.responseText;
+            if (status == "0") {
+                document.getElementById('statusProjectname').innerHTML = "Projektname noch nicht vergeben!";
+            } else {
+                document.getElementById('statusProjectname').innerHTML = "Projektname schon vergeben!";
+            }
+        } else {
+            document.getElementById('statusProjectname').innerHTML = "Fehler bei der Valiedierung des Projektnamens";
+        }
+    }
 }
 
 function validateEmailServlet()
@@ -29,42 +44,28 @@ function validateEmailServlet()
     xmlHttp.send(null);
 }
 
+function callbackValidateEmail() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var status = xmlHttp.responseText;
+            if (status == "0") {
+                document.getElementById('statusEmail').innerHTML = "E-Mail noch nicht vergeben!";
+            } else {
+                document.getElementById('statusEmail').innerHTML = "E-Mail schon vergeben!";
+            }
+        } else {
+            document.getElementById('statusEmail').innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
+        }
+    }
+}
+
+
 function startAsync(servlet)
 {
     createXMLHttpRequest();
     xmlHttp.open('POST',servlet, true);
     xmlHttp.onreadystatechange = callback;
     xmlHttp.send(null);
-}
-
-function callbackValidateProject() {
-        if (xmlHttp.readyState == 4) {
-        if (xmlHttp.status == 200) {
-            var status = xmlHttp.responseText;
-            if (status == "0") {
-                 document.getElementById('statusProjectname').innerHTML = "cool";
-            } else {
-                document.getElementById('statusProjectname').innerHTML = "gibts schon";
-            }
-       } else {
-           document.getElementById('statusProjectname').innerHTML = "Irgendwas stimmt bei Ihne net!";
-       }
-    }
-}
-
-function callbackValidateEmail() {
-        if (xmlHttp.readyState == 4) {
-        if (xmlHttp.status == 200) {
-            var status = xmlHttp.responseText;
-            if (status == "0") {
-                 document.getElementById('statusEmail').innerHTML = "cool";
-            } else {
-                document.getElementById('statusEmail').innerHTML = "gibts schon";
-            }
-       } else {
-           document.getElementById('statusEmail').innerHTML = "Irgendwas stimmt bei Ihne net!";
-       }
-    }
 }
 
 function buildQuery(servlet) {
@@ -81,19 +82,19 @@ function buildQuery(servlet) {
     startAsync(string);
 }
 
-function printWait(id) {
-    document.getElementById(id).innerHTML = "bitte warten ...";
-}
-
 function callback()
 {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
             if (xmlHttp.responseText == "0")
-                document.write("<a href='Login.html'>ok hat gang</a>");
+                document.write("<a href='Login.html'>Registrierung erfolgreich! Ihnen wurde eine E-Mail zugestellt mit ihren Zugangsdaten.</a>");
             else
                 document.getElementById("statusSubmit").innerHTML = "Es gab einen Fehler";
-       }
+        }
     }
+}
+
+function printWait(id) {
+    document.getElementById(id).innerHTML = "Bitte warten ...";
 }
 

@@ -35,8 +35,8 @@ public class MainServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             HttpSession seas = request.getSession();
-            seas.setAttribute("user", request.getParameter("benutzer"));
-            seas.setAttribute("password", request.getParameter("passwort"));
+            seas.setAttribute("user", request.getParameter("user"));
+            seas.setAttribute("password", request.getParameter("password"));
             Connection c = DBConnector.getConnection();
             System.out.println(c.getMetaData() + " " + seas.getAttribute("user"));
             System.out.println(c.getMetaData() + " " + seas.getAttribute("password"));

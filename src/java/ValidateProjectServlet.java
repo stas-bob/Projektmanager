@@ -34,15 +34,16 @@ public class ValidateProjectServlet extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String projektName = request.getParameter("projectname");
-        System.out.println(projektName);
+        String projectName = request.getParameter("projectname");
+        System.out.println(projectName);
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("select * from `Projekt` where `Name`=?");
-            ps.setString(1, projektName);
+            PreparedStatement ps = c.prepareStatement("select * from `Project` where `Name`=?");
+            ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
             String status = "0";
             if (rs.next()) status = "1";
+            ps.close();
             out.write(status);
         } catch (Exception ex) {
             Logger.getLogger(ValidateProjectServlet.class.getName()).log(Level.SEVERE, null, ex);
