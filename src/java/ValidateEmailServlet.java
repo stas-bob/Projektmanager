@@ -10,9 +10,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,9 +20,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bline
  */
-public class ValideProjectServlet extends HttpServlet {
-
-    /**
+@WebServlet(name="ValidateEmailServlet", urlPatterns={"/ValidateEmailServlet"})
+public class ValidateEmailServlet extends HttpServlet {
+   
+    /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
@@ -34,24 +34,23 @@ public class ValideProjectServlet extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String projektName = request.getParameter("projectname");
-        System.out.println(projektName);
+        String projektName = request.getParameter("email");
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("select * from `Projekt` where `Name`=?");
+            PreparedStatement ps = c.prepareStatement("select * from `Benutzer` where `EMail`=?");
             ps.setString(1, projektName);
             ResultSet rs = ps.executeQuery();
             String status = "0";
             if (rs.next()) status = "1";
             out.write(status);
         } catch (Exception ex) {
-            Logger.getLogger(ValideProjectServlet.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         out.close();
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
+    /** 
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -62,9 +61,9 @@ public class ValideProjectServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         processRequest(request, response);
-    }
+    } 
 
-    /**
+    /** 
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -77,7 +76,7 @@ public class ValideProjectServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
      * @return a String containing servlet description
      */

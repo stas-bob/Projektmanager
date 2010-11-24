@@ -49,23 +49,22 @@ public class Registrieren extends HttpServlet {
             String fromEmail = "htw-projektmanager@gmx.de";
             String pw = new BufferedReader(new FileReader("/pwEmail.txt")).readLine();
             String toEmail = request.getParameter("email");
-            String subject = "Anmeldung fuer das Projekt " + request.getParameter("projektname");
+            String subject = "Anmeldung fuer das Projekt " + request.getParameter("projectname");
             String genPW = (int)(Math.random()*10000000) + "";
             String text = createText(request.getParameter("vorname"),
                     request.getParameter("name"),
-                    request.getParameter("projektname"),
+                    request.getParameter("projectname"),
                     genPW);
 
 
-            if(validateProject(request.getParameter("projektname"), request.getParameter("email"))) {
+            if(validateProject(request.getParameter("projectname"), request.getParameter("email"))) {
                activate(request.getParameter("name"),
                        request.getParameter("vorname"),
                        request.getParameter("email"),
-                       request.getParameter("projektname"),
+                       request.getParameter("projectname"),
                        genPW);
                sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
             } else {
-                response.setStatus(1000);
                 out.write("<font color=\"#990000\">Die Eingabe ist nicht zufriedenstellend</font>");
             }
             out.close();

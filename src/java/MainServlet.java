@@ -78,7 +78,7 @@ public class MainServlet extends HttpServlet {
             out.write("</html>");
 
 
-            //seas.invalidate(); //Logout
+            seas.invalidate(); //Logout
         } catch (SQLException ex) {
             Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MySQLException ex) {
