@@ -7,13 +7,13 @@
         <link rel="stylesheet" type="text/css" href="start.css">
     </head>
     <body>
-        <div id="regestrierung" align="center">
+        <div id="regestrierung">
             <table>
                 <tr>
                     <th align="left">Projektname:</th>
                     <th><input id="projectname" onblur="printWait('statusProjectname');validateProjectServlet()" name="projectname" type="text" size="30" maxlength="20"/></th>
                     <th><div id="imgProjectname" /></th>
-                    <th><div id="statusProjectname"></div></th>
+                    <th><div id="statusProjectname" /></th>
                 </tr>
                 <tr>
                     <th align="left">Name:</th>
@@ -27,14 +27,16 @@
                     <th align="left">E-Mail:</th>
                     <th><input id="email" onblur="printWait('statusEmail');validateEmailServlet()" name="email" type="text" size="30" maxlength="30"/></th>
                     <th><div id="imgEmail" /></th>
-                    <th><div id="statusEmail"></div></th>
+                    <th><div id="statusEmail" /></th>
+                </tr>
+                <tr>
+                    <th><input type="submit" value="Senden" onclick="printWait('statusSubmit');buildQuery('/Projektmanager/Registrieren')" /></th>
+                    <th><div id="statusSubmit"/></th>
+                </tr>
+                <tr>
+                    <th><input type="button" value="Zur&uuml;ck" onclick="window.location.replace('Login.html')" /></th>
                 </tr>
             </table>
-            <span>
-                <input type="submit" value="Senden" onclick="printWait('statusSubmit');buildQuery('/Projektmanager/Registrieren')" />
-                <div id="statusSubmit" />
-                <input type="button" value="Zur&uuml;ck" onclick="window.location.replace('Login.html')" />
-            </span>
         </div>
     </body>
 </html>

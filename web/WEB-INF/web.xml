@@ -12,6 +12,10 @@
         <servlet-name>Members</servlet-name>
         <servlet-class>Members</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>FirstLogin</servlet-name>
+        <servlet-class>FirstLogin</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -31,6 +35,10 @@
     <servlet-mapping>
         <servlet-name>Members</servlet-name>
         <url-pattern>/Members</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FirstLogin</servlet-name>
+        <url-pattern>/FirstLogin</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
