@@ -9,6 +9,13 @@ function createXMLHttpRequest() {
     }
 }
 
+function deleteUser(email) {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Members?deleteEmail=" + email, true);
+    xmlHttp.onreadystatechange = showMembers;
+    xmlHttp.send();
+}
+
 function showMembers() {
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Members", true);
