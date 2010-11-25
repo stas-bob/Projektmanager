@@ -4,6 +4,7 @@
  */
 
 import db.DBConnector;
+import exceptions.MySQLException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,10 +12,9 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -151,23 +151,35 @@ public class Registrieren extends HttpServlet {
     private void activate(String name, String firstname, String email, String projectName, String password) {
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("INSERT INTO project (name) VALUES (?)");
-            ps.setString(1, projectName);
-            ps.executeUpdate();
-            ps.close();
+            try {
 
-            ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, status)"
-                    + " VALUES (?,?,?,?,?,'PL')");
-            ps.setString(1, name);
-            ps.setString(2, firstname);
-            ps.setString(3, email);
-            ps.setString(4, projectName);
-            ps.setString(5, password);
-            ps.executeUpdate();
-            ps.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
+                c.setAutoCommit(false);
+                PreparedStatement ps = c.prepareStatement("INSERT INTO project (name) VALUES (?)");
+                ps.setString(1, projectName);
+                ps.executeUpdate();
+                ps.close();
+
+                ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, status)"
+                        + " VALUES (?,?,?,?,?,'PL')");
+                ps.setString(1, name);
+                ps.setString(2, firstname);
+                ps.setString(3, email);
+                ps.setString(4, projectName);
+                ps.setString(5, password);
+                ps.executeUpdate();
+                ps.close();
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                e.printStackTrace();
+            } finally {
+                c.setAutoCommit(true);
+                c.close();
+            }
+        } catch (MySQLException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
