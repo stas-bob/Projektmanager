@@ -32,11 +32,21 @@ function addUser() {
             + "<td>Email:<input type=\"text\" name=\"email\"/></td>"
             + "</tr>"
             + "<tr>"
-            + "<td><input type=\"button\" value=\"save\"/></td><td><input type=\"button\" value=\"cancel\" onclick=\"hideAddUser()\"/></td>"
+            + "<td><input type=\"button\" value=\"save\" onclick=\"saveUser())\"/></td><td><input type=\"button\" value=\"cancel\" onclick=\"hideAddUser()\"/></td>"
             + "</tr>"
             + "</body></html>";
     document.getElementById("addUserField").innerHTML = html;
 }
+
+function saveUser() {
+    createXMLHttpRequest();
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    xmlHttp.open('POST',"/Projektmanager/Members?addName=" + name + "&addEmail=" + email, true);
+    xmlHttp.onreadystatechange = showMembers;
+    xmlHttp.send();
+}
+
 function hideAddUser() {
     document.getElementById("addUserField").innerHTML = "";
 }

@@ -5,6 +5,8 @@
 
 
 import db.DBConnector;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -41,6 +43,15 @@ public class Members extends HttpServlet {
         if (request.getParameter("deleteEmail") != null) {
             String email = request.getParameter("deleteEmail");
             deleteUser(email);
+        } else {
+            if (request.getParameter("addName") != null) {
+                String userName = request.getParameter("addName");
+                String userEmail = request.getParameter("addEmail");
+                new Registrieren().activate(userName,
+                    "empty",
+                    userEmail,
+                    request.getParameter("projectname"));
+            }
         }
         ArrayList<String> names, emails, status, firstnames;
         names = new ArrayList<String>();
