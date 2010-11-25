@@ -38,6 +38,10 @@ public class Members extends HttpServlet {
         PrintWriter out = response.getWriter();
         HttpSession seas = request.getSession();
 
+        if (request.getParameter("deleteEmail") != null) {
+            String email = request.getParameter("deleteEmail");
+            deleteUser(email);
+        }
         ArrayList<String> names, emails, status, firstnames;
         names = new ArrayList<String>();
         emails = new ArrayList<String>();
@@ -60,7 +64,7 @@ public class Members extends HttpServlet {
                     + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + firstnames.get(i) + "</td>"
                     + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + emails.get(i) + "</td>"
                     + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + status.get(i) + "</td>"
-                    + "<td><input type=\"button\" value=\"loeschen\"/></td>"
+                    + "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>"
                     + "</tr>";
         }
         htmlOutput += "<tr>"
@@ -125,6 +129,18 @@ public class Members extends HttpServlet {
             rs.close();
         } catch (Exception ex) {
             Logger.getLogger(Members.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+
+   private void deleteUser(String email) {
+        try {
+            ResultSet rs = DBConnector.getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE).executeQuery("select ID from `User` where `EMail`='" + email + "'");
+            if (rs.next()) {
+                rs.deleteRow();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
