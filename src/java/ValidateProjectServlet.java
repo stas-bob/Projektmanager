@@ -37,7 +37,7 @@ public class ValidateProjectServlet extends HttpServlet {
         String projectName = request.getParameter("projectname");
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("select * from `Project` where `Name`=?");
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM project WHERE name = ?");
             ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
             String status = "0";

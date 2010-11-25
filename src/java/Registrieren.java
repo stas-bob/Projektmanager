@@ -151,13 +151,13 @@ public class Registrieren extends HttpServlet {
     private void activate(String name, String firstname, String email, String projectName, String password) {
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("insert into `Project` (Name) values (?)");
+            PreparedStatement ps = c.prepareStatement("INSERT INTO project (name) VALUES (?)");
             ps.setString(1, projectName);
             ps.executeUpdate();
             ps.close();
 
-            ps = c.prepareStatement("insert into `User` (Name, Firstname, Email, Projectname, Password, Status)"
-                    + " values (?,?,?,?,?,'PL')");
+            ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, status)"
+                    + " VALUES (?,?,?,?,?,'PL')");
             ps.setString(1, name);
             ps.setString(2, firstname);
             ps.setString(3, email);
@@ -177,11 +177,11 @@ public class Registrieren extends HttpServlet {
                 return false;
             }
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps1 = c.prepareStatement("select * from `Project` where `Name`=?");
+            PreparedStatement ps1 = c.prepareStatement("SELECT * FROM project WHERE name = ?");
             ps1.setString(1, projectName);
             ResultSet rsPName = ps1.executeQuery();
 
-            PreparedStatement ps2 = c.prepareStatement("select * from `User` where `Email`=?");
+            PreparedStatement ps2 = c.prepareStatement("SELECT * FROM user WHERE email = ?");
             ps2.setString(1, email);
             ResultSet rsEmail = ps2.executeQuery();
             if (rsPName.next() || rsEmail.next()) {

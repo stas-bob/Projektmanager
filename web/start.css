@@ -9,20 +9,14 @@
 
 #title
 {
-	background-color:#3A38D8;
-	width:720px;
-	height:30px;
-	padding-top:8px;
-	text-align:center;
-	font-family:Tahoma, Arial;
-	font-weight:bold;
-	color:white;
-}
-
-#statusSubmit {
-    position: absolute;
-    margin-left: 170px;
-    margin-top: -25px;
+    background-color:#3A38D8;
+    width:720px;
+    height:30px;
+    padding-top:8px;
+    text-align:center;
+    font-family:Tahoma, Arial;
+    font-weight:bold;
+    color:white;
 }
 
 #content{
@@ -34,26 +28,30 @@
     font-family: Arial;
 }
 
+#textFirstLogin{
+    font-weight:bold;
+}
+
 .menuTopButton a
 {
     position:relative;
-	width:120px;
-	float:left;
-	height:23px;
-	background-image:url(grafik/button.jpg);
-	background-position:right;
-	text-align:center;
-	background-repeat:no-repeat;
+    width:120px;
+    float:left;
+    height:23px;
+    background-image:url(grafik/button.jpg);
+    background-position:right;
+    text-align:center;
+    background-repeat:no-repeat;
     padding-top:8px;
- 	font-family:Tahoma, Arial;
-	font-size:8pt;
-	color:white;
-	font-weight:bold;
-	text-decoration:none;
+    font-family:Tahoma, Arial;
+    font-size:8pt;
+    color:white;
+    font-weight:bold;
+    text-decoration:none;
 }
 
 .menuTopButton a:hover
 {
-	background-image:url(grafik/button_hover.jpg);
+    background-image:url(grafik/button_hover.jpg);
 }
 

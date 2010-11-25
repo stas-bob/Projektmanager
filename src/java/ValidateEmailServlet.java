@@ -37,7 +37,7 @@ public class ValidateEmailServlet extends HttpServlet {
         String emailName = request.getParameter("email");
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("select * from `User` where `EMail`=?");
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM user WHERE email = ?");
             ps.setString(1, emailName);
             ResultSet rs = ps.executeQuery();
             String status = "0";

@@ -158,5 +158,5 @@ function printWait(id) {
 }
 
 function fillColor(element, color) {
-       element.style.backgroundColor = color;
+    element.style.backgroundColor = color;
 }

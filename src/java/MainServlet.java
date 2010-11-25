@@ -4,11 +4,15 @@
  */
 
 import db.DBConnector;
+import exceptions.MySQLException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,59 +32,31 @@ public class MainServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, MySQLException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
+            Connection c = DBConnector.getConnection();
             HttpSession seas = request.getSession();
             seas.setAttribute("user", request.getParameter("user"));
             seas.setAttribute("password", request.getParameter("password"));
 
             String user = seas.getAttribute("user").toString();
             String password = seas.getAttribute("password").toString();
-            String projectName = getProjectName(user);
+            String projectName = getProjectName(c, user);
             seas.setAttribute("projectname", projectName);
 
-            if (checkLogin(user, password)) {
-                out.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
-                out.write("<html>");
-                out.write("<head>");
-                out.write("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
-                out.write("<title>Untitled Document</title>");
-                out.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
-                out.write("<script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script>");
-                out.write("</head>");
-                out.write("<body>");
-                out.write("<div id=\"frame\">");
-                out.write("<div id=\"title\">");
-                out.write(projectName);
-                out.write("</div>");
-                out.write("<div class=\"menuTopButton\">");
-                out.write("<a href=\"#\">&Uuml;berblick</a>");
-                out.write("</div>");
-                out.write("<div class=\"menuTopButton\">");
-                out.write("<a href=\"#\">Aufgaben</a>");
-                out.write("</div>");
-                out.write("<div class=\"menuTopButton\">");
-                out.write("<a href=\"#\">Zeiten</a>");
-                out.write("</div>");
-                out.write("<div class=\"menuTopButton\">");
-                out.write("<a href=\"#\">Profil</a>");
-                out.write("</div>");
-                out.write("<div class=\"menuTopButton\" onclick=\"showMembers()\">");
-                out.write("<a href=\"#\">Mitglieder</a>");
-                out.write("</div>");
-                out.write("<div class=\"menuTopButton\">");
-                out.write("<a href=\"#\">Logout</a>");
-                out.write("</div>");
-                out.write("<div style=\"clear:both;\">");
-                out.write("</div>");
-                out.write("<div id=\"content\">");
-                out.write("Und hier kommt der Inhalt.");
-                out.write("</div>");
-                out.write("</div>");
-                out.write("</body>");
-                out.write("</html>");
+            if (checkLogin(c, user, password)) {
+                PreparedStatement ps = c.prepareStatement("SELECT firstlogin FROM user WHERE email=?");
+                ps.setString(1, user);
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                int firstLogin = rs.getInt(1);
+                if (firstLogin == 0) {
+                    out.write(firstLoginView(0));
+                } else {
+                    out.write(mainView(projectName));
+                }
             } else {
                 out.write("<a href='Login.html'>Falscher Benutzername oder falsches Passwort eingegeben!</a>");
             }
@@ -89,10 +65,9 @@ public class MainServlet extends HttpServlet {
         }
     }
 
-    private boolean checkLogin(String user, String password) {
+    private boolean checkLogin(Connection c, String user, String password) {
         try {
-            Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT password FROM User WHERE LOWER(email)=?");
+            PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE LOWER(email)=?");
             user = user.toLowerCase();
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
@@ -109,10 +84,9 @@ public class MainServlet extends HttpServlet {
         return false;
     }
 
-    private String getProjectName(String user) {
+    private String getProjectName(Connection c, String user) {
         try {
-            Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("select Projectname from `User` where `EMail`=?");
+            PreparedStatement ps = c.prepareStatement("SELECT projectname FROM user WHERE email = ?");
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -127,6 +101,110 @@ public class MainServlet extends HttpServlet {
         return null;
     }
 
+    public static String mainView(String projectName) {
+        StringBuilder sb = new StringBuilder(500);
+        sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
+        sb.append("<html>");
+        sb.append("<head>");
+        sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
+        sb.append("<title>Untitled Document</title>");
+        sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
+        sb.append("<script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script>");
+        sb.append("</head>");
+        sb.append("<body>");
+        sb.append("<div id=\"frame\">");
+        sb.append("<div id=\"title\">");
+        sb.append(projectName);
+        sb.append("</div>");
+        sb.append("<div class=\"menuTopButton\">");
+        sb.append("<a href=\"#\">&Uuml;berblick</a>");
+        sb.append("</div>");
+        sb.append("<div class=\"menuTopButton\">");
+        sb.append("<a href=\"#\">Aufgaben</a>");
+        sb.append("</div>");
+        sb.append("<div class=\"menuTopButton\">");
+        sb.append("<a href=\"#\">Zeiten</a>");
+        sb.append("</div>");
+        sb.append("<div class=\"menuTopButton\">");
+        sb.append("<a href=\"#\">Profil</a>");
+        sb.append("</div>");
+        sb.append("<div class=\"menuTopButton\" onclick=\"showMembers()\">");
+        sb.append("<a href=\"#\">Mitglieder</a>");
+        sb.append("</div>");
+        sb.append("<div class=\"menuTopButton\">");
+        sb.append("<a href=\"#\">Logout</a>");
+        sb.append("</div>");
+        sb.append("<div style=\"clear:both;\">");
+        sb.append("</div>");
+        sb.append("<div id=\"content\">");
+        sb.append("Und hier kommt der Inhalt.");
+        sb.append("</div>");
+        sb.append("</div>");
+        sb.append("</body>");
+        sb.append("</html>");
+        return sb.toString();
+    }
+
+    public static String firstLoginView(int falsePassword) {
+        StringBuilder sb = new StringBuilder(500);
+        sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
+        sb.append("<html>");
+        sb.append("<head>");
+        sb.append("<title></title>");
+        sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
+        sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
+        sb.append("</head>");
+        sb.append("<body>");
+        sb.append("<div id=\"firstLogin\">");
+        if (falsePassword == 0) {
+            sb.append("<div id=\"textFirstLogin\">");
+            sb.append("Herzlich Wilkommen,");
+            sb.append("<br>");
+            sb.append("da das Ihr erster Login ist ändern Sie bitte ihr Passwort.");
+            sb.append("</div>");
+        } else if (falsePassword == 1) {
+            sb.append("<h1>Die neu eingebenen Passw&ouml;rter stimmen nicht überein!</h1>");
+        } else {
+            sb.append("<h1>Das eingegebene bisherige Passwort ist falsch!</h1>");
+        }
+        sb.append("<br>");
+        sb.append("<form action=\"/Projektmanager/FirstLogin\" method=\"post\"");
+        sb.append("<table>");
+        sb.append("<tr>");
+        sb.append("<th align=\"left\">");
+        sb.append("Altes Passwort:");
+        sb.append("</th>");
+        sb.append("<th>");
+        sb.append("<input name=\"oldPassword\" type=\"password\" />");
+        sb.append("</th>");
+        sb.append("</tr>");
+        sb.append("<tr>");
+        sb.append("<th align=\"left\">");
+        sb.append("Neues Passwort:");
+        sb.append("</th>");
+        sb.append("<th>");
+        sb.append("<input name=\"newPassword\" type=\"password\">");
+        sb.append("<br>");
+        sb.append("</th>");
+        sb.append("</tr>");
+        sb.append("<tr>");
+        sb.append("<th align=\"left\">");
+        sb.append("Neues Passwort bestätigen:");
+        sb.append("</th>");
+        sb.append("<th>");
+        sb.append("<input name=\"validatePassword\" type=\"password\">");
+        sb.append("<br>");
+        sb.append("</th>");
+        sb.append("</tr>");
+        sb.append("</table>");
+        sb.append("<input type=\"submit\" value=\"Speichern\" />");
+        sb.append("</form>");
+        sb.append("</div>");
+        sb.append("</body>");
+        sb.append("</html>");
+        return sb.toString();
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -138,7 +216,13 @@ public class MainServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MySQLException ex) {
+            Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 
@@ -151,7 +235,13 @@ public class MainServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MySQLException ex) {
+            Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 

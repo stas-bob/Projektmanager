@@ -120,7 +120,7 @@ public class Members extends HttpServlet {
     private void getMembers(String projectName, ArrayList<String> names, ArrayList<String> firstnames, ArrayList<String> emails, ArrayList<String> status) {
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT Name, Firstname, Email, Status FROM User WHERE Projectname=?");
+            PreparedStatement ps = c.prepareStatement("SELECT name, firstname, email, status FROM user WHERE projectname=?");
             ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
