@@ -55,7 +55,7 @@ public class Registrieren extends HttpServlet {
             activate(request.getParameter("name"),
                     request.getParameter("firstname"),
                     request.getParameter("email"),
-                    request.getParameter("projectname"), false);
+                    request.getParameter("projectname"), false);    //false == projektleiter dh. es wird ein projekt angelegt
             out.write("0");
         } else {
             out.write("1");

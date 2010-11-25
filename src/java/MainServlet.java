@@ -36,19 +36,18 @@ public class MainServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            Connection c = DBConnector.getConnection();
+            Connection connection = DBConnector.getConnection();
             HttpSession seas = request.getSession();
             seas.setAttribute("user", request.getParameter("user"));
             seas.setAttribute("password", request.getParameter("password"));
 
             String user = seas.getAttribute("user").toString();
             String password = seas.getAttribute("password").toString();
-            String projectName = getProjectName(c, user);
-            System.out.println(projectName);
+            String projectName = getProjectName(connection, user);
             seas.setAttribute("projectname", projectName);
 
-            if (checkLogin(c, user, password)) {
-                PreparedStatement ps = c.prepareStatement("SELECT firstlogin FROM user WHERE email=?");
+            if (checkLogin(connection, user, password)) {
+                PreparedStatement ps = connection.prepareStatement("SELECT firstlogin FROM user WHERE email=?");
                 ps.setString(1, user);
                 ResultSet rs = ps.executeQuery();
                 rs.next();
