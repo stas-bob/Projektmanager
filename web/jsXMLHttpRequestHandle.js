@@ -23,6 +23,24 @@ function showMembers() {
     xmlHttp.send();
 }
 
+function addUser() {
+    var html = "<head><head><script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script></head><body><table border=\"0\">"
+            + "<tr>"
+            + "<td>Name:<input type=\"text\" name=\"name\"/></td>"
+            + "</tr>"
+            + "<tr>"
+            + "<td>Email:<input type=\"text\" name=\"email\"/></td>"
+            + "</tr>"
+            + "<tr>"
+            + "<td><input type=\"button\" value=\"save\"/></td><td><input type=\"button\" value=\"cancel\" onclick=\"hideAddUser()\"/></td>"
+            + "</tr>"
+            + "</body></html>";
+    document.getElementById("addUserField").innerHTML = html;
+}
+function hideAddUser() {
+    document.getElementById("addUserField").innerHTML = "";
+}
+
 function validateProjectServlet()
 {
     var servlet = "/Projektmanager/ValidateProjectServlet";

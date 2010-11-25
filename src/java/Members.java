@@ -68,8 +68,11 @@ public class Members extends HttpServlet {
                     + "</tr>";
         }
         htmlOutput += "<tr>"
-                + "<td colspan=\"4\"><input type=\"button\" value=\"Neuen Benutzer anlegen\"/></td>"
+                + "<td colspan=\"4\" id=\"addUserField\"></td>"
+                + "</tr>"
                 + "<tr>"
+                + "<td colspan=\"4\"><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></td>"
+                + "</tr>"
                 + "</table>"
                 + "</body>"
                 + "</html>";
