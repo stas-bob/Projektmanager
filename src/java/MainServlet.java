@@ -4,15 +4,11 @@
  */
 
 import db.DBConnector;
-import exceptions.MySQLException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -82,16 +78,12 @@ public class MainServlet extends HttpServlet {
                 out.write("<div id=\"content\">");
                 out.write("Und hier kommt der Inhalt.");
                 out.write("</div>");
-                out.write("<div>");
+                out.write("</div>");
                 out.write("</body>");
                 out.write("</html>");
             } else {
                 out.write("<a href='Login.html'>Falscher Benutzername oder falsches Passwort eingegeben!</a>");
             }
-
-
-
-
         } finally {
             out.close();
         }
@@ -104,16 +96,35 @@ public class MainServlet extends HttpServlet {
             user = user.toLowerCase();
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            if (rs.getString(1).equals(password)) {
-                ps.close();
-                return true;
+            if (rs.next()) {
+                if (rs.getString(1).equals(password)) {
+                    ps.close();
+                    return true;
+                }
             }
             ps.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    private String getProjectName(String user) {
+        try {
+            Connection c = DBConnector.getConnection();
+            PreparedStatement ps = c.prepareStatement("select Projectname from `User` where `EMail`=?");
+            ps.setString(1, user);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String projectname = rs.getString(1);
+                ps.close();
+                return projectname;
+            }
+            return null;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -151,20 +162,4 @@ public class MainServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private String getProjectName(String user) {
-        try {
-            Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("select Projectname from `User` where `EMail`=?");
-            ps.setString(1, user);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            String projectname = rs.getString(1);
-            rs.close();
-            return projectname;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
 }

@@ -9,29 +9,31 @@ and open the template in the editor.
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
-        <h1>Projektmanagmentool</h1>
-        <form action="/Projektmanager/MainServlet" method="post">
-            <table>
-                <tr>
-                    <th align="left">
-                        Benutzername:
-                    </th>
-                    <th>
-                        <input name="user" type="text" />
-                    </th>
-                </tr>
-                <tr>
-                    <th align="left">
-                        Passwort:
-                    </th>
-                    <th>
-                        <input name="password" type="password">
-                        <br>
-                    </th>
-                </tr>
-            </table>
-            <input type="submit" value="Login" />
-        </form>
-        <input name="btnRegestrierung" type="button" value="Registrieren" onclick="window.location.replace('Registrierung.html')"/>
+        <h1 align="center">Projektmanagmentool</h1>
+        <div id="login" align="center">
+            <form action="/Projektmanager/MainServlet" method="post">
+                <table>
+                    <tr>
+                        <th align="left">
+                            Benutzername:
+                        </th>
+                        <th align="right">
+                            <input name="user" type="text" size="30" maxlength="30" />
+                        </th>
+                    </tr>
+                    <tr>
+                        <th align="left">
+                            Passwort:
+                        </th>
+                        <th align="right">
+                            <input name="password" type="password" size="30" maxlength="20" />
+                            <br>
+                        </th>
+                    </tr>
+                </table>
+                <input type="submit" value="Login" />
+            </form>
+            <input name="btnRegestrierung" type="button" value="Registrieren" onclick="window.location.replace('Registrierung.html')"/>
+        </div>
     </body>
 </html>

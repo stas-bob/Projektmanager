@@ -56,8 +56,8 @@ public class Registrieren extends HttpServlet {
         String text = createText(request.getParameter("firstname"),
                 request.getParameter("name"),
                 request.getParameter("projectname"),
+                toEmail,
                 genPW);
-
 
         if (validateProject(request.getParameter("projectname"), request.getParameter("email"))) {
             activate(request.getParameter("name"),
@@ -138,9 +138,13 @@ public class Registrieren extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private String createText(String firstname, String name, String projectname, String pw) {
+    private String createText(String firstname, String name, String projectname, String email, String pw) {
         StringBuilder sb = new StringBuilder(200);
-        sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n").append("die Anmeldung fuer das Projekt ").append(projectname).append(" war erfolgreich.\n\n").append("Ihr Passwort ist: ").append(pw).append("\n\n").append("Ihr Entwickler Team");
+        sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n")
+                .append("die Anmeldung fuer das Projekt ").append(projectname).append(" war erfolgreich.\n\n")
+                .append("Benutzername: ").append(email).append("\n")
+                .append("Passwort: ").append(pw).append("\n\n")
+                .append("Ihr Entwickler Team");
         return sb.toString();
     }
 
