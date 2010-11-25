@@ -4,6 +4,7 @@
  */
 
 import db.DBConnector;
+import exceptions.MySQLException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -47,25 +49,13 @@ public class Registrieren extends HttpServlet {
 
         PrintWriter out = response.getWriter();
 
-        String smtp = "mail.gmx.net";
-        String fromEmail = "htw-projektmanager@gmx.de";
-        String pw = new BufferedReader(new FileReader("/pw.txt")).readLine();
-        String toEmail = request.getParameter("email");
-        String subject = "Anmeldung fuer das Projekt " + request.getParameter("projectname");
-        String genPW = (int) (Math.random() * 10000000) + "";
-        String text = createText(request.getParameter("firstname"),
-                request.getParameter("name"),
-                request.getParameter("projectname"),
-                toEmail,
-                genPW);
+
 
         if (validateProject(request.getParameter("projectname"), request.getParameter("email"))) {
             activate(request.getParameter("name"),
                     request.getParameter("firstname"),
                     request.getParameter("email"),
-                    request.getParameter("projectname"),
-                    genPW);
-            sendMail(smtp, fromEmail, pw, fromEmail, toEmail, subject, text);
+                    request.getParameter("projectname"), false);
             out.write("0");
         } else {
             out.write("1");
@@ -148,26 +138,58 @@ public class Registrieren extends HttpServlet {
         return sb.toString();
     }
 
-    private void activate(String name, String firstname, String email, String projectName, String password) {
+    public void activate(String name, String firstname, String toEmail, String projectName, boolean member) {
         try {
-            Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("INSERT INTO project (name) VALUES (?)");
-            ps.setString(1, projectName);
-            ps.executeUpdate();
-            ps.close();
+            String smtp = "mail.gmx.net";
+            String fromEmail = "htw-projektmanager@gmx.de";
+            String emailPw = new BufferedReader(new FileReader("/pw.txt")).readLine();
+            String subject = "Anmeldung fuer das Projekt " + projectName;
+            String genPW = (int) (Math.random() * 10000000) + "";
+            String text = createText(firstname,
+            name,
+            projectName,
+            toEmail,
+            genPW);
 
-            ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, status)"
-                    + " VALUES (?,?,?,?,?,'PL')");
-            ps.setString(1, name);
-            ps.setString(2, firstname);
-            ps.setString(3, email);
-            ps.setString(4, projectName);
-            ps.setString(5, password);
-            ps.executeUpdate();
-            ps.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            Connection c = DBConnector.getConnection();
+            try {
+
+                c.setAutoCommit(false);
+                PreparedStatement ps = null;
+                String status = "MEM";
+                if (!member) {
+                    ps = c.prepareStatement("INSERT INTO project (name) VALUES (?)");
+                    ps.setString(1, projectName);
+                    ps.executeUpdate();
+                    ps.close();
+                    status = "PL";
+                }
+
+                ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, status)"
+                        + " VALUES (?,?,?,?,?,?)");
+                ps.setString(1, name);
+                ps.setString(2, firstname);
+                ps.setString(3, toEmail);
+                ps.setString(4, projectName);
+                ps.setString(5, genPW);
+                ps.setString(6, status);
+                ps.executeUpdate();
+                ps.close();
+                c.commit();
+                sendMail(smtp, fromEmail, emailPw, fromEmail, toEmail, subject, text);
+            } catch (SQLException e) {
+                c.rollback();
+                e.printStackTrace();
+            } finally {
+                c.setAutoCommit(true);
+                c.close();
+            }
+        } catch (IOException ex) {
             Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MySQLException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

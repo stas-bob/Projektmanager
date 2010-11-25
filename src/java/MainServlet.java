@@ -44,6 +44,7 @@ public class MainServlet extends HttpServlet {
             String user = seas.getAttribute("user").toString();
             String password = seas.getAttribute("password").toString();
             String projectName = getProjectName(c, user);
+            System.out.println(projectName);
             seas.setAttribute("projectname", projectName);
 
             if (checkLogin(c, user, password)) {
@@ -150,7 +151,7 @@ public class MainServlet extends HttpServlet {
         sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
         sb.append("<html>");
         sb.append("<head>");
-        sb.append("<title></title>");
+        sb.append("<title>FirstLogin</title>");
         sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
         sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
         sb.append("</head>");

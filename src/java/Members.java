@@ -5,13 +5,13 @@
 
 
 import db.DBConnector;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import exceptions.MySQLException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +50,7 @@ public class Members extends HttpServlet {
                 new Registrieren().activate(userName,
                     "empty",
                     userEmail,
-                    request.getParameter("projectname"));
+                    request.getSession().getAttribute("projectname").toString(), true);
             }
         }
         ArrayList<String> names, emails, status, firstnames;
@@ -149,12 +149,28 @@ public class Members extends HttpServlet {
 
    private void deleteUser(String email) {
         try {
-            ResultSet rs = DBConnector.getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE).executeQuery("select ID from `User` where `EMail`='" + email + "'");
-            if (rs.next()) {
-                rs.deleteRow();
+            Connection c = null;
+            String sql = "";
+            try {
+                c = DBConnector.getConnection();
+                c.setAutoCommit(false);
+                sql = "DELETE FROM user WHERE email = ?";
+                PreparedStatement ps = c.prepareStatement(sql);
+                ps.setString(1, email);
+                ps.executeUpdate();
+                ps.close();
+                c.commit();
+            } catch (MySQLException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                c.rollback();
+                throw new SQLException("Fehler beim Statement: " + sql);
+            } finally {
+                c.setAutoCommit(true);
+                c.close();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
