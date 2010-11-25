@@ -9,6 +9,13 @@ function createXMLHttpRequest() {
     }
 }
 
+function showMembers() {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Members", true);
+    xmlHttp.onreadystatechange = callbackMembers;
+    xmlHttp.send();
+}
+
 function validateProjectServlet()
 {
     var servlet = "/Projektmanager/ValidateProjectServlet";
@@ -107,7 +114,24 @@ function callback()
     }
 }
 
+function callbackMembers() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            var membersCount = xmlobject.getElementsByTagName("membersCount")[0].childNodes[0].nodeValue;
+            if (membersCount > 10) {
+                document.getElementById("content").style.height = membersCount*30;
+            }
+            document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+        }
+    }
+}
+
 function printWait(id) {
     document.getElementById(id).innerHTML = "Bitte warten ...";
 }
 
+function fillColor(element, color) {
+       element.style.backgroundColor = color;
+}

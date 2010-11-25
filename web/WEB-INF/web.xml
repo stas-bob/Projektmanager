@@ -8,6 +8,10 @@
         <servlet-name>ValidateProjectServlet</servlet-name>
         <servlet-class>ValidateProjectServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Members</servlet-name>
+        <servlet-class>Members</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>ValidateProjectServlet</servlet-name>
         <url-pattern>/ValidateProjectServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Members</servlet-name>
+        <url-pattern>/Members</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

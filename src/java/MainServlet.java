@@ -4,11 +4,15 @@
  */
 
 import db.DBConnector;
+import exceptions.MySQLException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +42,8 @@ public class MainServlet extends HttpServlet {
 
             String user = seas.getAttribute("user").toString();
             String password = seas.getAttribute("password").toString();
+            String projectName = getProjectName(user);
+            seas.setAttribute("projectname", projectName);
 
             if (checkLogin(user, password)) {
                 out.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
@@ -46,11 +52,12 @@ public class MainServlet extends HttpServlet {
                 out.write("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
                 out.write("<title>Untitled Document</title>");
                 out.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
+                out.write("<script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script>");
                 out.write("</head>");
                 out.write("<body>");
                 out.write("<div id=\"frame\">");
                 out.write("<div id=\"title\">");
-                out.write("Title des Projektes");
+                out.write(projectName);
                 out.write("</div>");
                 out.write("<div class=\"menuTopButton\">");
                 out.write("<a href=\"#\">&Uuml;berblick</a>");
@@ -64,12 +71,15 @@ public class MainServlet extends HttpServlet {
                 out.write("<div class=\"menuTopButton\">");
                 out.write("<a href=\"#\">Profil</a>");
                 out.write("</div>");
+                out.write("<div class=\"menuTopButton\" onclick=\"showMembers()\">");
+                out.write("<a href=\"#\">Mitglieder</a>");
+                out.write("</div>");
                 out.write("<div class=\"menuTopButton\">");
                 out.write("<a href=\"#\">Logout</a>");
                 out.write("</div>");
                 out.write("<div style=\"clear:both;\">");
                 out.write("</div>");
-                out.write("<div id=\"Content\">");
+                out.write("<div id=\"content\">");
                 out.write("Und hier kommt der Inhalt.");
                 out.write("</div>");
                 out.write("<div>");
@@ -141,4 +151,20 @@ public class MainServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private String getProjectName(String user) {
+        try {
+            Connection c = DBConnector.getConnection();
+            PreparedStatement ps = c.prepareStatement("select Projectname from `User` where `EMail`=?");
+            ps.setString(1, user);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            String projectname = rs.getString(1);
+            rs.close();
+            return projectname;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 }

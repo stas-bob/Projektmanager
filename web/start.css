@@ -1,7 +1,16 @@
+#frame{
+    margin-left: 200px;
+}
+
+#memberTable {
+    position:relative;
+    margin-left: 250px;
+}
+
 #title
 {
 	background-color:#3A38D8;
-	width:600px;
+	width:720px;
 	height:30px;
 	padding-top:8px;
 	text-align:center;
@@ -16,8 +25,8 @@
     margin-top: -25px;
 }
 
-#Content{
-    width: 580px;
+#content{
+    width: 700px;
     height:500px;
     margin-top: 10px;
     padding: 10px;
