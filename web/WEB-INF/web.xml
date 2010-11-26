@@ -20,6 +20,10 @@
         <servlet-name>Logout</servlet-name>
         <servlet-class>Logout</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Modules</servlet-name>
+        <servlet-class>Modules</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -47,6 +51,10 @@
     <servlet-mapping>
         <servlet-name>Logout</servlet-name>
         <url-pattern>/Logout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Modules</servlet-name>
+        <url-pattern>/Modules</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
