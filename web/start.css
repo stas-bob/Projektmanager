@@ -33,6 +33,13 @@
 
 #textFirstLogin{
     font-weight:bold;
+
+}
+
+#textLogout{
+    text-align: center;
+    font-size: 12pt;
+    font-weight: bold;
 }
 
 .menuTopButton a

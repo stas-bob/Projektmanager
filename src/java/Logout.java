@@ -4,24 +4,18 @@
  */
 
 
-import db.DBConnector;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author bline
+ * @author tA88
  */
-@WebServlet(name="ValidateEmailServlet", urlPatterns={"/ValidateEmailServlet"})
-public class ValidateEmailServlet extends HttpServlet {
+public class Logout extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -34,31 +28,27 @@ public class ValidateEmailServlet extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String emailName = request.getParameter("email");
-        String status = validateEmail(emailName);
-        out.write(status);
-        out.close();
+
+        try {
+            request.getSession().invalidate();
+            out.write("<html>");
+            out.write("<head>");
+            out.write("<title>Logout</title>");
+            out.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\" />");
+            out.write("</head>");
+            out.write("<body>");
+            out.write("<div id=\"textLogout\" />");
+            out.write("Sie wurden erfolgreich ausgelockt.");
+            out.write("<br>");
+            out.write("<a href='Login.html'>Zur&uuml;ck zum Login</a>");
+            out.write("</div>");
+            out.write("</body>");
+            out.write("</html>");
+        } finally { 
+            out.close();
+        }
     } 
 
-        public String validateEmail(String emailName) {
-        String status = "0";
-        try {
-            Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT * FROM user WHERE email = ?");
-            ps.setString(1, emailName);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                status = "1";
-            }
-            ps.close();
-            c.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        System.out.println(status);
-        return status;
-    }
-        
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -94,4 +84,5 @@ public class ValidateEmailServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 }

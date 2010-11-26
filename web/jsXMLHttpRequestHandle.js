@@ -203,3 +203,21 @@ function printWait(id) {
 function fillColor(element, color) {
     element.style.backgroundColor = color;
 }
+
+function logout() {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Logout", true);
+    xmlHttp.onreadystatechange = callbackLogout;
+    xmlHttp.send();
+}
+
+function callbackLogout()
+{
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            document.write(xmlHttp.responseText);
+        } else {
+            document.write("<a href='Login.html'>Schwerwiegender Fehler.</a>");
+        }
+    }
+}
