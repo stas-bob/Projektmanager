@@ -32,7 +32,7 @@ function addUser() {
             + "<td>Email:<input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
             + "</tr>"
             + "<tr>"
-            + "<td><input id=\"button\" type=\"button\" value=\"save\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"cancel\" onclick=\"hideAddUser()\"/></td>"
+            + "<td><input id=\"button\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
             + "</tr>"
             + "</body></html>";
     document.getElementById("addUserField").innerHTML = html;

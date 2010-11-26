@@ -89,8 +89,10 @@ public class Members extends HttpServlet {
             htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\">"
                     + "<td style=\"border: 1px solid; padding-left: 10px;  padding-right: 10px; cursor:pointer;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>"
                     + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), emails.get(i)) + "</td>";
-                    if (!request.getSession().getAttribute("user").equals(emails.get(i))) {
-                        htmlOutput += "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>";
+                    if (request.getSession().getAttribute("status").equals("PL")) {
+                        if (!request.getSession().getAttribute("user").equals(emails.get(i))) {
+                            htmlOutput += "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>";
+                        }
                     }
                     htmlOutput += "</tr>";
         }
@@ -188,35 +190,67 @@ public class Members extends HttpServlet {
         }
     }
 
-   public String getUserDescription(String email) {
+public String getUserDescription(String email) {
         try {
-            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT name, firstname, status from user where email='" + email + "'");
+            Connection c = DBConnector.getConnection();
+            PreparedStatement ps = c.prepareStatement("SELECT name, firstname, status FROM user where email = ?");
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return "Name: " + rs.getString(1) + "<br> Vorname: " + rs.getString(2) + "<br> E-Mail: <a href=\"mailto:" + email + "\">" + email + "</a><br> Status: " + rs.getString(3);
+                String name = rs.getString(1);
+                String firstname = rs.getString(2);
+                String status = rs.getString(3);
+                ps.close();
+                c.close();
+                return "Name: " + name +
+                        "<br> Vorname: " + firstname +
+                        "<br> E-Mail: <a href=\"mailto:" + email + "\">" + email + "</a>" +
+                        "<br> Status: " + status;
             }
-            rs.close();
+            ps.close();
+            c.close();
             return null;
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (MySQLException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
    }
 
     private String setStatusOnDB(String status, String email, String myStatus, String myEmail) {
-        try {
-            if (myStatus.equals("PL")) {
-                if (!myEmail.equals(email)) {
-                    DBConnector.getConnection().createStatement().executeUpdate("UPDATE user SET status='" + status + "' where email='" + email + "'");
-                    return "ok";
-                } else {
-                    return "Sie dürfen sich nicht selbst ändern";
+        if (myStatus.equals("PL")) {
+            if (!myEmail.equals(email)) {
+                try {
+                    Connection c = null;
+                    try {
+                        c = DBConnector.getConnection();
+                        c.setAutoCommit(false);
+                        PreparedStatement ps = c.prepareStatement("UPDATE user SET status = ? WHERE email = ?");
+                        ps.setString(1, status);
+                        ps.setString(2, email);
+                        ps.executeUpdate();
+                        ps.close();
+                        c.commit();
+                        return "&Auml;nderungen gespeichert";
+                    } catch (SQLException e) {
+                        c.rollback();
+                        e.printStackTrace();
+                    } finally {
+                        c.setAutoCommit(true);
+                        c.close();
+                    }
+                } catch (MySQLException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             } else {
-                //TODO was passiert bei CPL ???
-                return "Sie haben<br> keine Berechtigung<br> das zu tun!";
+                return "Sie dürfen sich nicht selbst &auml;ndern";
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } else {
+            //TODO was passiert bei CPL ???
+            return "Sie haben<br> keine Berechtigung<br> das zu tun!";
         }
         return "Fehler!";
     }
