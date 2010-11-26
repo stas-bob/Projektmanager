@@ -50,7 +50,7 @@ function addUser() {
             + "<td>Name:<input type=\"text\" id=\"name\"/></td>"
             + "</tr>"
             + "<tr>"
-            + "<td>Email:<input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
+            + "<td>Email: <input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
             + "</tr>"
             + "<tr>"
             + "<td><input id=\"button\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"

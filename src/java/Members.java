@@ -77,8 +77,7 @@ public class Members extends HttpServlet {
         getMembers(seas.getAttribute("projectname").toString(), names, firstnames, emails, status);
         String htmlOutput = "<div id=\"userDescription\"></div>"
                 + "<table border=\"0\" style=\"border-collapse:collapse\">"
-                + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>"
-                + "<tr><td>&nbsp;</td></tr>";
+                + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
         for (int i = 0; i < names.size(); i++) {
             htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">"
                     + "<td style=\"border: 1px solid; padding-left: 10px;  padding-right: 10px; cursor:pointer;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>"
