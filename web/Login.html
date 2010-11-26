@@ -9,31 +9,33 @@ and open the template in the editor.
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
-        <h1 align="center">Projektmanagmentool</h1>
-        <div id="login" align="center">
-            <form action="/Projektmanager/MainServlet" method="post">
-                <table>
-                    <tr>
-                        <th align="left">
-                            E-Mail:
-                        </th>
-                        <th align="right">
-                            <input name="user" type="text" size="30" maxlength="40" />
-                        </th>
-                    </tr>
-                    <tr>
-                        <th align="left">
-                            Passwort:
-                        </th>
-                        <th align="right">
-                            <input name="password" type="password" size="30" maxlength="20" />
-                            <br>
-                        </th>
-                    </tr>
-                </table>
-                <input type="submit" value="Login" />
-            </form>
-            <input name="btnRegestrierung" type="button" value="Registrieren" onclick="window.location.replace('Registrierung.html')"/>
+        <div style="background-image:url(grafik/bg-login.png); width: 887px; height: 430px; margin-top: -100px; margin-left: 10%; padding-top: 13%;">
+            <h1 align="center">Projektmanagmentool</h1>
+            <div id="login" align="center">
+                <form action="/Projektmanager/MainServlet" method="post">
+                    <table>
+                        <tr>
+                            <th align="left">
+                                E-Mail:
+                            </th>
+                            <th align="right">
+                                <input name="user" type="text" size="30" maxlength="40" />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th align="left">
+                                Passwort:
+                            </th>
+                            <th align="right">
+                                <input name="password" type="password" size="30" maxlength="20" />
+                                <br>
+                            </th>
+                        </tr>
+                    </table>
+                    <input type="submit" value="Login" />
+                </form>
+                <input name="btnRegestrierung" type="button" value="Registrieren" onclick="window.location.replace('Registrierung.html')"/>
+            </div>
         </div>
     </body>
 </html>

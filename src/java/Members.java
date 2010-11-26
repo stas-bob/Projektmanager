@@ -48,7 +48,6 @@ public class Members extends HttpServlet {
             if (request.getParameter("addName") != null) {
                 String userName = request.getParameter("addName");
                 String userEmail = request.getParameter("addEmail");
-                System.out.println(userEmail);
                 if(new ValidateEmailServlet().validateEmail(userEmail).equals("0")) {
                     new Registrieren().activate(userName,
                         "empty",
@@ -76,12 +75,7 @@ public class Members extends HttpServlet {
         firstnames = new ArrayList<String>();
 
         getMembers(seas.getAttribute("projectname").toString(), names, firstnames, emails, status);
-        String htmlOutput = "<html>"
-                + "<head>"
-                + "<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>"
-                + "</head>"
-                + "<body>"
-                + "<div id=\"userDescription\"></div>"
+        String htmlOutput = "<div id=\"userDescription\"></div>"
                 + "<table border=\"0\" style=\"border-collapse:collapse\">"
                 + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>"
                 + "<tr><td>&nbsp;</td></tr>";
@@ -94,14 +88,13 @@ public class Members extends HttpServlet {
                             htmlOutput += "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>";
                         }
                     }
-                    htmlOutput += "</tr>";
+            htmlOutput += "</tr>";
         }
-        htmlOutput += 
-                 "</table>"
-                 + "<div id=\"addUserField\"></div>"
-                 + "<div><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></div>"
-                 + "</body>"
-                 + "</html>";
+        htmlOutput += "</table>"
+                    + "<div id=\"addUserField\"></div>";
+        if (request.getSession().getAttribute("status").equals("PL")) {
+            htmlOutput += "<div><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></div>";
+        }
         String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><membersCount>" + names.size() + "</membersCount></root>";
         out.write(xmlResponse);
         out.close();

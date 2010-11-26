@@ -55,7 +55,6 @@ public class ValidateEmailServlet extends HttpServlet {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        System.out.println(status);
         return status;
     }
         
