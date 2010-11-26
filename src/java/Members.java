@@ -70,7 +70,6 @@ public class Members extends HttpServlet {
         firstnames = new ArrayList<String>();
 
         getMembers(seas.getAttribute("projectname").toString(), names, firstnames, emails, status);
-
         String htmlOutput = "<html>"
                 + "<head>"
                 + "<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>"
@@ -87,13 +86,10 @@ public class Members extends HttpServlet {
                     + "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>"
                     + "</tr>";
         }
-        htmlOutput += "<tr>"
-                + "<td colspan=\"4\" id=\"addUserField\"></td>"
-                + "</tr>"
-                + "<tr>"
-                + "<td colspan=\"4\"><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></td>"
-                + "</tr>"
-                + "</table>"
+        htmlOutput += 
+                 "</table>"
+                 + "<div id=\"addUserField\"></div>"
+                 + "<div><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></div>"
                 + "</body>"
                 + "</html>";
         String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><membersCount>" + names.size() + "</membersCount></root>";
