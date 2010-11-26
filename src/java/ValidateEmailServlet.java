@@ -5,11 +5,15 @@
 
 
 import db.DBConnector;
+import exceptions.MySQLException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,18 +39,8 @@ public class ValidateEmailServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String emailName = request.getParameter("email");
-        try {
-            Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT * FROM user WHERE email = ?");
-            ps.setString(1, emailName);
-            ResultSet rs = ps.executeQuery();
-            String status = "0";
-            if (rs.next()) status = "1";
-            ps.close();
-            out.write(status);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        String status = validateEmail(emailName);
+        out.write(status);
         out.close();
     } 
 
@@ -85,5 +79,23 @@ public class ValidateEmailServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    public String validateEmail(String emailName) {
+        String status = "0";
+        try {
+            Connection c = DBConnector.getConnection();
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM user WHERE email = ?");
+            ps.setString(1, emailName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                status = "1";
+            }
+            ps.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        System.out.println(status);
+        return status;
+    }
 
 }

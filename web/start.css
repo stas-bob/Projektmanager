@@ -1,10 +1,11 @@
 #frame{
     margin-left: 200px;
 }
-
-#memberTable {
-    position:relative;
-    margin-left: 250px;
+#userDescription {
+    width: 185px;
+    height: 330px;
+    margin-left: 520px;
+    position: absolute;
 }
 
 #title
@@ -32,7 +33,6 @@
 
 .menuTopButton a
 {
-    position:relative;
     width:120px;
     float:left;
     height:23px;
@@ -51,4 +51,5 @@
 {
     background-image:url(grafik/button_hover.jpg);
 }
+
 

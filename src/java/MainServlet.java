@@ -139,6 +139,7 @@ public class MainServlet extends HttpServlet {
         sb.append("<div id=\"content\">");
         sb.append("Und hier kommt der Inhalt.");
         sb.append("</div>");
+        sb.append("<div id=\"img-div\"></div>");
         sb.append("</div>");
         sb.append("</body>");
         sb.append("</html>");

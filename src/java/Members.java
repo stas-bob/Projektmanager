@@ -47,10 +47,20 @@ public class Members extends HttpServlet {
             if (request.getParameter("addName") != null) {
                 String userName = request.getParameter("addName");
                 String userEmail = request.getParameter("addEmail");
-                new Registrieren().activate(userName,
-                    "empty",
-                    userEmail,
-                    request.getSession().getAttribute("projectname").toString(), true);
+                System.out.println(userEmail);
+                if(new ValidateEmailServlet().validateEmail(userEmail).equals("0")) {
+                    new Registrieren().activate(userName,
+                        "empty",
+                        userEmail,
+                        request.getSession().getAttribute("projectname").toString(), true);
+                } else {
+                    out.write("1");
+                }
+            } else {
+                if (request.getParameter("userDescription") != null) {
+                    out.write(getUserDescription(request.getParameter("userDescription")));
+                    return;
+                }
             }
         }
         ArrayList<String> names, emails, status, firstnames;
@@ -66,14 +76,13 @@ public class Members extends HttpServlet {
                 + "<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>"
                 + "</head>"
                 + "<body>"
-                + "<table id=\"memberTable\" border=\"0\" style=\"border-collapse:collapse\">"
-                + "<tr><td align=\"center\">Name</td><td align=\"center\">Vorname</td><td align=\"center\">Email</td><td align=\"center\">Status</td></tr>"
+                + "<div id=\"userDescription\"></div>"
+                + "<table border=\"0\" style=\"border-collapse:collapse\">"
+                + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>"
                 + "<tr><td>&nbsp;</td></tr>";
         for (int i = 0; i < names.size(); i++) {
-            htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" style=\"cursor:pointer\">"
+            htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" style=\"cursor:pointer\" onclick=\"showUserDescription('" + emails.get(i) + "')\">"
                     + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + names.get(i) + "</td>"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + firstnames.get(i) + "</td>"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + emails.get(i) + "</td>"
                     + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + status.get(i) + "</td>"
                     + "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>"
                     + "</tr>";
@@ -174,4 +183,17 @@ public class Members extends HttpServlet {
         }
     }
 
+   public String getUserDescription(String email) {
+        try {
+            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT name, firstname, status from user where email='" + email + "'");
+            if (rs.next()) {
+                return "Name: " + rs.getString(1) + "<br> Vorname: " + rs.getString(2) + "<br> E-Mail: " + email + "<br> Status: " + rs.getString(3);
+            }
+            rs.close();
+            return null;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+   }
 }

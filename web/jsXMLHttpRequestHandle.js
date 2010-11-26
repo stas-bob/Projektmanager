@@ -29,10 +29,10 @@ function addUser() {
             + "<td>Name:<input type=\"text\" id=\"name\"/></td>"
             + "</tr>"
             + "<tr>"
-            + "<td>Email:<input type=\"text\" id=\"email\"/></td>"
+            + "<td>Email:<input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
             + "</tr>"
             + "<tr>"
-            + "<td><input type=\"button\" value=\"save\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"cancel\" onclick=\"hideAddUser()\"/></td>"
+            + "<td><input id=\"button\" type=\"button\" value=\"save\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"cancel\" onclick=\"hideAddUser()\"/></td>"
             + "</tr>"
             + "</body></html>";
     document.getElementById("addUserField").innerHTML = html;
@@ -45,6 +45,21 @@ function saveUser() {
     xmlHttp.open('POST',"/Projektmanager/Members?addName=" + name + "&addEmail=" + email, true);
     xmlHttp.onreadystatechange = showMembers;
     xmlHttp.send();
+}
+
+function showUserDescription(email) {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Members?userDescription=" + email, true);
+    xmlHttp.onreadystatechange = callbackShowUserDescription;
+    xmlHttp.send();
+}
+
+function callbackShowUserDescription() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            document.getElementById("userDescription").innerHTML = xmlHttp.responseText;
+        }
+    }
 }
 
 function hideAddUser() {
@@ -104,12 +119,15 @@ function callbackValidateEmail() {
             if (status == "0") {
                 document.getElementById('imgEmail').innerHTML = "<img src=grafik/ok.gif />";
                 document.getElementById('statusEmail').innerHTML = "E-Mail noch nicht vergeben!";
+                document.getElementById('button').disabled = false;
             } else {
                 document.getElementById('imgEmail').innerHTML = "<img src=grafik/error.gif />";
                 document.getElementById('statusEmail').innerHTML = "E-Mail schon vergeben!";
+                document.getElementById('button').disabled = true;
             }
         } else {
             document.getElementById('statusEmail').innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
+            document.getElementById('button').disabled = true;
         }
     }
 }
@@ -156,9 +174,17 @@ function callbackMembers() {
             var html = xmlobject.getElementsByTagName("htmlSeite");
             var membersCount = xmlobject.getElementsByTagName("membersCount")[0].childNodes[0].nodeValue;
             if (membersCount > 10) {
-                document.getElementById("content").style.height = membersCount*30;
+                document.getElementById("content").style.height = membersCount*40 + "px";
+                document.getElementById("img-div").style.top=membersCount*40 - 91 + "px";
+            } else {
+                document.getElementById("img-div").style.top=409 + "px";
             }
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+            document.getElementById("img-div").style.backgroundImage = "url(grafik/bg-yellow.png)";
+            document.getElementById("img-div").style.height=199 + "px";
+            document.getElementById("img-div").style.left=440 + "px";
+            document.getElementById("img-div").style.width=488 + "px";
+            document.getElementById("img-div").style.position="absolute";
         }
     }
 }
