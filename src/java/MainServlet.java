@@ -132,7 +132,7 @@ public class MainServlet extends HttpServlet {
         sb.append("<div class=\"menuTopButton\" onclick=\"showMembers()\">");
         sb.append("<a href=\"#\">Mitglieder</a>");
         sb.append("</div>");
-        sb.append("<div class=\"menuTopButton\">");
+        sb.append("<div class=\"menuTopButton\" onclick=\"logout()\">");
         sb.append("<a href=\"#\">Logout</a>");
         sb.append("</div>");
         sb.append("<div style=\"clear:both;\">");
