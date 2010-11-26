@@ -54,6 +54,13 @@ function showUserDescription(email) {
     xmlHttp.send();
 }
 
+function changeStatus(status, email) {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Members?changeStatus=" + status + "&email=" + email, true);
+    xmlHttp.onreadystatechange = callbackShowUserDescription;
+    xmlHttp.send();
+}
+
 function callbackShowUserDescription() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {

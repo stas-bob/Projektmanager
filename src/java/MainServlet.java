@@ -40,6 +40,7 @@ public class MainServlet extends HttpServlet {
             HttpSession seas = request.getSession();
             seas.setAttribute("user", request.getParameter("user"));
             seas.setAttribute("password", request.getParameter("password"));
+            seas.setAttribute("status", getMyStatus(request.getParameter("user").toString()));
 
             String user = seas.getAttribute("user").toString();
             String password = seas.getAttribute("password").toString();
@@ -253,4 +254,18 @@ public class MainServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private String getMyStatus(String userEmail) {
+        String status = "";
+        try {
+            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT status FROM user WHERE email='" + userEmail + "'");
+            if (rs.next()) {
+                status = rs.getString(1);
+            }
+            rs.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return status;
+    }
 }

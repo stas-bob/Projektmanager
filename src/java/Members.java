@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.omg.PortableServer.REQUEST_PROCESSING_POLICY_ID;
 
 /**
  *
@@ -60,6 +61,11 @@ public class Members extends HttpServlet {
                 if (request.getParameter("userDescription") != null) {
                     out.write(getUserDescription(request.getParameter("userDescription")));
                     return;
+                } else {
+                    if (request.getParameter("changeStatus") != null) {
+                        out.write(setStatusOnDB(request.getParameter("changeStatus"), request.getParameter("email"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString()));
+                        return;
+                    }
                 }
             }
         }
@@ -80,18 +86,20 @@ public class Members extends HttpServlet {
                 + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>"
                 + "<tr><td>&nbsp;</td></tr>";
         for (int i = 0; i < names.size(); i++) {
-            htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" style=\"cursor:pointer\">"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + status.get(i) + "</td>"
-                    + "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>"
-                    + "</tr>";
+            htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\">"
+                    + "<td style=\"border: 1px solid; padding-left: 10px;  padding-right: 10px; cursor:pointer;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>"
+                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), emails.get(i)) + "</td>";
+                    if (!request.getSession().getAttribute("user").equals(emails.get(i))) {
+                        htmlOutput += "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>";
+                    }
+                    htmlOutput += "</tr>";
         }
         htmlOutput += 
                  "</table>"
                  + "<div id=\"addUserField\"></div>"
                  + "<div><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></div>"
-                + "</body>"
-                + "</html>";
+                 + "</body>"
+                 + "</html>";
         String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><membersCount>" + names.size() + "</membersCount></root>";
         out.write(xmlResponse);
         out.close();
@@ -184,7 +192,7 @@ public class Members extends HttpServlet {
         try {
             ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT name, firstname, status from user where email='" + email + "'");
             if (rs.next()) {
-                return "Name: " + rs.getString(1) + "<br> Vorname: " + rs.getString(2) + "<br> E-Mail: " + email + "<br> Status: " + rs.getString(3);
+                return "Name: " + rs.getString(1) + "<br> Vorname: " + rs.getString(2) + "<br> E-Mail: <a href=\"mailto:" + email + "\">" + email + "</a><br> Status: " + rs.getString(3);
             }
             rs.close();
             return null;
@@ -193,4 +201,41 @@ public class Members extends HttpServlet {
         }
         return null;
    }
+
+    private String setStatusOnDB(String status, String email, String myStatus, String myEmail) {
+        try {
+            if (myStatus.equals("PL")) {
+                if (!myEmail.equals(email)) {
+                    DBConnector.getConnection().createStatement().executeUpdate("UPDATE user SET status='" + status + "' where email='" + email + "'");
+                    return "ok";
+                } else {
+                    return "Sie dürfen sich nicht selbst ändern";
+                }
+            } else {
+                //TODO was passiert bei CPL ???
+                return "Sie haben<br> keine Berechtigung<br> das zu tun!";
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "Fehler!";
+    }
+
+    private String setStatus(String status, String email) {
+        String MEM = "<option onclick=\"changeStatus('MEM','" + email + "')\">MEM</option>";
+        String CPL = "<option onclick=\"changeStatus('CPL','" + email + "')\">CPL</option>";
+        String PL  = "<option onclick=\"changeStatus('PL','" + email + "')\">PL</option>";
+
+        String select = "<select name=\"statusSelect\" size=\"1\">";
+        if (status.equals("MEM")) {
+            select += MEM + CPL + PL;
+        } else {
+            if (status.equals("CPL")) {
+                select += CPL + MEM + PL;
+            } else {
+                select += PL + CPL + MEM;
+            }
+        }
+        return select + "</select>";
+    }
 }
