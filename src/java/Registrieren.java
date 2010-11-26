@@ -211,6 +211,7 @@ public class Registrieren extends HttpServlet {
                 ps2.close();
                 return false;
             }
+            c.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;

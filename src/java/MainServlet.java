@@ -60,6 +60,7 @@ public class MainServlet extends HttpServlet {
             } else {
                 out.write("<a href='Login.html'>Falscher Benutzername oder falsches Passwort eingegeben!</a>");
             }
+            connection.close();
         } finally {
             out.close();
         }
@@ -139,7 +140,6 @@ public class MainServlet extends HttpServlet {
         sb.append("<div id=\"content\">");
         sb.append("Und hier kommt der Inhalt.");
         sb.append("</div>");
-        sb.append("<div id=\"img-div\"></div>");
         sb.append("</div>");
         sb.append("</body>");
         sb.append("</html>");

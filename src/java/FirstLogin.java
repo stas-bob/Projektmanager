@@ -40,8 +40,9 @@ public class FirstLogin extends HttpServlet {
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String validatePassword = request.getParameter("validatePassword");
+        Connection c = null;
         try {
-            Connection c = DBConnector.getConnection();
+            c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE email = ?");
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
@@ -75,6 +76,7 @@ public class FirstLogin extends HttpServlet {
                     out.write(MainServlet.firstLoginView(2));
                 }
             }
+            c.close();
         } catch (MySQLException e) {
             e.printStackTrace();
         } catch (SQLException e) {

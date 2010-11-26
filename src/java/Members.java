@@ -81,9 +81,9 @@ public class Members extends HttpServlet {
                 + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>"
                 + "<tr><td>&nbsp;</td></tr>";
         for (int i = 0; i < names.size(); i++) {
-            htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" style=\"cursor:pointer\" onclick=\"showUserDescription('" + emails.get(i) + "')\">"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + names.get(i) + "</td>"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + status.get(i) + "</td>"
+            htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" style=\"cursor:pointer\">"
+                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>"
+                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + status.get(i) + "</td>"
                     + "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>"
                     + "</tr>";
         }
@@ -149,7 +149,8 @@ public class Members extends HttpServlet {
                 emails.add(rs.getString(3));
                 status.add(rs.getString(4));
             }
-            rs.close();
+            ps.close();
+            c.close();
         } catch (Exception ex) {
             Logger.getLogger(Members.class.getName()).log(Level.SEVERE, null, ex);
         }

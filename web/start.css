@@ -20,6 +20,9 @@
 }
 
 #content{
+    background-repeat: no-repeat;
+    background-image: url("grafik/bg-yellow.png");
+    background-position: bottom right;
     width: 700px;
     height:500px;
     margin-top: 10px;
@@ -51,5 +54,4 @@
 {
     background-image:url(grafik/button_hover.jpg);
 }
-
 

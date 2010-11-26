@@ -175,16 +175,16 @@ function callbackMembers() {
             var membersCount = xmlobject.getElementsByTagName("membersCount")[0].childNodes[0].nodeValue;
             if (membersCount > 10) {
                 document.getElementById("content").style.height = membersCount*40 + "px";
-                document.getElementById("img-div").style.top=membersCount*40 - 91 + "px";
+                //document.getElementById("img-div").style.top=membersCount*40 - 91 + "px";
             } else {
-                document.getElementById("img-div").style.top=409 + "px";
+                //document.getElementById("img-div").style.top=349 + "px";
             }
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
-            document.getElementById("img-div").style.backgroundImage = "url(grafik/bg-yellow.png)";
-            document.getElementById("img-div").style.height=199 + "px";
-            document.getElementById("img-div").style.left=440 + "px";
-            document.getElementById("img-div").style.width=488 + "px";
-            document.getElementById("img-div").style.position="absolute";
+            //document.getElementById("img-div").style.backgroundImage = "url(grafik/bg-yellow.png)";
+            //document.getElementById("img-div").style.height=199 + "px";
+            //document.getElementById("img-div").style.left=440 + "px";
+            //document.getElementById("img-div").style.width=488 + "px";
+            //document.getElementById("img-div").style.position="absolute";
         }
     }
 }

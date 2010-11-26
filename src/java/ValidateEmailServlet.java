@@ -91,6 +91,7 @@ public class ValidateEmailServlet extends HttpServlet {
                 status = "1";
             }
             ps.close();
+            c.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

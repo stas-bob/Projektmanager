@@ -44,6 +44,7 @@ public class ValidateProjectServlet extends HttpServlet {
             if (rs.next()) status = "1";
             ps.close();
             out.write(status);
+            c.close();
         } catch (Exception ex) {
             Logger.getLogger(ValidateProjectServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
