@@ -5,15 +5,11 @@
 
 
 import db.DBConnector;
-import exceptions.MySQLException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -44,6 +40,25 @@ public class ValidateEmailServlet extends HttpServlet {
         out.close();
     } 
 
+        public String validateEmail(String emailName) {
+        String status = "0";
+        try {
+            Connection c = DBConnector.getConnection();
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM user WHERE email = ?");
+            ps.setString(1, emailName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                status = "1";
+            }
+            ps.close();
+            c.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        System.out.println(status);
+        return status;
+    }
+        
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -79,24 +94,4 @@ public class ValidateEmailServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    public String validateEmail(String emailName) {
-        String status = "0";
-        try {
-            Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT * FROM user WHERE email = ?");
-            ps.setString(1, emailName);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                status = "1";
-            }
-            ps.close();
-            c.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        System.out.println(status);
-        return status;
-    }
-
 }

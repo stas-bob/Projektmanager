@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -63,81 +64,6 @@ public class Registrieren extends HttpServlet {
         out.close();
     }
 
-    public void sendMail(String smtpHost, String username, String password, String senderAddress, String recipientsAddress, String subject, String text) {
-        MailAuthenticator auth = new MailAuthenticator(username, password);
-
-        Properties properties = System.getProperties();
-        properties.put("mail.smtp.host", smtpHost);
-        properties.put("mail.smtp.port", 587);
-        properties.put("mail.smtp.auth", "true");
-
-        Session session = Session.getInstance(properties, auth);
-        try {
-            Message msg = new MimeMessage(session);
-
-            msg.setFrom(new InternetAddress(senderAddress));
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(
-                    recipientsAddress, false));
-
-            msg.setSubject(subject);
-            msg.setText(text);
-
-            msg.setHeader("Test", "Test");
-            msg.setSentDate(new Date());
-
-            Transport.send(msg);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-    private String createText(String firstname, String name, String projectname, String email, String pw) {
-        StringBuilder sb = new StringBuilder(200);
-        sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n")
-                .append("die Anmeldung fuer das Projekt ").append(projectname).append(" war erfolgreich.\n\n")
-                .append("Benutzername: ").append(email).append("\n")
-                .append("Passwort: ").append(pw).append("\n\n")
-                .append("Ihr Entwickler Team");
-        return sb.toString();
-    }
-
     public void activate(String name, String firstname, String toEmail, String projectName, boolean member) {
         try {
             String smtp = "mail.gmx.net";
@@ -153,7 +79,6 @@ public class Registrieren extends HttpServlet {
 
             Connection c = DBConnector.getConnection();
             try {
-
                 c.setAutoCommit(false);
                 PreparedStatement ps = null;
                 String status = "MEM";
@@ -193,6 +118,44 @@ public class Registrieren extends HttpServlet {
         }
     }
 
+    private void sendMail(String smtpHost, String username, String password, String senderAddress, String recipientsAddress, String subject, String text) {
+        MailAuthenticator auth = new MailAuthenticator(username, password);
+
+        Properties properties = System.getProperties();
+        properties.put("mail.smtp.host", smtpHost);
+        properties.put("mail.smtp.port", 587);
+        properties.put("mail.smtp.auth", "true");
+
+        Session session = Session.getInstance(properties, auth);
+        try {
+            Message msg = new MimeMessage(session);
+
+            msg.setFrom(new InternetAddress(senderAddress));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(
+                    recipientsAddress, false));
+
+            msg.setSubject(subject);
+            msg.setText(text);
+
+            msg.setHeader("Test", "Test");
+            msg.setSentDate(new Date());
+
+            Transport.send(msg);
+        } catch (MessagingException ex) {
+            System.out.println("Fehler in Registrieren/sendMail(...)");
+        }
+    }
+
+    private String createText(String firstname, String name, String projectname, String email, String pw) {
+        StringBuilder sb = new StringBuilder(200);
+        sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n")
+                .append("die Anmeldung fuer das Projekt ").append(projectname).append(" war erfolgreich.\n\n")
+                .append("Benutzername: ").append(email).append("\n")
+                .append("Passwort: ").append(pw).append("\n\n")
+                .append("Ihr Entwickler Team");
+        return sb.toString();
+    }
+
     private boolean validateProject(String projectName, String email) {
         try {
             if (projectName.trim().isEmpty() || email.trim().isEmpty()) {
@@ -218,6 +181,42 @@ public class Registrieren extends HttpServlet {
         }
         return true;
     }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
 }
 
 class MailAuthenticator extends Authenticator {
