@@ -16,6 +16,13 @@ function deleteUser(email) {
     xmlHttp.send();
 }
 
+function deleteModule(id) {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Modules?deleteModule=" + id, true);
+    xmlHttp.onreadystatechange = showModules;
+    xmlHttp.send();
+}
+
 function showModules() {
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules", true);
@@ -200,6 +207,7 @@ function showModuleDescription(id) {
 }
 
 function changeModuleStatus(status, id) {
+    alert(1);
     document.getElementById("addModule").innerHTML = "";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?changeStatus=" + status + "&id=" + id, true);

@@ -74,9 +74,13 @@ public class Modules extends HttpServlet {
                         return;
                     } else {
                         if (request.getParameter("changeStatus") != null) {
-                        out.write(setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id")));
-                        return;
-                    }
+                            out.write(setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id")));
+                            return;
+                        } else {
+                            if (request.getParameter("deleteModule") != null) {
+                                deleteModule(request.getParameter("deleteModule").toString());
+                            }
+                        }
                     }
                 }
             }
@@ -200,6 +204,7 @@ public class Modules extends HttpServlet {
                         + "<tr><td>Mitgliederzahl: </td><td>" + memberCount + "</td></tr>"
                         + "<tr><td>Mitglieder: </td><td>" + members + "</td></tr>"
                         + "<tr><td>Beschreibung: </td><td>" + description + "</td></tr>"
+                        + "<tr><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>"
                         + "</table>";
                 return htmlOutput;
             }
@@ -308,6 +313,38 @@ public class Modules extends HttpServlet {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    private void deleteModule(String id) {
+        try {
+            Connection c = null;
+            String sql = "";
+            try {
+                c = DBConnector.getConnection();
+                c.setAutoCommit(false);
+                sql = "DELETE FROM module WHERE id = ?";
+                PreparedStatement ps = c.prepareStatement(sql);
+                ps.setString(1, id);
+                ps.executeUpdate();
+                ps.close();
+                sql = "DELETE FROM rel_module_user WHERE modulid = ?";
+                ps = c.prepareStatement(sql);
+                ps.setString(1, id);
+                ps.executeUpdate();
+                ps.close();
+                c.commit();
+            } catch (MySQLException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                c.rollback();
+                throw new SQLException("Fehler beim Statement: " + sql);
+            } finally {
+                c.setAutoCommit(true);
+                c.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
