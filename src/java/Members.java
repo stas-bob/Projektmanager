@@ -79,7 +79,7 @@ public class Members extends HttpServlet {
                 + "<table border=\"0\" style=\"border-collapse:collapse\">"
                 + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
         for (int i = 0; i < names.size(); i++) {
-            htmlOutput += "<tr id=\"" + emails.get(i) + "\" onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">"
+            htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">"
                     + "<td style=\"border: 1px solid; padding-left: 10px;  padding-right: 10px; cursor:pointer;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>"
                     + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), emails.get(i)) + "</td>";
                     if (request.getSession().getAttribute("status").equals("PL")) {
@@ -164,6 +164,11 @@ public class Members extends HttpServlet {
                 c.setAutoCommit(false);
                 sql = "DELETE FROM user WHERE email = ?";
                 PreparedStatement ps = c.prepareStatement(sql);
+                ps.setString(1, email);
+                ps.executeUpdate();
+                ps.close();
+                sql = "DELETE FROM rel_module_user WHERE email = ?";
+                ps = c.prepareStatement(sql);
                 ps.setString(1, email);
                 ps.executeUpdate();
                 ps.close();

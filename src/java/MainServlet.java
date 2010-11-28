@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -41,6 +42,7 @@ public class MainServlet extends HttpServlet {
             seas.setAttribute("user", request.getParameter("user"));
             seas.setAttribute("password", request.getParameter("password"));
             seas.setAttribute("status", getMyStatus(request.getParameter("user").toString()));
+            seas.setAttribute("modules", getMyModules(request.getParameter("user").toString()));
 
             String user = seas.getAttribute("user").toString();
             String password = seas.getAttribute("password").toString();
@@ -267,5 +269,19 @@ public class MainServlet extends HttpServlet {
             ex.printStackTrace();
         }
         return status;
+    }
+
+    private ArrayList<Integer> getMyModules(String email) {
+        try {
+            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT modulid FROM rel_module_user WHERE email='" + email + "'");
+            ArrayList<Integer> modules = new ArrayList<Integer>();
+            while (rs.next()) {
+                modules.add(rs.getInt(1));
+            }
+            return modules;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }

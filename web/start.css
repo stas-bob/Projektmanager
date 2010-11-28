@@ -4,6 +4,14 @@
     padding-left: 168px;
     width: 750px;
 }
+
+#addModule {
+height:400px;
+margin-left:270px;
+position:absolute;
+width:430px;
+}
+
 #userDescription {
     width: 185px;
     height: 330px;
