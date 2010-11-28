@@ -201,7 +201,7 @@ function showUserDescription(email) {
 function showModuleDescription(id) {
     document.getElementById("addModule").style.border = "0px solid";
     createXMLHttpRequest();
-    xmlHttp.open('POST',"/Projektmanager/Modules?moduleDescription=" + id, true);
+    xmlHttp.open('POST',"/Projektmanager/Modules?moduleDescriptionId=" + id, true);
     xmlHttp.onreadystatechange = callbackShowModuleDescription;
     xmlHttp.send();
 }

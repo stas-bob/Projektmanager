@@ -69,8 +69,8 @@ public class Modules extends HttpServlet {
                     addMeToModule(request.getSession().getAttribute("user").toString(), request.getParameter("addToModule").toString());
                     ((ArrayList<Integer>)request.getSession().getAttribute("modules")).add(Integer.parseInt(request.getParameter("addToModule").toString()));
                 } else {
-                    if (request.getParameter("moduleDescription") != null) {
-                        out.write(getModuleDescription(request.getParameter("moduleDescription")));
+                    if (request.getParameter("moduleDescriptionId") != null) {
+                        out.write(getModuleDescription(request.getParameter("moduleDescriptionId"), request.getSession().getAttribute("status").toString()));
                         return;
                     } else {
                         if (request.getParameter("changeStatus") != null) {
@@ -87,25 +87,20 @@ public class Modules extends HttpServlet {
         }
 
 
-        ArrayList<String> names, starts, ends, status, prios, descriptions;
+        ArrayList<String> names, status;
         names = new ArrayList<String>();
-        starts = new ArrayList<String>();
-        ends = new ArrayList<String>();
-        prios = new ArrayList<String>();
         status = new ArrayList<String>();
-        descriptions = new ArrayList<String>();
+        ArrayList<Integer> ids = new ArrayList<Integer>();
 
-        int moduleID = 0;
-        getModules(request.getSession().getAttribute("projectname").toString(), names, starts, ends, prios, status, descriptions);
+        getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids);
         String htmlOutput = "<table border=\"0\" style=\"border-collapse:collapse; position:absolute;\" >"
                 + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
         for (int i = 0; i < names.size(); i++) {
-            moduleID = getCurrentModuleId(names.get(i), request.getSession().getAttribute("projectname").toString());
             htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + moduleID + ")\">" + names.get(i) + "</td>"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), moduleID) + "</td>";
-            if (!((ArrayList<Integer>)request.getSession().getAttribute("modules")).contains(moduleID)) {
-                htmlOutput += "<td><input type=\"button\" value=\"Teilnehmen\" onclick=\"addMeToModule(" + moduleID + ")\"/></td>";
+                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\">" + names.get(i) + "</td>"
+                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i),ids.get(i)) + "</td>";
+            if (!((ArrayList<Integer>)request.getSession().getAttribute("modules")).contains(ids.get(i))) {
+                htmlOutput += "<td><input type=\"button\" value=\"Teilnehmen\" onclick=\"addMeToModule(" + ids.get(i) + ")\"/></td>";
             }
             htmlOutput += "</tr>";
         }
@@ -156,19 +151,16 @@ public class Modules extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void getModules(String projectName, ArrayList<String> names, ArrayList<String> starts, ArrayList<String> ends, ArrayList<String> prios, ArrayList<String> status, ArrayList<String> descriptions) {
+    private void getModules(String projectName, ArrayList<String> names, ArrayList<String> status, ArrayList<Integer> ids) {
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT name, start, end, status, prio, description FROM module WHERE projectname=?");
+            PreparedStatement ps = c.prepareStatement("SELECT name, status, id FROM module WHERE projectname=?");
             ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 names.add(rs.getString(1));
-                starts.add(rs.getString(2));
-                ends.add(rs.getString(3));
-                status.add(rs.getString(4));
-                prios.add(rs.getString(5));
-                descriptions.add(rs.getString(6));
+                status.add(rs.getString(2));
+                ids.add(rs.getInt(3));
             }
             ps.close();
             c.close();
@@ -177,7 +169,7 @@ public class Modules extends HttpServlet {
         }
     }
 
-    private String getModuleDescription(String id) {
+    private String getModuleDescription(String id, String status) {
         try {
             Statement s = DBConnector.getConnection().createStatement();
             ResultSet rs = s.executeQuery("SELECT name, prio, description, start, end FROM module WHERE id='" + id + "'");
@@ -203,9 +195,11 @@ public class Modules extends HttpServlet {
                         + "<tr><td>Ende: </td><td>" + end + "</td></tr>"
                         + "<tr><td>Mitgliederzahl: </td><td>" + memberCount + "</td></tr>"
                         + "<tr><td>Mitglieder: </td><td>" + members + "</td></tr>"
-                        + "<tr><td>Beschreibung: </td><td>" + description + "</td></tr>"
-                        + "<tr><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>"
-                        + "</table>";
+                        + "<tr><td>Beschreibung: </td><td>" + description + "</td></tr>";
+                        if (status.equals("PL")) {
+                            htmlOutput += "<tr><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
+                        }
+                        htmlOutput += "</table>";
                 return htmlOutput;
             }
         } catch (Exception ex) {
@@ -213,17 +207,17 @@ public class Modules extends HttpServlet {
         }
         return null;
     }
-    private int getCurrentModuleId(String moduleName, String projectName) {
-        try {
-            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT id FROM module WHERE projectname='" + projectName + "' AND name='" + moduleName + "'");
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return 0;
-    }
+//    private int getCurrentModuleId(String moduleName, String projectName) {
+//        try {
+//            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT id FROM module WHERE projectname='" + projectName + "' AND name='" + moduleName + "'");
+//            if (rs.next()) {
+//                return rs.getInt(1);
+//            }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//        return 0;
+//    }
 
     private String getAllMembers(String projectName) {
         try {

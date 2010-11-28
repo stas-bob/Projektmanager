@@ -68,13 +68,12 @@ public class Members extends HttpServlet {
                 }
             }
         }
-        ArrayList<String> names, emails, status, firstnames;
+        ArrayList<String> names, emails, status;
         names = new ArrayList<String>();
         emails = new ArrayList<String>();
         status = new ArrayList<String>();
-        firstnames = new ArrayList<String>();
 
-        getMembers(seas.getAttribute("projectname").toString(), names, firstnames, emails, status);
+        getMembers(seas.getAttribute("projectname").toString(), names, emails, status);
         String htmlOutput = "<div id=\"userDescription\"></div>"
                 + "<table border=\"0\" style=\"border-collapse:collapse\">"
                 + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
@@ -135,17 +134,16 @@ public class Members extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void getMembers(String projectName, ArrayList<String> names, ArrayList<String> firstnames, ArrayList<String> emails, ArrayList<String> status) {
+    private void getMembers(String projectName, ArrayList<String> names, ArrayList<String> emails, ArrayList<String> status) {
         try {
             Connection c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT name, firstname, email, status FROM user WHERE projectname=?");
+            PreparedStatement ps = c.prepareStatement("SELECT name, email, status FROM user WHERE projectname=?");
             ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 names.add(rs.getString(1));
-                firstnames.add(rs.getString(2));
-                emails.add(rs.getString(3));
-                status.add(rs.getString(4));
+                emails.add(rs.getString(2));
+                status.add(rs.getString(3));
             }
             ps.close();
             c.close();
