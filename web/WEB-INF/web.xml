@@ -24,6 +24,18 @@
         <servlet-name>Modules</servlet-name>
         <servlet-class>Modules</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Profile</servlet-name>
+        <servlet-class>Profile</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Times</servlet-name>
+        <servlet-class>Times</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Overview</servlet-name>
+        <servlet-class>Overview</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -55,6 +67,18 @@
     <servlet-mapping>
         <servlet-name>Modules</servlet-name>
         <url-pattern>/Modules</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Profile</servlet-name>
+        <url-pattern>/Profile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Times</servlet-name>
+        <url-pattern>/Times</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Overview</servlet-name>
+        <url-pattern>/Overview</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
