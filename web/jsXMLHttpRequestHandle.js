@@ -78,6 +78,7 @@ function addUser() {
             + "</body></html>";
     document.getElementById("addUserField").innerHTML = html;
 }
+
 function addMemberToModuleBox() {
     var selectElement = document.getElementById("selectMember");
     var membersInModuleBox = document.getElementById("membersInModuleBox");
@@ -384,4 +385,55 @@ function ismaxlength(obj){
     var mlength=obj.getAttribute? parseInt(obj.getAttribute("maxlength")) : ""
     if (obj.getAttribute && obj.value.length>mlength)
         obj.value=obj.value.substring(0,mlength)
+}
+
+function showOverview() {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Overview", true);
+    xmlHttp.onreadystatechange = callbackOverview;
+    xmlHttp.send();
+}
+
+function callbackOverview() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+        }
+    }
+}
+
+function showProfile() {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Profile", true);
+    xmlHttp.onreadystatechange = callbackProfile;
+    xmlHttp.send();
+}
+
+function callbackProfile() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+        }
+    }
+}
+
+function showTimes() {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Times", true);
+    xmlHttp.onreadystatechange = callbackTimes;
+    xmlHttp.send();
+}
+
+function callbackTimes() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+        }
+    }
 }
