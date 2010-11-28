@@ -206,7 +206,6 @@ function showModuleDescription(id) {
 }
 
 function changeModuleStatus(status, id) {
-    alert(1);
     document.getElementById("addModule").innerHTML = "";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?changeStatus=" + status + "&id=" + id, true);
