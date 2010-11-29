@@ -34,34 +34,40 @@ public class Profile extends HttpServlet {
         try {
             StringBuilder htmlOutput = new StringBuilder(300);
             htmlOutput.append("<div id=profile>")
-            .append("<table cellspacing=\"5\">")
-            .append("<colgroup width=\"200\" />")
-            .append("<tr align=\"left\">")
-            .append("<th>Name:</th>")
-            .append("<th>").append(seas.getAttribute("name")).append("</th>")
-            .append("</tr>")
-            .append("<tr align=\"left\">")
-            .append("<th>Vorname:</th>")
-            .append("<th>").append(seas.getAttribute("firstname")).append("</th>")
-            .append("</tr>")
-            .append("<tr align=\"left\">")
-            .append("<th>E-Mail:</th>")
-            .append("<th>").append(seas.getAttribute("user")).append("</th>")
-            .append("</tr><tr><th>&#160;</th></tr>")
-            .append("<tr align=\"left\">")
-            .append("<th>Projekt:</th>")
-            .append("<th>").append(seas.getAttribute("projectname")).append("</th>")
-            .append("</tr>")
-            .append("<tr align=\"left\">")
-            .append("<th>Status:</th>")
-            .append("<th>").append(seas.getAttribute("status")).append("</th>")
-            .append("</tr>")
-            .append("</table>")
-            .append("<br><br>")
-            .append("<form action=\"/Projektmanager/ChangePassword?firstLogin=0\" method=\"post\"")
-            .append("<input type=\"submit\" value=\"Kennwort &auml;ndern\" />")
-            .append("</form>")
-            .append("</div>");
+                .append("<table cellspacing=\"5\">")
+                .append("<colgroup width=\"200\" />")
+                .append("<tr align=\"left\">")
+                .append("<th>Name:</th>")
+                .append("<th>").append(seas.getAttribute("name")).append("</th>")
+                .append("</tr>")
+                .append("<tr align=\"left\">")
+                .append("<th>Vorname:</th>")
+                .append("<th>").append(seas.getAttribute("firstname")).append("</th>")
+                .append("</tr>")
+                .append("<tr align=\"left\">")
+                .append("<th>E-Mail:</th>")
+                .append("<th>").append(seas.getAttribute("user")).append("</th>")
+                .append("</tr><tr><th>&#160;</th></tr>")
+                .append("<tr align=\"left\">")
+                .append("<th>Projekt:</th>")
+                .append("<th>").append(seas.getAttribute("projectname")).append("</th>")
+                .append("</tr>")
+                .append("<tr align=\"left\">")
+                .append("<th>Status:</th>");
+            if (seas.getAttribute("status").equals("PL")) {
+                htmlOutput.append("<th>Projektleiter</th>");
+            } else if (seas.getAttribute("status").equals("CPL")) {
+                htmlOutput.append("<th>Co- Projektleiter</th>");
+            } else {
+                htmlOutput.append("<th>Mitglied</th>");
+            }
+            htmlOutput.append("</tr>")
+                .append("</table>")
+                .append("<br><br>")
+                .append("<form action=\"/Projektmanager/ChangePassword?firstLogin=0\" method=\"post\"")
+                .append("<input type=\"submit\" value=\"Kennwort &auml;ndern\" />")
+                .append("</form>")
+                .append("</div>");
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite></root>";
             out.write(xmlResponse);
         } finally {

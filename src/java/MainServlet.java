@@ -169,7 +169,7 @@ public class MainServlet extends HttpServlet {
         sb.append("<body>");
         sb.append("<div id=\"changePassword\">");
         if (falsePassword == -1) {
-            sb.append("Hier können Sie ihr Passwort a&auml;ndern:");
+            sb.append("Hier können Sie ihr Passwort &auml;ndern:");
         } else if (falsePassword == 0) {
             sb.append("Herzlich Wilkommen,");
             sb.append("<br>");
@@ -179,6 +179,7 @@ public class MainServlet extends HttpServlet {
         } else if (falsePassword == 2) {
             sb.append("Das eingegebene bisherige Passwort ist falsch!");
         }
+        sb.append("</div>");
         sb.append("<br>");
         sb.append("<form action=\"/Projektmanager/ChangePassword?firstLogin=1\" method=\"post\" >");
         sb.append("<table>");
@@ -211,8 +212,6 @@ public class MainServlet extends HttpServlet {
         sb.append("</table>");
         sb.append("<input type=\"submit\" value=\"Speichern\" />");
         sb.append("</form>");
-        sb.append("</div>");
-
         sb.append("</body>");
         sb.append("</html>");
         return sb.toString();
