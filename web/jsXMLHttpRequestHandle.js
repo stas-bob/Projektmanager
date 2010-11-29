@@ -178,6 +178,8 @@ function saveModule() {
         xmlHttp.open('POST',"/Projektmanager/Modules?" + query, true);
         xmlHttp.onreadystatechange = callbackModules;
         xmlHttp.send();
+    } else {
+        document.getElementById("statusBox").innerHTML = "Bitte geben Sie in jedes Feld etwas ein!"
     }
 }
 

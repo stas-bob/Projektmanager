@@ -61,7 +61,7 @@ public class Modules extends HttpServlet {
                                 "<tr><td>Mitglied zuweisen:</td><td><select id=\"selectMember\">" + getAllMembers(request.getSession().getAttribute("projectname").toString()) + "</select><input value=\"einfügen\" type=\"button\" onclick=\"addMemberToModuleBox()\"/><input value=\"loeschen\" type=\"button\" onclick=\"removeMemberFromModuleBox()\"/></td></tr>" +
                             "</tbody>" +
                         "</table>" +
-                        "<div id=\"membersInModuleBox\" style=\"position:absolute; border: 1px dashed; margin-left: 50px; width: 300px; height: 120px; display:none\"></div><input type=\"button\" value=\"speichern\" style=\"margin-left:344px; position:absolute; margin-top:-27px;\" onclick=\"saveModule()\"/>";
+                        "<div id=\"membersInModuleBox\" style=\"position:absolute; border: 1px dashed; margin-left: 50px; width: 300px; height: 120px; display:none\"></div><button onclick=\"saveModule()\" style=\"margin-left: 354px; font: 12px Arial; padding-top:1px; padding-left:0px; padding-right:0px; position: absolute; margin-top: -27px;\">speichern</button>";
                 out.write(htmlOutput);
                 return;
             } else {
