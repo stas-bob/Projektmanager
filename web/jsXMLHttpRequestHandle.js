@@ -225,6 +225,7 @@ function changeStatus(status, email) {
 function callbackShowModuleDescription() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
+            document.getElementById("addModule").style.border = "0px";
             document.getElementById("addModule").innerHTML = xmlHttp.responseText;
         }
     }
