@@ -437,3 +437,14 @@ function callbackTimes() {
         }
     }
 }
+
+var a = 0;
+function showHint(element, text) {
+    if (a == 0) {
+        a = 1;
+        element.innerHTML = "<div style=\"position:absolute; background-image:url(grafik/hint.png); margin-left:70px; margin-top:-30px; width:145px; height:57px;\" align=\"center\"><font size=1>" + text + "</font></div>";
+    } else {
+        a = 0;
+        element.innerHTML = "";
+    }
+}

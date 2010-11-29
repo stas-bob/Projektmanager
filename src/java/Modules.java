@@ -55,9 +55,9 @@ public class Modules extends HttpServlet {
                         "<table border=\"0\">" +
                             "<tbody><tr><td>Name:</td><td><input id=\"name\" size=\"40\" maxlength=\"40\" type=\"text\"></td></tr>" +
                                 "<tr><td valign=\"top\">Beschreibung:</td><td><textarea id=\"description\" cols=\"30\" rows=\"6\" maxlength=\"400\" onkeypress=\"ismaxlength(this)\"></textarea></td></tr>" +
-                                "<tr><td>Priorität:</td><td><select size=\"1\" id=\"prio\"><option>1</option><option>2</option><option>3</option></select></td></tr>" +
-                                "<tr><td>Start:</td><td>Tag: <input id=\"startDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"startMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"startYear\" typ=\"text\" size=\"1\" maxlength=\"4\"></td></tr>" +
-                                "<tr><td>Ende:</td><td>Tag: <input id=\"endDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"endMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"endYear\" typ=\"text\" size=\"1\" maxlength=\"4\"></td></tr>" +
+                                "<tr><td>Priorität:</td><td><select size=\"1\" id=\"prio\"><option>1</option><option>2</option><option>3</option></select><div style=\"background-image:url(grafik/question_mark.png); width:25px; height:22px; position:absolute; margin-left: 40px; margin-top: -22px;\" onclick=\"showHint(this, '1 is die höchste prio')\"></div></td></tr>" +
+                                "<tr><td>Start:</td><td>Tag: <input id=\"startDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"startMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"startYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" +
+                                "<tr><td>Ende:</td><td>Tag: <input id=\"endDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"endMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"endYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" +
                                 "<tr><td>Mitglied zuweisen:</td><td><select id=\"selectMember\">" + getAllMembers(request.getSession().getAttribute("projectname").toString()) + "</select><input value=\"einfügen\" type=\"button\" onclick=\"addMemberToModuleBox()\"/><input value=\"loeschen\" type=\"button\" onclick=\"removeMemberFromModuleBox()\"/></td></tr>" +
                             "</tbody>" +
                         "</table>" +
