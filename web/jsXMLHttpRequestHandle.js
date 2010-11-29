@@ -38,6 +38,14 @@ function addMeToModule(id) {
     xmlHttp.send();
 }
 
+function removeMeFromModule(id) {
+    document.getElementById("statusBox").innerHTML = "Bitte warten ...";
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Modules?removeFromModule="+id, true);
+    xmlHttp.onreadystatechange = callbackModules;
+    xmlHttp.send();
+}
+
 function callbackModules() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
