@@ -41,8 +41,10 @@ public class MainServlet extends HttpServlet {
             HttpSession seas = request.getSession();
             seas.setAttribute("user", request.getParameter("user"));
             seas.setAttribute("password", request.getParameter("password"));
-            seas.setAttribute("status", getMyStatus(request.getParameter("user").toString()));
-            seas.setAttribute("modules", getMyModules(request.getParameter("user").toString()));
+            seas.setAttribute("status", getMyStatus(request.getParameter("user").toString(), connection));
+            seas.setAttribute("modules", getMyModules(request.getParameter("user").toString(), connection));
+            seas.setAttribute("name", getName(request.getParameter("user").toString(), connection));
+            seas.setAttribute("firstname", getFirstname(request.getParameter("user").toString(), connection));
 
             String user = seas.getAttribute("user").toString();
             String password = seas.getAttribute("password").toString();
@@ -56,9 +58,9 @@ public class MainServlet extends HttpServlet {
                 rs.next();
                 int firstLogin = rs.getInt(1);
                 if (firstLogin == 0) {
-                    out.write(firstLoginView(0));
+                    out.write(changePasswordView(0));
                 } else {
-                    out.write(mainView(projectName));
+                    out.write(mainView(projectName, false));
                 }
             } else {
                 out.write("<a href='Login.html'>Falscher Benutzername oder falsches Passwort eingegeben!</a>");
@@ -105,7 +107,7 @@ public class MainServlet extends HttpServlet {
         return null;
     }
 
-    public static String mainView(String projectName) {
+    public static String mainView(String projectName, boolean passwordChange) {
         StringBuilder sb = new StringBuilder(500);
         sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
         sb.append("<html>");
@@ -142,7 +144,11 @@ public class MainServlet extends HttpServlet {
         sb.append("<div style=\"clear:both;\">");
         sb.append("</div>");
         sb.append("<div id=\"content\">");
-        sb.append("Und hier kommt der Inhalt.");
+        if (passwordChange) {
+            sb.append("Ihr Kennwort wurde erfolgreich ge&auml;ndert.");
+        } else {
+            sb.append("Und hier kommt der Inhalt.");
+        }
         sb.append("</div>");
         sb.append("</div>");
         sb.append("</body>");
@@ -150,30 +156,31 @@ public class MainServlet extends HttpServlet {
         return sb.toString();
     }
 
-    public static String firstLoginView(int falsePassword) {
+    public static String changePasswordView(int falsePassword) {
         StringBuilder sb = new StringBuilder(500);
         sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
         sb.append("<html>");
         sb.append("<head>");
-        sb.append("<title>FirstLogin</title>");
+        sb.append("<title>ChangePassword</title>");
         sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
+        sb.append("<title>Untitled Document</title>");
         sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
         sb.append("</head>");
         sb.append("<body>");
-        sb.append("<div id=\"firstLogin\">");
-        if (falsePassword == 0) {
-            sb.append("<div id=\"textFirstLogin\">");
+        sb.append("<div id=\"changePassword\">");
+        if (falsePassword == -1) {
+            sb.append("Hier können Sie ihr Passwort a&auml;ndern:");
+        } else if (falsePassword == 0) {
             sb.append("Herzlich Wilkommen,");
             sb.append("<br>");
-            sb.append("da das Ihr erster Login ist ändern Sie bitte ihr Passwort.");
-            sb.append("</div>");
+            sb.append("da das Ihr erster Login ist, ändern Sie bitte ihr Passwort.");
         } else if (falsePassword == 1) {
-            sb.append("<h1>Die neu eingebenen Passw&ouml;rter stimmen nicht überein!</h1>");
-        } else {
-            sb.append("<h1>Das eingegebene bisherige Passwort ist falsch!</h1>");
+            sb.append("Die neu eingebenen Passw&ouml;rter stimmen nicht überein!");
+        } else if (falsePassword == 2) {
+            sb.append("Das eingegebene bisherige Passwort ist falsch!");
         }
         sb.append("<br>");
-        sb.append("<form action=\"/Projektmanager/FirstLogin\" method=\"post\"");
+        sb.append("<form action=\"/Projektmanager/ChangePassword?firstLogin=1\" method=\"post\" >");
         sb.append("<table>");
         sb.append("<tr>");
         sb.append("<th align=\"left\">");
@@ -205,6 +212,7 @@ public class MainServlet extends HttpServlet {
         sb.append("<input type=\"submit\" value=\"Speichern\" />");
         sb.append("</form>");
         sb.append("</div>");
+
         sb.append("</body>");
         sb.append("</html>");
         return sb.toString();
@@ -258,31 +266,68 @@ public class MainServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private String getMyStatus(String userEmail) {
+    private String getMyStatus(String email, Connection c) {
         String status = "";
         try {
-            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT status FROM user WHERE email='" + userEmail + "'");
+            PreparedStatement ps = c.prepareStatement("SELECT status FROM user WHERE email = ?");
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 status = rs.getString(1);
             }
-            rs.close();
-        } catch (Exception ex) {
+            ps.close();
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return status;
     }
 
-    private ArrayList<Integer> getMyModules(String email) {
+    private ArrayList<Integer> getMyModules(String email, Connection c) {
         try {
-            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT modulid FROM rel_module_user WHERE email='" + email + "'");
+            PreparedStatement ps = c.prepareStatement("SELECT modulid FROM rel_module_user WHERE email = ?");
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
             ArrayList<Integer> modules = new ArrayList<Integer>();
             while (rs.next()) {
                 modules.add(rs.getInt(1));
             }
+            ps.close();
             return modules;
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    private String getName(String email, Connection c) {
+        String name = "";
+        try {
+            PreparedStatement ps = c.prepareStatement("SELECT name FROM user WHERE email = ?");
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return name;
+    }
+
+    private String getFirstname(String email, Connection c) {
+        String firstname = "";
+        try {
+            PreparedStatement ps = c.prepareStatement("SELECT firstname FROM user WHERE email = ?");
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                firstname = rs.getString(1);
+            }
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return firstname;
     }
 }

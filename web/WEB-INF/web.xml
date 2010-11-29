@@ -13,8 +13,8 @@
         <servlet-class>Members</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>FirstLogin</servlet-name>
-        <servlet-class>FirstLogin</servlet-class>
+        <servlet-name>ChangePassword</servlet-name>
+        <servlet-class>ChangePassword</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Logout</servlet-name>
@@ -57,8 +57,8 @@
         <url-pattern>/Members</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>FirstLogin</servlet-name>
-        <url-pattern>/FirstLogin</url-pattern>
+        <servlet-name>ChangePassword</servlet-name>
+        <url-pattern>/ChangePassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Logout</servlet-name>
