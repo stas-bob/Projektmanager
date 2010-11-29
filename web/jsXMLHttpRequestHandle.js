@@ -168,6 +168,25 @@ function saveModule() {
         i++;
     }
     if (name.length != 0 && description.length != 0 && startDay.length != 0 && startMonth.length != 0 && startYear.length != 0 && endDay.length != 0 && endMonth.length != 0 && endYear.length != 0) {
+        if (startYear > endYear) {
+            document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Jahr)";
+            return;
+        } else {
+            if (startYear == endYear) {
+                if (startMonth > endMonth) {
+                    document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Monat)";
+                    return;
+                } else {
+                    if (startMonth == endMonth) {
+                        if (startDay > endDay) {
+                            document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Tag)";
+                            return;
+                        }
+                    }
+                }
+
+            }
+        }
         var query = "description=" + description + "&" +
                     "name=" + name + "&" +
                     "startDate=" + (startYear.length == 2 ? "20" + startYear : startYear) + "-" + (startMonth.length == 1 ? "0" + startMonth : startMonth) + "-" + (startDay.length == 1 ? "0" + startDay : startDay) + "&" +
@@ -179,7 +198,7 @@ function saveModule() {
         xmlHttp.onreadystatechange = callbackModules;
         xmlHttp.send();
     } else {
-        document.getElementById("statusBox").innerHTML = "Bitte geben Sie in jedes Feld etwas ein!"
+        document.getElementById("statusBox").innerHTML = "Bitte geben Sie in jedes Feld etwas ein!";
     }
 }
 
