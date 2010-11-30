@@ -161,16 +161,13 @@ public class MainServlet extends HttpServlet {
         sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
         sb.append("<html>");
         sb.append("<head>");
-        sb.append("<title>ChangePassword</title>");
+        sb.append("<title>First Login</title>");
         sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
         sb.append("<title>Untitled Document</title>");
         sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
         sb.append("</head>");
         sb.append("<body>");
-        sb.append("<div id=\"changePassword\">");
-        if (falsePassword == -1) {
-            sb.append("Hier können Sie ihr Passwort &auml;ndern:");
-        } else if (falsePassword == 0) {
+        if (falsePassword == 0) {
             sb.append("Herzlich Wilkommen,");
             sb.append("<br>");
             sb.append("da das Ihr erster Login ist, ändern Sie bitte ihr Passwort.");
@@ -179,9 +176,18 @@ public class MainServlet extends HttpServlet {
         } else if (falsePassword == 2) {
             sb.append("Das eingegebene bisherige Passwort ist falsch!");
         }
-        sb.append("</div>");
         sb.append("<br>");
-        sb.append("<form action=\"/Projektmanager/ChangePassword?firstLogin=1\" method=\"post\" >");
+        sb.append("<form action=\"/Projektmanager/FirstLogin\" method=\"post\" >");
+        sb.append(changePasswordArea());
+        sb.append("<input type=\"submit\" value=\"Speichern\" />");
+        sb.append("</form>");
+        sb.append("</body>");
+        sb.append("</html>");
+        return sb.toString();
+    }
+
+    public static String changePasswordArea() {
+        StringBuilder sb = new StringBuilder(200);
         sb.append("<table>");
         sb.append("<tr>");
         sb.append("<th align=\"left\">");
@@ -210,10 +216,6 @@ public class MainServlet extends HttpServlet {
         sb.append("</th>");
         sb.append("</tr>");
         sb.append("</table>");
-        sb.append("<input type=\"submit\" value=\"Speichern\" />");
-        sb.append("</form>");
-        sb.append("</body>");
-        sb.append("</html>");
         return sb.toString();
     }
 
