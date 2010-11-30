@@ -124,6 +124,17 @@ public class Modules extends HttpServlet {
                                             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
                                         }
                                         return;
+                                    } else {
+                                        if (request.getParameter("deleteMessageId") != null) {
+                                            deleteMessage(request.getParameter("deleteMessageId"), request.getParameter("modulid"), c);
+                                            out.write(getModuleDescription(request.getParameter("modulid"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
+                                            try {
+                                                c.close();
+                                            } catch (SQLException ex) {
+                                                Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                            return;
+                                        }
                                     }
                                 }
                             }
@@ -242,11 +253,13 @@ public class Modules extends HttpServlet {
                 ArrayList<String> messages = new ArrayList<String>();
                 ArrayList<String> username = new ArrayList<String>();
                 ArrayList<String> email = new ArrayList<String>();
-                rs = s.executeQuery("SELECT message, username, email FROM rel_module_message WHERE modulid='" + id + "'");
+                ArrayList<Integer> messageIds = new ArrayList<Integer>();
+                rs = s.executeQuery("SELECT message, username, email, messageid FROM rel_module_message WHERE modulid='" + id + "'");
                 while (rs.next()) {
                     messages.add(rs.getString(1));
                     username.add(rs.getString(2));
                     email.add(rs.getString(3));
+                    messageIds.add(rs.getInt(4));
                 }
 
 
@@ -266,7 +279,7 @@ public class Modules extends HttpServlet {
                 for (int i = 0; i < messages.size(); i++) {
                     htmlOutput += "<tr style=\"border: 1px solid;\"><td>" + username.get(i) + " schrieb ";
                     if (email.get(i).equals(myEmail)) {
-                        htmlOutput += "<button onclick=\"alert('noch net impl.')\">l&ouml;schen</button></td></tr>";
+                        htmlOutput += "<button onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></td></tr>";
                     }
                     htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px;\" height:100px;>" + messages.get(i) + "</div></tr>"
                     + "<tr><td height=\"10\"></td></tr>";
@@ -431,8 +444,37 @@ public class Modules extends HttpServlet {
 
     private void saveMessageToDB(String message, String id, String username, String myEmail, Connection c) {
         try {
-            c.createStatement().executeUpdate("INSERT INTO rel_module_message (modulid, username, message, email) VALUES ('" + id + "','" + username + "','" + message + "','" + myEmail + "')");
+            int freeID = getFreeMessageID(id, c);
+            c.createStatement().executeUpdate("INSERT INTO rel_module_message (modulid, username, message, email, messageid) VALUES ('" + id + "','" + username + "','" + message + "','" + myEmail + "','" + freeID + "')");
         } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private int getFreeMessageID(String modulid, Connection c) {
+        try {
+            ArrayList<Integer> ids = new ArrayList<Integer>();
+            ResultSet rs = c.createStatement().executeQuery("SELECT messageid FROM rel_module_message WHERE modulid='" + modulid + "'");
+            while (rs.next()) {
+                ids.add(rs.getInt(1));
+            }
+            for (int i = 1;; i++) {
+                System.out.println("trying " + i);
+                if (!ids.contains(i)) {
+                    System.out.println("success on " + i);
+                    return i;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
+    private void deleteMessage(String messageid, String modulid, Connection c) {
+        try {
+            c.createStatement().executeUpdate("DELETE FROM rel_module_message WHERE modulid='" + modulid + "' AND messageid='" + messageid + "'");
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }

@@ -314,6 +314,13 @@ function callbackShowModuleDescription() {
     }
 }
 
+function deleteMessage(modulid, messageid) {
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Modules?deleteMessageId=" + messageid + "&modulid=" + modulid, true);
+    xmlHttp.onreadystatechange = callbackShowModuleDescription;
+    xmlHttp.send();
+}
+
 function callbackShowUserDescription() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
