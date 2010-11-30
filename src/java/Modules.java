@@ -44,6 +44,10 @@ public class Modules extends HttpServlet {
             ArrayList<String> members = getMembers(request.getParameter("membersToAdd"), request.getSession().getAttribute("projectname").toString());
             if (validateModuleName(request.getParameter("name").toString(),request.getSession().getAttribute("projectname").toString())) {
                 saveMouleToDB(members, request.getParameter("name").toString(), request.getParameter("description").toString(), request.getParameter("startDate").toString(), request.getParameter("endDate").toString(), request.getParameter("prio").toString(), request.getSession().getAttribute("projectname").toString());
+                if (members.contains(request.getSession().getAttribute("user").toString())) {
+                    int modulid = getModulId(request.getSession().getAttribute("projectname").toString(), request.getParameter("name").toString());
+                    ((ArrayList<Integer>)request.getSession().getAttribute("modules")).add(modulid);
+                }
             } else {
                 String xmlResponse = "<root><htmlSeite><![CDATA[Der Name " + request.getParameter("name").toString() + " ist in diesem Projekt bereits vorhanden]]></htmlSeite><modulesCount>0</modulesCount><error>1</error></root>";
                 out.write(xmlResponse);
@@ -79,6 +83,11 @@ public class Modules extends HttpServlet {
                         } else {
                             if (request.getParameter("deleteModule") != null) {
                                 deleteModule(request.getParameter("deleteModule").toString());
+                            } else {
+                                if (request.getParameter("removeFromModule") != null) {
+                                    removeMeFromModule(request.getSession().getAttribute("user").toString(), Integer.parseInt(request.getParameter("removeFromModule").toString()));
+                                    ((ArrayList<Integer>)request.getSession().getAttribute("modules")).remove((Integer)Integer.parseInt(request.getParameter("removeFromModule")));
+                                }
                             }
                         }
                     }
@@ -101,6 +110,8 @@ public class Modules extends HttpServlet {
                     + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i),ids.get(i)) + "</td>";
             if (!((ArrayList<Integer>)request.getSession().getAttribute("modules")).contains(ids.get(i))) {
                 htmlOutput += "<td><input type=\"button\" value=\"Teilnehmen\" onclick=\"addMeToModule(" + ids.get(i) + ")\"/></td>";
+            } else {
+                htmlOutput += "<td><input type=\"button\" value=\"Aufh&ouml;ren\" onclick=\"removeMeFromModule(" + ids.get(i) + ")\"/></td>";
             }
             htmlOutput += "</tr>";
         }
@@ -109,7 +120,7 @@ public class Modules extends HttpServlet {
         }
         htmlOutput += "</table>";
         htmlOutput += "<div id=\"addModule\"></div>";
-        htmlOutput += "<div id=\"statusBox\" style=\"height:50px; width:430px; position:absolute; margin-left:270px; margin-top:420px;\"></div>";
+        htmlOutput += "<div id=\"statusBox\" style=\"height:50px; width:430px; position:absolute; margin-left:309px; margin-top:420px;\"></div>";
         String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>0</error></root>";
         out.write(xmlResponse);
         out.close();
@@ -188,16 +199,16 @@ public class Modules extends HttpServlet {
                     members += "[" + rs.getString(1) + "]";
                 }
 
-                String htmlOutput = "<table border=\"1\">"
-                        + "<tr><td>Name: </td><td>" + name +"</td></tr>"
-                        + "<tr><td>Prio: </td><td>" + prio + "</td></tr>"
-                        + "<tr><td>Start: </td><td>" + start + "</td></tr>"
-                        + "<tr><td>Ende: </td><td>" + end + "</td></tr>"
-                        + "<tr><td>Mitgliederzahl: </td><td>" + memberCount + "</td></tr>"
-                        + "<tr><td>Mitglieder: </td><td>" + members + "</td></tr>"
-                        + "<tr><td>Beschreibung: </td><td>" + description + "</td></tr>";
+                String htmlOutput = "<table border=\"1\" style=\"border-collapse:collapse\">"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Name: </td><td>" + name +"</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Prio: </td><td>" + prio + "</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Start: </td><td>" + start + "</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Ende: </td><td>" + end + "</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitgliederzahl: </td><td>" + memberCount + "</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitglieder: </td><td>" + members + "</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Beschreibung: </td><td>" + description + "</td></tr>";
                         if (status.equals("PL")) {
-                            htmlOutput += "<tr><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
+                            htmlOutput += "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\"><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
                         }
                         htmlOutput += "</table>";
                 return htmlOutput;
@@ -207,17 +218,6 @@ public class Modules extends HttpServlet {
         }
         return null;
     }
-//    private int getCurrentModuleId(String moduleName, String projectName) {
-//        try {
-//            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT id FROM module WHERE projectname='" + projectName + "' AND name='" + moduleName + "'");
-//            if (rs.next()) {
-//                return rs.getInt(1);
-//            }
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//        return 0;
-//    }
 
     private String getAllMembers(String projectName) {
         try {
@@ -338,6 +338,27 @@ public class Modules extends HttpServlet {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private int getModulId(String projectName, String name) {
+        try {
+            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT id FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'");
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    private void removeMeFromModule(String email, int modulid) {
+        try {
+            DBConnector.getConnection().createStatement().executeUpdate("DELETE FROM rel_module_user WHERE modulid='" + modulid + "' AND email='" + email + "'");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

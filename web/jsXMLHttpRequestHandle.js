@@ -38,6 +38,14 @@ function addMeToModule(id) {
     xmlHttp.send();
 }
 
+function removeMeFromModule(id) {
+    document.getElementById("statusBox").innerHTML = "Bitte warten ...";
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Modules?removeFromModule="+id, true);
+    xmlHttp.onreadystatechange = callbackModules;
+    xmlHttp.send();
+}
+
 function callbackModules() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
@@ -167,36 +175,54 @@ function saveModule() {
         }
         i++;
     }
-    if (name.length != 0 && description.length != 0 && startDay.length != 0 && startMonth.length != 0 && startYear.length != 0 && endDay.length != 0 && endMonth.length != 0 && endYear.length != 0) {
-        if (startYear > endYear) {
-            document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Jahr)";
-            return;
-        } else {
-            if (startYear == endYear) {
-                if (startMonth > endMonth) {
-                    document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Monat)";
-                    return;
-                } else {
-                    if (startMonth == endMonth) {
-                        if (startDay > endDay) {
-                            document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Tag)";
-                            return;
+    if (name.length != 0 
+        && description.length != 0
+        && startDay.length != 0
+        && startMonth.length != 0
+        && startYear.length != 0
+        && endDay.length != 0
+        && endMonth.length != 0
+        && endYear.length != 0) {
+        if (parseInt(startDay)==startDay-0
+            && parseInt(startMonth)==startMonth-0   //zahlenwerte ?
+            && parseInt(startYear)==startYear-0
+            && parseInt(endDay)==endDay-0
+            && parseInt(endMonth)==endMonth-0
+            && parseInt(endYear)==endYear-0) {
+
+
+            if (startYear > endYear) {
+                document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Jahr)";
+                return;
+            } else {
+                if (startYear == endYear) {
+                    if (startMonth > endMonth) {
+                        document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Monat)";
+                        return;
+                    } else {
+                        if (startMonth == endMonth) {
+                            if (startDay > endDay) {
+                                document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Tag)";
+                                return;
+                            }
                         }
                     }
+
                 }
-
             }
-        }
-        var query = "description=" + description + "&" +
-                    "name=" + name + "&" +
-                    "startDate=" + (startYear.length == 2 ? "20" + startYear : startYear) + "-" + (startMonth.length == 1 ? "0" + startMonth : startMonth) + "-" + (startDay.length == 1 ? "0" + startDay : startDay) + "&" +
-                    "endDate=" + (endYear.length == 2 ? "20" + endYear : endYear) + "-" + (endMonth.length == 1 ? "0" + endMonth : endMonth) + "-" + (endDay.length == 1 ? "0" + endDay : endDay) + "&" +
-                    "membersToAdd=" + membersToAdd + "&" +
-                    "prio=" + prio;
+            var query = "description=" + description + "&" +
+                        "name=" + name + "&" +
+                        "startDate=" + (startYear.length == 2 ? "20" + startYear : startYear) + "-" + (startMonth.length == 1 ? "0" + startMonth : startMonth) + "-" + (startDay.length == 1 ? "0" + startDay : startDay) + "&" +
+                        "endDate=" + (endYear.length == 2 ? "20" + endYear : endYear) + "-" + (endMonth.length == 1 ? "0" + endMonth : endMonth) + "-" + (endDay.length == 1 ? "0" + endDay : endDay) + "&" +
+                        "membersToAdd=" + membersToAdd + "&" +
+                        "prio=" + prio;
 
-        xmlHttp.open('POST',"/Projektmanager/Modules?" + query, true);
-        xmlHttp.onreadystatechange = callbackModules;
-        xmlHttp.send();
+            xmlHttp.open('POST',"/Projektmanager/Modules?" + query, true);
+            xmlHttp.onreadystatechange = callbackModules;
+            xmlHttp.send();
+        } else {
+            document.getElementById("statusBox").innerHTML = "Ein Datum darf keine Buchstaben enthalten!";
+        }
     } else {
         document.getElementById("statusBox").innerHTML = "Bitte geben Sie in jedes Feld etwas ein!";
     }
@@ -236,6 +262,7 @@ function changeModuleStatus(status, id) {
 }
 
 function changeStatus(status, email) {
+    document.getElementById("userDescription").innerHTML = "";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Members?changeStatus=" + status + "&email=" + email, true);
     xmlHttp.onreadystatechange = callbackShowUserDescription;

@@ -3,8 +3,8 @@
         <title>Projektmanager</title>
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     </head><body>
-        <div style="background-image: url(&quot;grafik/bg-login.png&quot;); width: 887px; height: 430px; margin-left: 10%; margin-top: -10%; padding-top: 14%;">
-            <div align="center" id="login" style="margin-top: 50px;">
+        <div style="background-image: url(&quot;grafik/bg-login.png&quot;); width: 887px; margin-left: 10%; position: absolute; margin-top: -122px; height: 516px;">
+            <div id="login" style="position: absolute; margin-top: 199px; margin-left: 291px;" align="center">
                 <h1 align="center">Projektmanagmentool</h1>
                 <form action="/Projektmanager/MainServlet" method="post">
                     <table>
@@ -13,7 +13,7 @@
                                     E-Mail:
                                 </th>
                                 <th align="right">
-                                    <input type="text" name="user" size="30" maxlength="40">
+                                    <input name="user" size="30" maxlength="40" type="text">
                                 </th>
                             </tr>
                             <tr>
@@ -21,14 +21,14 @@
                                     Passwort:
                                 </th>
                                 <th align="right">
-                                    <input type="password" name="password" size="30" maxlength="20">
+                                    <input name="password" size="30" maxlength="20" type="password">
                                     <br>
                                 </th>
                             </tr>
                         </tbody></table>
-                    <input type="submit" value="Login">
+                    <input value="Login" type="submit">
                 </form>
-                <input type="button" name="btnRegestrierung" value="Registrieren" onclick="window.location.replace('Registrierung.html')">
+                <input name="btnRegestrierung" value="Registrieren" onclick="window.location.replace('Registrierung.html')" type="button">
             </div>
         </div>
     </body>
