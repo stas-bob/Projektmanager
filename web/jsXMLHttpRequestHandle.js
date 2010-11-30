@@ -24,6 +24,7 @@ function deleteModule(id) {
 }
 
 function showModules() {
+    document.getElementById("content").style.height = 500 + "px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules", true);
     xmlHttp.onreadystatechange = callbackModules;
@@ -31,6 +32,8 @@ function showModules() {
 }
 
 function addMeToModule(id) {
+    document.getElementById("content").style.height = 500 + "px";
+    document.getElementById("statusBox").style.marginTop = 468 + "px";
     document.getElementById("statusBox").innerHTML = "Bitte warten ...";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?addToModule="+id, true);
@@ -39,10 +42,21 @@ function addMeToModule(id) {
 }
 
 function removeMeFromModule(id) {
+    document.getElementById("content").style.height = 500 + "px";
+    document.getElementById("statusBox").style.marginTop = 468 + "px";
     document.getElementById("statusBox").innerHTML = "Bitte warten ...";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?removeFromModule="+id, true);
     xmlHttp.onreadystatechange = callbackModules;
+    xmlHttp.send();
+}
+
+function saveMessage(id) {
+    document.getElementById("statusBox").innerHTML = "Bitte warten ...";
+    var message = document.getElementById("messageArea").value;
+    createXMLHttpRequest();
+    xmlHttp.open('POST',"/Projektmanager/Modules?saveMessage="+message+"&id="+id, true);
+    xmlHttp.onreadystatechange = callbackShowModuleDescription;
     xmlHttp.send();
 }
 
@@ -66,6 +80,7 @@ function callbackModules() {
 }
 
 function showMembers() {
+    document.getElementById("content").style.height = 500 + "px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Members", true);
     xmlHttp.onreadystatechange = callbackMembers;
@@ -149,6 +164,8 @@ function addModule() {
 function callbackAddModule() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
+            document.getElementById("content").style.height = 500 + "px";
+            document.getElementById("statusBox").style.marginTop = 468 + "px";
             document.getElementById("addModule").innerHTML = xmlHttp.responseText;
         }
     }
@@ -254,12 +271,16 @@ function showModuleDescription(id) {
 }
 
 function changeModuleStatus(status, id) {
+    document.getElementById("content").style.height = 500 + "px";
+    document.getElementById("statusBox").style.marginTop = 420 + "px";
     document.getElementById("addModule").innerHTML = "";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?changeStatus=" + status + "&id=" + id, true);
     xmlHttp.onreadystatechange = callbackShowModuleDescription;
     xmlHttp.send();
 }
+
+
 
 function changeStatus(status, email) {
     document.getElementById("userDescription").innerHTML = "";
@@ -271,11 +292,28 @@ function changeStatus(status, email) {
 function callbackShowModuleDescription() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            document.getElementById("addModule").style.border = "0px";
-            document.getElementById("addModule").innerHTML = xmlHttp.responseText;
+            var xmlobject = xmlHttp.responseXML;
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            var modulesCount = xmlobject.getElementsByTagName("modulesCount")[0].childNodes[0].nodeValue;
+            var error = xmlobject.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+            document.getElementById("statusBox").innerHTML = "";
+            if (error > 0) {
+                document.getElementById("statusBox").innerHTML = html[0].childNodes[0].nodeValue;
+            } else {
+                if (modulesCount > 1) {
+                    document.getElementById("content").style.height = 500 + modulesCount*136 + "px";
+                    document.getElementById("statusBox").style.marginTop = 353 + modulesCount*136 + "px";
+                } else {
+                    document.getElementById("content").style.height = 500 + "px";
+                    document.getElementById("statusBox").style.marginTop = 468 + "px";
+                }
+                document.getElementById("addModule").style.border = "0px";
+                document.getElementById("addModule").innerHTML = html[0].childNodes[0].nodeValue;
+            }
         }
     }
 }
+
 function callbackShowUserDescription() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
@@ -357,6 +395,7 @@ function callbackValidateEmail() {
 
 function startAsync(servlet)
 {
+    document.getElementById("content").style.height = 500 + "px";
     createXMLHttpRequest();
     xmlHttp.open('POST',servlet, true);
     xmlHttp.onreadystatechange = callback;

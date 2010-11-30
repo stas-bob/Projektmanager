@@ -39,18 +39,30 @@ public class Modules extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("application/xml");
         PrintWriter out = response.getWriter();
+        Connection c = null;
+        try {
+            c = DBConnector.getConnection();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return;
+        }
 
         if (request.getParameter("description") != null) {
-            ArrayList<String> members = getMembers(request.getParameter("membersToAdd"), request.getSession().getAttribute("projectname").toString());
-            if (validateModuleName(request.getParameter("name").toString(),request.getSession().getAttribute("projectname").toString())) {
-                saveMouleToDB(members, request.getParameter("name").toString(), request.getParameter("description").toString(), request.getParameter("startDate").toString(), request.getParameter("endDate").toString(), request.getParameter("prio").toString(), request.getSession().getAttribute("projectname").toString());
+            ArrayList<String> members = getMembers(request.getParameter("membersToAdd"), request.getSession().getAttribute("projectname").toString(), c);
+            if (validateModuleName(request.getParameter("name").toString(),request.getSession().getAttribute("projectname").toString(), c)) {
+                saveMouleToDB(members, request.getParameter("name"), request.getParameter("description"), request.getParameter("startDate"), request.getParameter("endDate"), request.getParameter("prio"), request.getSession().getAttribute("projectname").toString(), c);
                 if (members.contains(request.getSession().getAttribute("user").toString())) {
-                    int modulid = getModulId(request.getSession().getAttribute("projectname").toString(), request.getParameter("name").toString());
+                    int modulid = getModulId(request.getSession().getAttribute("projectname").toString(), request.getParameter("name"), c);
                     ((ArrayList<Integer>)request.getSession().getAttribute("modules")).add(modulid);
                 }
             } else {
                 String xmlResponse = "<root><htmlSeite><![CDATA[Der Name " + request.getParameter("name").toString() + " ist in diesem Projekt bereits vorhanden]]></htmlSeite><modulesCount>0</modulesCount><error>1</error></root>";
                 out.write(xmlResponse);
+                try {
+                    c.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 return;
             }
         } else {
@@ -67,26 +79,52 @@ public class Modules extends HttpServlet {
                         "</table>" +
                         "<div id=\"membersInModuleBox\" style=\"position:absolute; border: 1px dashed; margin-left: 50px; width: 300px; height: 120px; display:none\"></div><button onclick=\"saveModule()\" style=\"margin-left: 354px; font: 12px Arial; padding-top:1px; padding-left:0px; padding-right:0px; position: absolute; margin-top: -27px;\">speichern</button>";
                 out.write(htmlOutput);
+                try {
+                    c.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 return;
             } else {
                 if (request.getParameter("addToModule") != null) {
-                    addMeToModule(request.getSession().getAttribute("user").toString(), request.getParameter("addToModule").toString());
-                    ((ArrayList<Integer>)request.getSession().getAttribute("modules")).add(Integer.parseInt(request.getParameter("addToModule").toString()));
+                    addMeToModule(request.getSession().getAttribute("user").toString(), request.getParameter("addToModule").toString(), c);
+                    ((ArrayList<Integer>)request.getSession().getAttribute("modules")).add(Integer.parseInt(request.getParameter("addToModule")));
                 } else {
                     if (request.getParameter("moduleDescriptionId") != null) {
-                        out.write(getModuleDescription(request.getParameter("moduleDescriptionId"), request.getSession().getAttribute("status").toString()));
+                        out.write(getModuleDescription(request.getParameter("moduleDescriptionId"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
+                        try {
+                            c.close();
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         return;
                     } else {
                         if (request.getParameter("changeStatus") != null) {
-                            out.write(setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id")));
+                            out.write(setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c));
+                            try {
+                                c.close();
+                            } catch (SQLException ex) {
+                                Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             return;
                         } else {
                             if (request.getParameter("deleteModule") != null) {
-                                deleteModule(request.getParameter("deleteModule").toString());
+                                deleteModule(request.getParameter("deleteModule"), c);
                             } else {
                                 if (request.getParameter("removeFromModule") != null) {
-                                    removeMeFromModule(request.getSession().getAttribute("user").toString(), Integer.parseInt(request.getParameter("removeFromModule").toString()));
+                                    removeMeFromModule(request.getSession().getAttribute("user").toString(), Integer.parseInt(request.getParameter("removeFromModule")), c);
                                     ((ArrayList<Integer>)request.getSession().getAttribute("modules")).remove((Integer)Integer.parseInt(request.getParameter("removeFromModule")));
+                                } else {
+                                    if (request.getParameter("saveMessage") != null) {
+                                        saveMessageToDB(request.getParameter("saveMessage"), request.getParameter("id"), request.getSession().getAttribute("name").toString(), request.getSession().getAttribute("user").toString(),  c);
+                                        out.write(getModuleDescription(request.getParameter("id"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
+                                        try {
+                                            c.close();
+                                        } catch (SQLException ex) {
+                                            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        return;
+                                    }
                                 }
                             }
                         }
@@ -101,7 +139,7 @@ public class Modules extends HttpServlet {
         status = new ArrayList<String>();
         ArrayList<Integer> ids = new ArrayList<Integer>();
 
-        getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids);
+        getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids, c);
         String htmlOutput = "<table border=\"0\" style=\"border-collapse:collapse; position:absolute;\" >"
                 + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
         for (int i = 0; i < names.size(); i++) {
@@ -120,10 +158,15 @@ public class Modules extends HttpServlet {
         }
         htmlOutput += "</table>";
         htmlOutput += "<div id=\"addModule\"></div>";
-        htmlOutput += "<div id=\"statusBox\" style=\"height:50px; width:430px; position:absolute; margin-left:309px; margin-top:420px;\"></div>";
+        htmlOutput += "<div id=\"statusBox\" style=\"height:35px; width:393px; position:absolute; margin-left:309px; margin-top:468px;\"></div>";
         String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>0</error></root>";
         out.write(xmlResponse);
         out.close();
+        try {
+            c.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+        }
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -162,9 +205,8 @@ public class Modules extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void getModules(String projectName, ArrayList<String> names, ArrayList<String> status, ArrayList<Integer> ids) {
+    private void getModules(String projectName, ArrayList<String> names, ArrayList<String> status, ArrayList<Integer> ids, Connection c) {
         try {
-            Connection c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("SELECT name, status, id FROM module WHERE projectname=?");
             ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
@@ -174,15 +216,14 @@ public class Modules extends HttpServlet {
                 ids.add(rs.getInt(3));
             }
             ps.close();
-            c.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private String getModuleDescription(String id, String status) {
+    private String getModuleDescription(String id, String status, String myEmail, Connection c) {
         try {
-            Statement s = DBConnector.getConnection().createStatement();
+            Statement s = c.createStatement();
             ResultSet rs = s.executeQuery("SELECT name, prio, description, start, end FROM module WHERE id='" + id + "'");
             if (rs.next()) {
                 String description = rs.getString(3);
@@ -198,6 +239,16 @@ public class Modules extends HttpServlet {
                 while (rs.next()) {
                     members += "[" + rs.getString(1) + "]";
                 }
+                ArrayList<String> messages = new ArrayList<String>();
+                ArrayList<String> username = new ArrayList<String>();
+                ArrayList<String> email = new ArrayList<String>();
+                rs = s.executeQuery("SELECT message, username, email FROM rel_module_message WHERE modulid='" + id + "'");
+                while (rs.next()) {
+                    messages.add(rs.getString(1));
+                    username.add(rs.getString(2));
+                    email.add(rs.getString(3));
+                }
+
 
                 String htmlOutput = "<table border=\"1\" style=\"border-collapse:collapse\">"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Name: </td><td>" + name +"</td></tr>"
@@ -210,8 +261,21 @@ public class Modules extends HttpServlet {
                         if (status.equals("PL")) {
                             htmlOutput += "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\"><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
                         }
-                        htmlOutput += "</table>";
-                return htmlOutput;
+                htmlOutput += "</table>"
+                            + "<table border=\"0\" style=\"border-collapse: collapse; margin-top: 10px; width: 490px;\">";
+                for (int i = 0; i < messages.size(); i++) {
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><td>" + username.get(i) + " schrieb ";
+                    if (email.get(i).equals(myEmail)) {
+                        htmlOutput += "<button onclick=\"alert('noch net impl.')\">l&ouml;schen</button></td></tr>";
+                    }
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px;\" height:100px;>" + messages.get(i) + "</div></tr>"
+                    + "<tr><td height=\"10\"></td></tr>";
+                }
+                htmlOutput += "<tr style=\"border: 1px solid;\">Schreiben Sie einen Kommentar</tr>"
+                            + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"58\" rows=\"5\"></textarea></tr>"
+                            + "<tr align=\"right\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></tr>"
+                            + "</table>";
+                return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error></root>";
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -233,16 +297,16 @@ public class Modules extends HttpServlet {
         return null;
     }
 
-    private ArrayList<String> getMembers(String string, String projectName) {
+    private ArrayList<String> getMembers(String membersString, String projectName, Connection c) {
         ArrayList<String> members = new ArrayList<String>();
         try {
-            Statement s = DBConnector.getConnection().createStatement();
-            for (int i = 0; i < string.length(); i++) {
-                if (string.charAt(i) == '[') {
+            Statement s = c.createStatement();
+            for (int i = 0; i < membersString.length(); i++) {
+                if (membersString.charAt(i) == '[') {
                     String tmpString = "";
                     i++;
-                    while (string.charAt(i) != ']') {
-                        tmpString += string.charAt(i);
+                    while (membersString.charAt(i) != ']') {
+                        tmpString += membersString.charAt(i);
                         i++;
                     }
                     ResultSet rs = s.executeQuery("SELECT email FROM user WHERE name='" + tmpString + "' AND projectname='" + projectName + "'");
@@ -257,9 +321,9 @@ public class Modules extends HttpServlet {
         return members;
     }
 
-    private void saveMouleToDB(ArrayList<String> members, String name, String description, String start, String end, String prio, String projectName) {
+    private void saveMouleToDB(ArrayList<String> members, String name, String description, String start, String end, String prio, String projectName, Connection c) {
         try {
-            Statement s = DBConnector.getConnection().createStatement();
+            Statement s = c.createStatement();
             s.executeUpdate("INSERT INTO module (name,start,end,prio,status,description,projectname) VALUES ('" + name + "','" + start + "','" + end + "','" + prio + "','open','" + description + "','" + projectName + "')");
             for (String member: members) {
                 s.executeUpdate("INSERT INTO rel_module_user (modulid, email) VALUES ((SELECT id FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'),'" + member + "')");
@@ -269,9 +333,9 @@ public class Modules extends HttpServlet {
         }
     }
 
-    private boolean validateModuleName(String name, String projectName) {
+    private boolean validateModuleName(String name, String projectName, Connection c) {
         try {
-            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT * FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'");
+            ResultSet rs = c.createStatement().executeQuery("SELECT * FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'");
             if (rs.next()) {
                 return false;
             }
@@ -282,9 +346,9 @@ public class Modules extends HttpServlet {
         return false;
     }
 
-    private void addMeToModule(String email, String modulid) {
+    private void addMeToModule(String email, String modulid, Connection c) {
         try {
-            DBConnector.getConnection().createStatement().executeUpdate("INSERT INTO rel_module_user (modulid, email) VALUES ('" + modulid + "','" + email + "')");
+            c.createStatement().executeUpdate("INSERT INTO rel_module_user (modulid, email) VALUES ('" + modulid + "','" + email + "')");
         } catch (Exception ex) {
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -299,19 +363,18 @@ public class Modules extends HttpServlet {
         return select + "</select>";
     }
 
-    public String setModuleStatusOnDB(String status, String id) {
+    public String setModuleStatusOnDB(String status, String id, Connection c) {
         try {
-            DBConnector.getConnection().createStatement().executeUpdate("UPDATE module SET status='" + status + "' WHERE id='" + id + "'");
-            return "Aenderung gespeichert.";
+            c.createStatement().executeUpdate("UPDATE module SET status='" + status + "' WHERE id='" + id + "'");
+            return "<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>0</error></root>";
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
     }
 
-    private void deleteModule(String id) {
+    private void deleteModule(String id, Connection c) {
         try {
-            Connection c = null;
             String sql = "";
             try {
                 c = DBConnector.getConnection();
@@ -326,6 +389,11 @@ public class Modules extends HttpServlet {
                 ps.setString(1, id);
                 ps.executeUpdate();
                 ps.close();
+                sql = "DELETE FROM rel_module_message WHERE modulid = ?";
+                ps = c.prepareStatement(sql);
+                ps.setString(1, id);
+                ps.executeUpdate();
+                ps.close();
                 c.commit();
             } catch (MySQLException e) {
                 e.printStackTrace();
@@ -334,16 +402,15 @@ public class Modules extends HttpServlet {
                 throw new SQLException("Fehler beim Statement: " + sql);
             } finally {
                 c.setAutoCommit(true);
-                c.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private int getModulId(String projectName, String name) {
+    private int getModulId(String projectName, String name, Connection c) {
         try {
-            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT id FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'");
+            ResultSet rs = c.createStatement().executeQuery("SELECT id FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'");
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -354,9 +421,17 @@ public class Modules extends HttpServlet {
         return 0;
     }
 
-    private void removeMeFromModule(String email, int modulid) {
+    private void removeMeFromModule(String email, int modulid, Connection c) {
         try {
-            DBConnector.getConnection().createStatement().executeUpdate("DELETE FROM rel_module_user WHERE modulid='" + modulid + "' AND email='" + email + "'");
+            c.createStatement().executeUpdate("DELETE FROM rel_module_user WHERE modulid='" + modulid + "' AND email='" + email + "'");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void saveMessageToDB(String message, String id, String username, String myEmail, Connection c) {
+        try {
+            c.createStatement().executeUpdate("INSERT INTO rel_module_message (modulid, username, message, email) VALUES ('" + id + "','" + username + "','" + message + "','" + myEmail + "')");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
