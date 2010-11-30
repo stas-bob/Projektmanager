@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author tA88
  */
-public class ChangePassword extends HttpServlet {
+public class FirstLogin extends HttpServlet {
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -34,7 +34,6 @@ public class ChangePassword extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         HttpSession seas = request.getSession();
-        int firstLogin = Integer.parseInt(request.getParameter("firstLogin").toString());
 
         String projectname = seas.getAttribute("projectname").toString();
         String user = seas.getAttribute("user").toString();
@@ -43,42 +42,38 @@ public class ChangePassword extends HttpServlet {
         String validatePassword = request.getParameter("validatePassword");
         Connection c = null;
         try {
-            if (firstLogin == 0) {
-                out.write(MainServlet.changePasswordView(-1));
-            } else {
-                c = DBConnector.getConnection();
-                PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE email = ?");
-                ps.setString(1, user);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    if (rs.getString(1).equals(oldPassword)) {
-                        if (newPassword.equals(validatePassword)) {
+            c = DBConnector.getConnection();
+            PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE email = ?");
+            ps.setString(1, user);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                if (rs.getString(1).equals(oldPassword)) {
+                    if (newPassword.equals(validatePassword)) {
+                        ps.close();
+                        String sql = "";
+                        try {
+                            c.setAutoCommit(false);
+                            sql = "UPDATE user SET password = ?, firstlogin = 1 WHERE email = ?";
+                            ps = c.prepareStatement(sql);
+                            ps.setString(1, newPassword);
+                            ps.setString(2, user);
+                            ps.executeUpdate();
                             ps.close();
-                            String sql = "";
-                            try {
-                                c.setAutoCommit(false);
-                                sql = "UPDATE user SET password = ?, firstlogin = 1 WHERE email = ?";
-                                ps = c.prepareStatement(sql);
-                                ps.setString(1, newPassword);
-                                ps.setString(2, user);
-                                ps.executeUpdate();
-                                ps.close();
-                                c.commit();
-                            } catch (SQLException e) {
-                                c.rollback();
-                                out.write("<a href='Login.html'>Schwerwiegender Fehler</a>");
-                                throw new SQLException("Fehler beim Statement: " + sql);
-                            } finally {
-                                c.setAutoCommit(true);
-                                c.close();
-                            }
-                            out.write(MainServlet.mainView(projectname, true));
-                        } else {
-                            out.write(MainServlet.changePasswordView(1));
+                            c.commit();
+                        } catch (SQLException e) {
+                            c.rollback();
+                            out.write("<a href='Login.html'>Schwerwiegender Fehler</a>");
+                            throw new SQLException("Fehler beim Statement: " + sql);
+                        } finally {
+                            c.setAutoCommit(true);
+                            c.close();
                         }
+                        out.write(MainServlet.mainView(projectname, true));
                     } else {
-                        out.write(MainServlet.changePasswordView(2));
+                        out.write(MainServlet.changePasswordView(1));
                     }
+                } else {
+                    out.write(MainServlet.changePasswordView(2));
                 }
             }
             c.close();

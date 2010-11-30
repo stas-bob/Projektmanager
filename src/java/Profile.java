@@ -64,9 +64,9 @@ public class Profile extends HttpServlet {
             htmlOutput.append("</tr>")
                 .append("</table>")
                 .append("<br><br>")
-                .append("<form action=\"/Projektmanager/ChangePassword?firstLogin=0\" method=\"post\"")
-                .append("<input type=\"submit\" value=\"Kennwort &auml;ndern\" />")
-                .append("</form>")
+                .append("<div id=\"changePasswordText\">Passwort &auml;ndern:</div>")
+                .append(MainServlet.changePasswordArea())
+                .append("<input type=\"button\" value=\"&Auml;ndern\" onclick=\"\" />")
                 .append("</div>");
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite></root>";
             out.write(xmlResponse);

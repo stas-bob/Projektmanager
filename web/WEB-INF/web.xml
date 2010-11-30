@@ -4,41 +4,58 @@
         <servlet-name>MainServlet</servlet-name>
         <servlet-class>MainServlet</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>MainServlet</servlet-name>
+        <url-pattern>/MainServlet</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>ValidateProjectServlet</servlet-name>
         <servlet-class>ValidateProjectServlet</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>ValidateProjectServlet</servlet-name>
+        <url-pattern>/ValidateProjectServlet</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>Members</servlet-name>
         <servlet-class>Members</servlet-class>
     </servlet>
+        <servlet-mapping>
+        <servlet-name>Members</servlet-name>
+        <url-pattern>/Members</url-pattern>
+    </servlet-mapping>
     <servlet>
-        <servlet-name>ChangePassword</servlet-name>
-        <servlet-class>ChangePassword</servlet-class>
+        <servlet-name>FirstLogin</servlet-name>
+        <servlet-class>FirstLogin</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>Logout</servlet-name>
-        <servlet-class>Logout</servlet-class>
-    </servlet>
+    <servlet-mapping>
+        <servlet-name>FirstLogin</servlet-name>
+        <url-pattern>/FirstLogin</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>Modules</servlet-name>
         <servlet-class>Modules</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>Modules</servlet-name>
+        <url-pattern>/Modules</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>Profile</servlet-name>
         <servlet-class>Profile</servlet-class>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>Profile</servlet-name>
+        <url-pattern>/Profile</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>Times</servlet-name>
         <servlet-class>Times</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>Overview</servlet-name>
-        <servlet-class>Overview</servlet-class>
-    </servlet>
     <servlet-mapping>
-        <servlet-name>MainServlet</servlet-name>
-        <url-pattern>/MainServlet</url-pattern>
+        <servlet-name>Times</servlet-name>
+        <url-pattern>/Times</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>Registrieren</servlet-name>
@@ -48,34 +65,18 @@
         <servlet-name>Registrieren</servlet-name>
         <url-pattern>/Registrieren</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ValidateProjectServlet</servlet-name>
-        <url-pattern>/ValidateProjectServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Members</servlet-name>
-        <url-pattern>/Members</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ChangePassword</servlet-name>
-        <url-pattern>/ChangePassword</url-pattern>
-    </servlet-mapping>
+    <servlet>
+        <servlet-name>Logout</servlet-name>
+        <servlet-class>Logout</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Logout</servlet-name>
         <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Modules</servlet-name>
-        <url-pattern>/Modules</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Profile</servlet-name>
-        <url-pattern>/Profile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Times</servlet-name>
-        <url-pattern>/Times</url-pattern>
-    </servlet-mapping>
+    <servlet>
+        <servlet-name>Overview</servlet-name>
+        <servlet-class>Overview</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Overview</servlet-name>
         <url-pattern>/Overview</url-pattern>
