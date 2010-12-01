@@ -45,12 +45,8 @@ public class Registrieren extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         response.setContentType("text/html;charset=UTF-8");
-
         PrintWriter out = response.getWriter();
-
-
 
         if (validateProject(request.getParameter("projectname"), request.getParameter("email"))) {
             activate(request.getParameter("name"),

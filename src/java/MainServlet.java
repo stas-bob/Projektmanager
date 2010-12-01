@@ -40,6 +40,7 @@ public class MainServlet extends HttpServlet {
             Connection connection = DBConnector.getConnection();
             HttpSession seas = request.getSession();
             seas.setAttribute("user", request.getParameter("user"));
+            seas.setAttribute("user_id", getUserId(request.getParameter("user").toString(), connection));
             seas.setAttribute("password", request.getParameter("password"));
             seas.setAttribute("status", getMyStatus(request.getParameter("user").toString(), connection));
             seas.setAttribute("modules", getMyModules(request.getParameter("user").toString(), connection));
@@ -115,7 +116,7 @@ public class MainServlet extends HttpServlet {
         sb.append("<title>Projektmanager</title>");
         sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
         sb.append("<title>Untitled Document</title>");
-        sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
+        sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>");
         sb.append("<script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script>");
         sb.append("</head>");
         sb.append("<body>");
@@ -332,5 +333,21 @@ public class MainServlet extends HttpServlet {
             ex.printStackTrace();
         }
         return firstname;
+    }
+
+    private int getUserId(String email, Connection c) {
+        int user_id = -1;
+        try {
+            PreparedStatement ps = c.prepareStatement("SELECT id FROM user WHERE email = ?");
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                user_id = rs.getInt(1);
+            }
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return user_id;
     }
 }

@@ -545,6 +545,7 @@ function showHint(element, text) {
 }
 
 function changePassword() {
+    document.getElementById("statusChangePassowrd").innerHTML = "Bitte warten...";
     var oldPassword = document.getElementById("oldPassword").value;
     var newPassword = document.getElementById("newPassword").value;
     var validatePassword = document.getElementById("validatePassword").value;
@@ -559,6 +560,7 @@ function callbackPassword() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
             document.getElementById("returnChangePasswordText").innerHTML = xmlHttp.responseText;
+            document.getElementById("statusChangePassowrd").innerHTML = "";
         }
     }
 }
