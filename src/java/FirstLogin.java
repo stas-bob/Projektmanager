@@ -36,11 +36,36 @@ public class FirstLogin extends HttpServlet {
         HttpSession seas = request.getSession();
 
         String projectname = seas.getAttribute("projectname").toString();
-        String user = seas.getAttribute("user").toString();
+        try {
+            switch (changePassword(request)) {
+                case -1:
+                    out.write(MainServlet.changePasswordView(-1));
+                    break;
+                case 0:
+                    out.write(MainServlet.mainView(projectname, true));
+                    break;
+                case 1:
+                    out.write(MainServlet.changePasswordView(1));
+                    break;
+                case 2:
+                    out.write(MainServlet.changePasswordView(2));
+                    break;
+                default:
+                    break;
+            }
+        } finally {
+            out.close();
+        }
+    }
+
+    public static int changePassword(HttpServletRequest request) {
+        System.out.println("Hallo2");
+        Connection c = null;
+        String user = request.getSession().getAttribute("user").toString();
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String validatePassword = request.getParameter("validatePassword");
-        Connection c = null;
+        System.out.println(oldPassword + " " + validatePassword);
         try {
             c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE email = ?");
@@ -62,18 +87,17 @@ public class FirstLogin extends HttpServlet {
                             c.commit();
                         } catch (SQLException e) {
                             c.rollback();
-                            out.write("<a href='Login.html'>Schwerwiegender Fehler</a>");
                             throw new SQLException("Fehler beim Statement: " + sql);
                         } finally {
                             c.setAutoCommit(true);
                             c.close();
                         }
-                        out.write(MainServlet.mainView(projectname, true));
+                        return 0;
                     } else {
-                        out.write(MainServlet.changePasswordView(1));
+                        return 1;
                     }
                 } else {
-                    out.write(MainServlet.changePasswordView(2));
+                    return 2;
                 }
             }
             c.close();
@@ -81,9 +105,8 @@ public class FirstLogin extends HttpServlet {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            out.close();
         }
+        return -1;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

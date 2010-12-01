@@ -543,3 +543,22 @@ function showHint(element, text) {
         element.innerHTML = "";
     }
 }
+
+function changePassword() {
+    var oldPassword = document.getElementById("oldPassword").value;
+    var newPassword = document.getElementById("newPassword").value;
+    var validatePassword = document.getElementById("validatePassword").value;
+    createXMLHttpRequest();
+    var servlet = "/Projektmanager/ChangePassword?oldPassword=" + oldPassword + "&newPassword=" + newPassword + "&validatePassword=" + validatePassword;
+    xmlHttp.open('POST',servlet, true);
+    xmlHttp.onreadystatechange = callbackPassword;
+    xmlHttp.send();
+}
+
+function callbackPassword() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            document.getElementById("returnChangePasswordText").innerHTML = xmlHttp.responseText;
+        }
+    }
+}

@@ -66,7 +66,8 @@ public class Profile extends HttpServlet {
                 .append("<br><br>")
                 .append("<div id=\"changePasswordText\">Passwort &auml;ndern:</div>")
                 .append(MainServlet.changePasswordArea())
-                .append("<input type=\"button\" value=\"&Auml;ndern\" onclick=\"\" />")
+                .append("<input type=\"button\" value=\"&Auml;ndern\" onclick=\"changePassword()\" />")
+                .append("<div id=\"returnChangePasswordText\"></div>")
                 .append("</div>");
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite></root>";
             out.write(xmlResponse);

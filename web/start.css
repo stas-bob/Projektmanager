@@ -54,6 +54,11 @@
     font-weight: bold;
 }
 
+#returnChangePasswordText {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
 .menuTopButton a
 {
     width:137px;

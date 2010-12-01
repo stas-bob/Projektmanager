@@ -4,6 +4,10 @@
         <servlet-name>MainServlet</servlet-name>
         <servlet-class>MainServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ChangePassword</servlet-name>
+        <servlet-class>ChangePassword</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -20,7 +24,7 @@
         <servlet-name>Members</servlet-name>
         <servlet-class>Members</servlet-class>
     </servlet>
-        <servlet-mapping>
+    <servlet-mapping>
         <servlet-name>Members</servlet-name>
         <url-pattern>/Members</url-pattern>
     </servlet-mapping>
@@ -32,7 +36,6 @@
         <servlet-name>FirstLogin</servlet-name>
         <url-pattern>/FirstLogin</url-pattern>
     </servlet-mapping>
-
     <servlet>
         <servlet-name>Modules</servlet-name>
         <servlet-class>Modules</servlet-class>
@@ -80,6 +83,10 @@
     <servlet-mapping>
         <servlet-name>Overview</servlet-name>
         <url-pattern>/Overview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ChangePassword</servlet-name>
+        <url-pattern>/ChangePassword</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

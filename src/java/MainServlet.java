@@ -175,6 +175,8 @@ public class MainServlet extends HttpServlet {
             sb.append("Die neu eingebenen Passw&ouml;rter stimmen nicht überein!");
         } else if (falsePassword == 2) {
             sb.append("Das eingegebene bisherige Passwort ist falsch!");
+        } else {
+            sb.append("Fehler bei der &Auml;nderung ihres Passwortes.");
         }
         sb.append("<br>");
         sb.append("<form action=\"/Projektmanager/FirstLogin\" method=\"post\" >");
@@ -194,7 +196,7 @@ public class MainServlet extends HttpServlet {
         sb.append("Altes Passwort:");
         sb.append("</th>");
         sb.append("<th>");
-        sb.append("<input name=\"oldPassword\" type=\"password\" />");
+        sb.append("<input id=\"oldPassword\" name=\"oldPassword\" type=\"password\" />");
         sb.append("</th>");
         sb.append("</tr>");
         sb.append("<tr>");
@@ -202,7 +204,7 @@ public class MainServlet extends HttpServlet {
         sb.append("Neues Passwort:");
         sb.append("</th>");
         sb.append("<th>");
-        sb.append("<input name=\"newPassword\" type=\"password\">");
+        sb.append("<input id=\"newPassword\" name=\"newPassword\" type=\"password\">");
         sb.append("<br>");
         sb.append("</th>");
         sb.append("</tr>");
@@ -211,7 +213,7 @@ public class MainServlet extends HttpServlet {
         sb.append("Neues Passwort bestätigen:");
         sb.append("</th>");
         sb.append("<th>");
-        sb.append("<input name=\"validatePassword\" type=\"password\">");
+        sb.append("<input id=\"validatePassword\" name=\"validatePassword\" type=\"password\">");
         sb.append("<br>");
         sb.append("</th>");
         sb.append("</tr>");
