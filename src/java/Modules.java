@@ -74,7 +74,7 @@ public class Modules extends HttpServlet {
                                 "<tr><td>Priorität:</td><td><select size=\"1\" id=\"prio\"><option>1</option><option>2</option><option>3</option></select><div style=\"background-image:url(grafik/question_mark.png); width:25px; height:22px; position:absolute; margin-left: 40px; margin-top: -22px;\" onclick=\"showHint(this, '1 is die höchste prio')\"></div></td></tr>" +
                                 "<tr><td>Start:</td><td>Tag: <input id=\"startDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"startMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"startYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" +
                                 "<tr><td>Ende:</td><td>Tag: <input id=\"endDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"endMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"endYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" +
-                                "<tr><td>Mitglied zuweisen:</td><td><select id=\"selectMember\">" + getAllMembers(request.getSession().getAttribute("projectname").toString()) + "</select><input value=\"einfügen\" type=\"button\" onclick=\"addMemberToModuleBox()\"/><input value=\"loeschen\" type=\"button\" onclick=\"removeMemberFromModuleBox()\"/></td></tr>" +
+                                "<tr><td>Mitglied zuweisen:</td><td><select id=\"selectMember\">" + getAllMembers(request.getSession().getAttribute("projectname").toString(), c) + "</select><input value=\"einfügen\" type=\"button\" onclick=\"addMemberToModuleBox()\"/><input value=\"loeschen\" type=\"button\" onclick=\"removeMemberFromModuleBox()\"/></td></tr>" +
                             "</tbody>" +
                         "</table>" +
                         "<div id=\"membersInModuleBox\" style=\"position:absolute; border: 1px dashed; margin-left: 50px; width: 300px; height: 120px; display:none\"></div><button onclick=\"saveModule()\" style=\"margin-left: 354px; font: 12px Arial; padding-top:1px; padding-left:0px; padding-right:0px; position: absolute; margin-top: -27px;\">speichern</button>";
@@ -218,7 +218,7 @@ public class Modules extends HttpServlet {
 
     private void getModules(String projectName, ArrayList<String> names, ArrayList<String> status, ArrayList<Integer> ids, Connection c) {
         try {
-            PreparedStatement ps = c.prepareStatement("SELECT name, status, id FROM module WHERE projectname=?");
+            PreparedStatement ps = c.prepareStatement("SELECT name, status, id FROM module WHERE projectname = ?");
             ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -227,40 +227,50 @@ public class Modules extends HttpServlet {
                 ids.add(rs.getInt(3));
             }
             ps.close();
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
     private String getModuleDescription(String id, String status, String myEmail, Connection c) {
         try {
-            Statement s = c.createStatement();
-            ResultSet rs = s.executeQuery("SELECT name, prio, description, start, end FROM module WHERE id='" + id + "'");
+            PreparedStatement ps = c.prepareStatement("SELECT name, prio, description, start, end FROM module WHERE id = ?");
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 String description = rs.getString(3);
                 String name = rs.getString(1);
                 String prio = rs.getString(2);
                 Date start = rs.getDate(4);
                 Date end = rs.getDate(5);
+
+                ps.close();
                 String members = "";
-                rs = s.executeQuery("SELECT name FROM rel_module_user, user WHERE user.email = rel_module_user.email AND modulid='" + id + "'");
+                ps = c.prepareStatement("SELECT name FROM rel_module_user, user WHERE user.email = rel_module_user.email AND modulid = ?");
+                ps.setString(1, id);
+                rs = ps.executeQuery();
                 rs.last();
                 int memberCount = rs.getRow();
                 rs.beforeFirst();
                 while (rs.next()) {
                     members += "[" + rs.getString(1) + "]";
                 }
+                ps.close();
+
                 ArrayList<String> messages = new ArrayList<String>();
                 ArrayList<String> username = new ArrayList<String>();
                 ArrayList<String> email = new ArrayList<String>();
                 ArrayList<Integer> messageIds = new ArrayList<Integer>();
-                rs = s.executeQuery("SELECT message, username, email, messageid FROM rel_module_message WHERE modulid='" + id + "'");
+                ps = c.prepareStatement("SELECT message, username, email, messageid FROM rel_module_message WHERE modulid = ?");
+                ps.setString(1, id);
+                rs = ps.executeQuery();
                 while (rs.next()) {
                     messages.add(rs.getString(1));
                     username.add(rs.getString(2));
                     email.add(rs.getString(3));
                     messageIds.add(rs.getInt(4));
                 }
+                ps.close();
 
 
                 String htmlOutput = "<table border=\"1\" style=\"border-collapse:collapse\">"
@@ -290,21 +300,24 @@ public class Modules extends HttpServlet {
                             + "</table>";
                 return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error></root>";
             }
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
     }
 
-    private String getAllMembers(String projectName) {
+    private String getAllMembers(String projectName, Connection c) {
         try {
             String result = "";
-            ResultSet rs = DBConnector.getConnection().createStatement().executeQuery("SELECT name FROM user WHERE projectname='" + projectName + "'");
+            PreparedStatement ps = c.prepareStatement("SELECT name FROM user WHERE projectname = ?");
+            ps.setString(1, projectName);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 result += "<option>" + rs.getString(1) + "</option>";
             }
+            ps.close();
             return result;
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
@@ -313,7 +326,9 @@ public class Modules extends HttpServlet {
     private ArrayList<String> getMembers(String membersString, String projectName, Connection c) {
         ArrayList<String> members = new ArrayList<String>();
         try {
-            Statement s = c.createStatement();
+
+            PreparedStatement ps = c.prepareStatement("SELECT email FROM user WHERE name = ? AND projectname = ?");
+            ps.setString(2, projectName);
             for (int i = 0; i < membersString.length(); i++) {
                 if (membersString.charAt(i) == '[') {
                     String tmpString = "";
@@ -322,13 +337,15 @@ public class Modules extends HttpServlet {
                         tmpString += membersString.charAt(i);
                         i++;
                     }
-                    ResultSet rs = s.executeQuery("SELECT email FROM user WHERE name='" + tmpString + "' AND projectname='" + projectName + "'");
+                    ps.setString(1, tmpString);
+                    ResultSet rs = ps.executeQuery();
                     if (rs.next()) {
                         members.add(rs.getString(1));
                     }
                 }
             }
-        } catch (Exception ex) {
+            ps.close();
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return members;
@@ -336,24 +353,42 @@ public class Modules extends HttpServlet {
 
     private void saveMouleToDB(ArrayList<String> members, String name, String description, String start, String end, String prio, String projectName, Connection c) {
         try {
-            Statement s = c.createStatement();
-            s.executeUpdate("INSERT INTO module (name,start,end,prio,status,description,projectname) VALUES ('" + name + "','" + start + "','" + end + "','" + prio + "','open','" + description + "','" + projectName + "')");
+            PreparedStatement ps = c.prepareStatement("INSERT INTO module (name,start,end,prio,status,description,projectname) VALUES (?,?,?,?,'open',?,?)");
+            ps.setString(1, name);
+            ps.setString(2, start);
+            ps.setString(3, end);
+            ps.setString(4, prio);
+            ps.setString(5, description);
+            ps.setString(6, projectName);
+            ps.executeUpdate();
+            ps.close();
+
+            ps = c.prepareStatement("INSERT INTO rel_module_user (modulid, email) VALUES ((SELECT id FROM module WHERE name = ? AND projectname = ?), ?)");
+            ps.setString(1, name);
+            ps.setString(2, projectName);
             for (String member: members) {
-                s.executeUpdate("INSERT INTO rel_module_user (modulid, email) VALUES ((SELECT id FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'),'" + member + "')");
+                ps.setString(3, member);
+                ps.executeUpdate();
             }
-        } catch (Exception ex) {
+            ps.close();
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
     private boolean validateModuleName(String name, String projectName, Connection c) {
         try {
-            ResultSet rs = c.createStatement().executeQuery("SELECT * FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'");
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM module WHERE name = ? AND projectname = ?");
+            ps.setString(1, name);
+            ps.setString(2, projectName);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                ps.close();
                 return false;
             }
+            ps.close();
             return true;
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return false;
@@ -361,8 +396,12 @@ public class Modules extends HttpServlet {
 
     private void addMeToModule(String email, String modulid, Connection c) {
         try {
-            c.createStatement().executeUpdate("INSERT INTO rel_module_user (modulid, email) VALUES ('" + modulid + "','" + email + "')");
-        } catch (Exception ex) {
+            PreparedStatement ps = c.prepareStatement("INSERT INTO rel_module_user (modulid, email) VALUES (?,?)");
+            ps.setString(1, modulid);
+            ps.setString(2, email);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException ex) {
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -378,9 +417,13 @@ public class Modules extends HttpServlet {
 
     public String setModuleStatusOnDB(String status, String id, Connection c) {
         try {
-            c.createStatement().executeUpdate("UPDATE module SET status='" + status + "' WHERE id='" + id + "'");
+            PreparedStatement ps = c.prepareStatement("UPDATE module SET status = ? WHERE id = ?");
+            ps.setString(1, status);
+            ps.setString(2, id);
+            ps.executeUpdate();
+            ps.close();
             return "<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>0</error></root>";
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
@@ -390,7 +433,6 @@ public class Modules extends HttpServlet {
         try {
             String sql = "";
             try {
-                c = DBConnector.getConnection();
                 c.setAutoCommit(false);
                 sql = "DELETE FROM module WHERE id = ?";
                 PreparedStatement ps = c.prepareStatement(sql);
@@ -408,8 +450,6 @@ public class Modules extends HttpServlet {
                 ps.executeUpdate();
                 ps.close();
                 c.commit();
-            } catch (MySQLException e) {
-                e.printStackTrace();
             } catch (SQLException e) {
                 c.rollback();
                 throw new SQLException("Fehler beim Statement: " + sql);
@@ -423,12 +463,16 @@ public class Modules extends HttpServlet {
 
     private int getModulId(String projectName, String name, Connection c) {
         try {
-            ResultSet rs = c.createStatement().executeQuery("SELECT id FROM module WHERE name='" + name + "' AND projectname='" + projectName + "'");
+            PreparedStatement ps = c.prepareStatement("SELECT id FROM module WHERE name = ? AND projectname = ?");
+            ps.setString(1, name);
+            ps.setString(2, projectName);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                ps.close();
                 return rs.getInt(1);
             }
-
-        } catch (Exception ex) {
+            ps.close();
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return 0;
@@ -436,8 +480,12 @@ public class Modules extends HttpServlet {
 
     private void removeMeFromModule(String email, int modulid, Connection c) {
         try {
-            c.createStatement().executeUpdate("DELETE FROM rel_module_user WHERE modulid='" + modulid + "' AND email='" + email + "'");
-        } catch (Exception ex) {
+            PreparedStatement ps = c.prepareStatement("DELETE FROM rel_module_user WHERE modulid = ? AND email = ?");
+            ps.setInt(1, modulid);
+            ps.setString(2, email);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
@@ -445,8 +493,15 @@ public class Modules extends HttpServlet {
     private void saveMessageToDB(String message, String id, String username, String myEmail, Connection c) {
         try {
             int freeID = getFreeMessageID(id, c);
-            c.createStatement().executeUpdate("INSERT INTO rel_module_message (modulid, username, message, email, messageid) VALUES ('" + id + "','" + username + "','" + message + "','" + myEmail + "','" + freeID + "')");
-        } catch (Exception ex) {
+            PreparedStatement ps = c.prepareStatement("INSERT INTO rel_module_message (modulid, username, message, email, messageid) VALUES (?,?,?,?,?)");
+            ps.setString(1, id);
+            ps.setString(2, username);
+            ps.setString(3, message);
+            ps.setString(4, myEmail);
+            ps.setInt(5, freeID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
@@ -454,10 +509,13 @@ public class Modules extends HttpServlet {
     private int getFreeMessageID(String modulid, Connection c) {
         try {
             ArrayList<Integer> ids = new ArrayList<Integer>();
-            ResultSet rs = c.createStatement().executeQuery("SELECT messageid FROM rel_module_message WHERE modulid='" + modulid + "'");
+            PreparedStatement ps = c.prepareStatement("SELECT messageid FROM rel_module_message WHERE modulid = ?");
+            ps.setString(1, modulid);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ids.add(rs.getInt(1));
             }
+            ps.close();
             for (int i = 1;; i++) {
                 System.out.println("trying " + i);
                 if (!ids.contains(i)) {
@@ -473,7 +531,11 @@ public class Modules extends HttpServlet {
 
     private void deleteMessage(String messageid, String modulid, Connection c) {
         try {
-            c.createStatement().executeUpdate("DELETE FROM rel_module_message WHERE modulid='" + modulid + "' AND messageid='" + messageid + "'");
+            PreparedStatement ps = c.prepareStatement("DELETE FROM rel_module_message WHERE modulid = ? AND messageid = ?");
+            ps.setString(1, modulid);
+            ps.setString(2, messageid);
+            ps.executeUpdate();
+            ps.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
