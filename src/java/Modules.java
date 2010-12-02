@@ -517,9 +517,7 @@ public class Modules extends HttpServlet {
             }
             ps.close();
             for (int i = 1;; i++) {
-                System.out.println("trying " + i);
                 if (!ids.contains(i)) {
-                    System.out.println("success on " + i);
                     return i;
                 }
             }

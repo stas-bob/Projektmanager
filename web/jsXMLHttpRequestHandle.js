@@ -564,3 +564,7 @@ function callbackPassword() {
         }
     }
 }
+
+function pressedMenueButton(element) {
+    element.style.backgroundImage = "url:(grafik/button_pressed.png)";
+}

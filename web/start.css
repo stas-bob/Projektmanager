@@ -11,6 +11,7 @@
     margin-left:309px;
     position:absolute;
     width:486px;
+    margin-top: 25px;
 }
 
 #userDescription {
@@ -23,7 +24,8 @@
 
 #title
 {
-    background-color:#3A38D8;
+    background-image: url('grafik/head.png');
+    background-position: left top;
     width:822px;
     height:30px;
     padding-top:8px;
@@ -64,19 +66,26 @@
     width:137px;
     float:left;
     height:23px;
-    background-image:url(grafik/button.jpg);
+    background-image:url(grafik/button.png);
     background-position:right;
     text-align:center;
     background-repeat:no-repeat;
     padding-top:8px;
     font-size:10pt;
-    color:white;
+    color:black;
     font-weight:bold;
     text-decoration:none;
 }
 
 .menuTopButton a:hover
 {
-    background-image:url(grafik/button_hover.jpg);
+    background-image:url(grafik/button_hover.png);
+    color:white;
+}
+
+.menuTopButton a:active
+{
+    background-image:url(grafik/button_pressed.png);
+    color:white;
 }
 
