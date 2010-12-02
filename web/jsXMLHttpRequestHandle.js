@@ -263,6 +263,7 @@ function showUserDescription(email) {
     xmlHttp.send();
 }
 function showModuleDescription(id) {
+    document.getElementById("statusBox").innerHTML = "Bitte warten ...";
     document.getElementById("addModule").style.border = "0px solid";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?moduleDescriptionId=" + id, true);
