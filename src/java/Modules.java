@@ -468,8 +468,9 @@ public class Modules extends HttpServlet {
             ps.setString(2, projectName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                int result = rs.getInt(1);
                 ps.close();
-                return rs.getInt(1);
+                return result;
             }
             ps.close();
         } catch (SQLException ex) {
