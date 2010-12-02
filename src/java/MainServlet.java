@@ -40,12 +40,12 @@ public class MainServlet extends HttpServlet {
             Connection connection = DBConnector.getConnection();
             HttpSession seas = request.getSession();
             seas.setAttribute("user", request.getParameter("user"));
-            seas.setAttribute("user_id", getUserId(request.getParameter("user").toString(), connection));
+            seas.setAttribute("user_id", getUserId(request.getParameter("user"), connection));
             seas.setAttribute("password", request.getParameter("password"));
-            seas.setAttribute("status", getMyStatus(request.getParameter("user").toString(), connection));
-            seas.setAttribute("modules", getMyModules(request.getParameter("user").toString(), connection));
-            seas.setAttribute("name", getName(request.getParameter("user").toString(), connection));
-            seas.setAttribute("firstname", getFirstname(request.getParameter("user").toString(), connection));
+            seas.setAttribute("status", getMyStatus(request.getParameter("user"), connection));
+            seas.setAttribute("modules", getMyModules(request.getParameter("user"), connection));
+            seas.setAttribute("name", getName(request.getParameter("user"), connection));
+            seas.setAttribute("firstname", getFirstname(request.getParameter("user"), connection));
 
             String user = seas.getAttribute("user").toString();
             String password = seas.getAttribute("password").toString();

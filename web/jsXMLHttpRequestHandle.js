@@ -301,7 +301,7 @@ function callbackShowModuleDescription() {
             if (error > 0) {
                 document.getElementById("statusBox").innerHTML = html[0].childNodes[0].nodeValue;
             } else {
-                if (modulesCount > 1) {
+                if (modulesCount > 0) {
                     document.getElementById("content").style.height = 500 + modulesCount*136 + "px";
                     document.getElementById("statusBox").style.marginTop = 353 + modulesCount*136 + "px";
                 } else {
