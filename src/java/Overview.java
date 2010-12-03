@@ -41,9 +41,10 @@ public class Overview extends HttpServlet {
             int doneCount = getModulesDoneCount(c, request.getSession().getAttribute("projectname").toString());
             int divWidth = 200;
             int progress = (divWidth*doneCount)/modulesCount;
-            String htmlOutput = "<div style=\"border:1px solid; width:" + divWidth + "px; height:100px; position:absolute;\"><div style=\"margin-left:30%; margin-top:35px; position:absolute\">Fortschritt " + (int)((float)progress*100/divWidth) + "%</div>"
-                                    + "<div style=\"border:1px solid blue; width:" + progress + "px; height:100px;\"></div>"
-                                + "</div>";
+            String htmlOutput = "<div style=\"border:1px dashed; width:" + divWidth + "px; height:100px; position:absolute; background-color: ##EEEEFF;\">"
+                                  + "<div style=\"margin-left:30%; margin-top:35px; position:absolute; text-shadow: 2px 2px 0 #AAAAAA;\">Fortschritt " + (int)((float)progress*100/divWidth) + "%</div>"
+                                  + "<div style=\"border:1px solid blue; width:" + progress + "px; height:100px; margin-top: -1px; margin-left: -1px; color:white; background-color: LightSteelBlue;\"></div>"
+                              + "</div>";
 
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite></root>";
             out.write(xmlResponse);
