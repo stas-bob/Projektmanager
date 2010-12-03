@@ -245,14 +245,14 @@ public class Modules extends HttpServlet {
                 htmlOutput += "</table>"
                             + "<table border=\"0\" style=\"border-collapse: collapse; margin-top: 10px; width: 490px;\">";
                 for (int i = 0; i < messages.size(); i++) {
-                    htmlOutput += "<tr style=\"border: 1px solid;\"><td>" + username.get(i) + " schrieb ";
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><td><b>" + username.get(i) + "</b> schrieb ";
                     if (email.get(i).equals(myEmail)) {
-                        htmlOutput += "<button onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></td></tr>";
+                        htmlOutput += "<button style=\"margin-left:330px\" onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></tr>";
                     }
                     htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px;\" height:100px;>" + messages.get(i) + "</div></tr>"
                     + "<tr><td height=\"10\"></td></tr>";
                 }
-                htmlOutput += "<tr style=\"border: 1px solid;\">Schreiben Sie einen Kommentar</tr>"
+                htmlOutput += "<tr style=\"border: 1px solid;\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></tr>"
                             + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"58\" rows=\"5\"></textarea></tr>"
                             + "<tr align=\"right\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></tr>"
                             + "</table>";
