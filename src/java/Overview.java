@@ -4,8 +4,15 @@
  */
 
 
+import db.DBConnector;
+import java.sql.*;
+import exceptions.MySQLException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +36,21 @@ public class Overview extends HttpServlet {
         response.setContentType("application/xml");
         PrintWriter out = response.getWriter();
         try {
-            String htmlOutput = ("TO-DO");
+            Connection c = DBConnector.getConnection();
+            int modulesCount = getModulesCount(c, request.getSession().getAttribute("projectname").toString());
+            int doneCount = getModulesDoneCount(c, request.getSession().getAttribute("projectname").toString());
+            int divWidth = 200;
+            int progress = (divWidth*doneCount)/modulesCount;
+            String htmlOutput = "<div style=\"border:1px solid; width:" + divWidth + "px; height:100px; position:absolute;\"><div style=\"margin-left:30%; margin-top:35px; position:absolute\">Fortschritt " + (int)((float)progress*100/divWidth) + "%</div>"
+                                    + "<div style=\"border:1px solid blue; width:" + progress + "px; height:100px;\"></div>"
+                                + "</div>";
+
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite></root>";
             out.write(xmlResponse);
+        } catch (SQLException ex) {
+            Logger.getLogger(Overview.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MySQLException ex) {
+            Logger.getLogger(Overview.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             out.close();
         }
@@ -72,5 +91,33 @@ public class Overview extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private int getModulesCount(Connection c, String projectName) {
+        try {
+            PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM module WHERE projectname=?");
+            ps.setString(1, projectName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Overview.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
+    private int getModulesDoneCount(Connection c, String projectName) {
+        try {
+            PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM module WHERE projectname=? AND status='closed'");
+            ps.setString(1, projectName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Overview.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
 
 }
