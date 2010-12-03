@@ -13,7 +13,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,103 +36,64 @@ public class Modules extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("application/xml");
-        PrintWriter out = response.getWriter();
-        Connection c = null;
         try {
-            c = DBConnector.getConnection();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return;
-        }
-
-        if (request.getParameter("description") != null) {
-            ArrayList<String> members = getMembers(request.getParameter("membersToAdd"), request.getSession().getAttribute("projectname").toString(), c);
-            if (validateModuleName(request.getParameter("name").toString(),request.getSession().getAttribute("projectname").toString(), c)) {
-                saveMouleToDB(members, request.getParameter("name"), request.getParameter("description"), request.getParameter("startDate"), request.getParameter("endDate"), request.getParameter("prio"), request.getSession().getAttribute("projectname").toString(), c);
-                if (members.contains(request.getSession().getAttribute("user").toString())) {
-                    int modulid = getModulId(request.getSession().getAttribute("projectname").toString(), request.getParameter("name"), c);
-                    ((ArrayList<Integer>)request.getSession().getAttribute("modules")).add(modulid);
-                }
-            } else {
-                String xmlResponse = "<root><htmlSeite><![CDATA[Der Name " + request.getParameter("name").toString() + " ist in diesem Projekt bereits vorhanden]]></htmlSeite><modulesCount>0</modulesCount><error>1</error></root>";
-                out.write(xmlResponse);
-                try {
-                    c.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                return;
-            }
-        } else {
-            if(request.getParameter("addModule") != null) {
-                String htmlOutput =
-                        "<table border=\"0\">" +
-                            "<tbody><tr><td>Name:</td><td><input id=\"name\" size=\"40\" maxlength=\"40\" type=\"text\"></td></tr>" +
-                                "<tr><td valign=\"top\">Beschreibung:</td><td><textarea id=\"description\" cols=\"30\" rows=\"6\" maxlength=\"400\" onkeypress=\"ismaxlength(this)\"></textarea></td></tr>" +
-                                "<tr><td>Priorität:</td><td><select size=\"1\" id=\"prio\"><option>1</option><option>2</option><option>3</option></select><div style=\"background-image:url(grafik/question_mark.png); width:25px; height:22px; position:absolute; margin-left: 40px; margin-top: -22px;\" onclick=\"showHint(this, '1 is die höchste prio')\"></div></td></tr>" +
-                                "<tr><td>Start:</td><td>Tag: <input id=\"startDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"startMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"startYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" +
-                                "<tr><td>Ende:</td><td>Tag: <input id=\"endDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"endMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"endYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" +
-                                "<tr><td>Mitglied zuweisen:</td><td><select id=\"selectMember\">" + getAllMembers(request.getSession().getAttribute("projectname").toString(), c) + "</select><input value=\"einfügen\" type=\"button\" onclick=\"addMemberToModuleBox()\"/><input value=\"loeschen\" type=\"button\" onclick=\"removeMemberFromModuleBox()\"/></td></tr>" +
-                            "</tbody>" +
-                        "</table>" +
-                        "<div id=\"membersInModuleBox\" style=\"position:absolute; border: 1px dashed; margin-left: 50px; width: 300px; height: 120px; display:none\"></div><button onclick=\"saveModule()\" style=\"margin-left: 354px; font: 12px Arial; padding-top:1px; padding-left:0px; padding-right:0px; position: absolute; margin-top: -27px;\">speichern</button>";
-                out.write(htmlOutput);
-                try {
-                    c.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                return;
-            } else {
-                if (request.getParameter("addToModule") != null) {
-                    addMeToModule(request.getSession().getAttribute("user").toString(), request.getParameter("addToModule").toString(), c);
-                    ((ArrayList<Integer>)request.getSession().getAttribute("modules")).add(Integer.parseInt(request.getParameter("addToModule")));
+            response.setContentType("application/xml");
+            PrintWriter out = response.getWriter();
+            Connection c = DBConnector.getConnection();
+            if (request.getParameter("description") != null) {
+                ArrayList<String> members = getMembers(request.getParameter("membersToAdd"), request.getSession().getAttribute("projectname").toString(), c);
+                if (validateModuleName(request.getParameter("name").toString(), request.getSession().getAttribute("projectname").toString(), c)) {
+                    saveMouleToDB(members, request.getParameter("name"), request.getParameter("description"), request.getParameter("startDate"), request.getParameter("endDate"), request.getParameter("prio"), request.getSession().getAttribute("projectname").toString(), c);
+                    if (members.contains(request.getSession().getAttribute("user").toString())) {
+                        int modulid = getModulId(request.getSession().getAttribute("projectname").toString(), request.getParameter("name"), c);
+                        ((ArrayList<Integer>) request.getSession().getAttribute("modules")).add(modulid);
+                    }
                 } else {
-                    if (request.getParameter("moduleDescriptionId") != null) {
-                        out.write(getModuleDescription(request.getParameter("moduleDescriptionId"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
-                        try {
-                            c.close();
-                        } catch (SQLException ex) {
-                            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        return;
+                    String xmlResponse = "<root><htmlSeite><![CDATA[Der Name " + request.getParameter("name").toString() + " ist in diesem Projekt bereits vorhanden]]></htmlSeite><modulesCount>0</modulesCount><error>1</error></root>";
+                    out.write(xmlResponse);
+                    c.close();
+                    return;
+                }
+            } else {
+                if (request.getParameter("addModule") != null) {
+                    String htmlOutput = "<table border=\"0\">" + "<tbody><tr><td>Name:</td><td><input id=\"name\" size=\"40\" maxlength=\"40\" type=\"text\"></td></tr>" + "<tr><td valign=\"top\">Beschreibung:</td><td><textarea id=\"description\" cols=\"30\" rows=\"6\" maxlength=\"400\" onkeypress=\"ismaxlength(this)\"></textarea></td></tr>" + "<tr><td>Priorität:</td><td><select size=\"1\" id=\"prio\"><option>1</option><option>2</option><option>3</option></select><div style=\"background-image:url(grafik/question_mark.png); background-repeat:no-repeat; width:25px; height:22px; position:absolute; margin-left: 40px; margin-top: -22px;\" onclick=\"showHint(this, '1 is die höchste prio')\"></div></td></tr>" + "<tr><td>Start:</td><td>Tag: <input id=\"startDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"startMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"startYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" + "<tr><td>Ende:</td><td>Tag: <input id=\"endDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"endMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"endYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" + "<tr><td>Mitglied zuweisen:</td><td><select id=\"selectMember\">" + getAllMembers(request.getSession().getAttribute("projectname").toString(), c) + "</select><input value=\"einfügen\" type=\"button\" onclick=\"addMemberToModuleBox()\"/><input value=\"loeschen\" type=\"button\" onclick=\"removeMemberFromModuleBox()\"/></td></tr>" + "</tbody>" + "</table>" + "<div id=\"membersInModuleBox\" style=\"position:absolute; border: 1px dashed; margin-left: 50px; width: 300px; height: 120px; display:none\"></div><button onclick=\"saveModule()\" style=\"margin-left: 354px; font: 12px Arial; padding-top:1px; padding-left:0px; padding-right:0px; position: absolute; margin-top: -27px;\">speichern</button>";
+                    out.write(htmlOutput);
+                    c.close();
+                    return;
+                } else {
+                    if (request.getParameter("addToModule") != null) {
+                        addMeToModule(request.getSession().getAttribute("user").toString(), request.getParameter("addToModule").toString(), c);
+                        ((ArrayList<Integer>) request.getSession().getAttribute("modules")).add(Integer.parseInt(request.getParameter("addToModule")));
                     } else {
-                        if (request.getParameter("changeStatus") != null) {
-                            out.write(setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c));
-                            try {
-                                c.close();
-                            } catch (SQLException ex) {
-                                Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                        if (request.getParameter("moduleDescriptionId") != null) {
+                            out.write(getModuleDescription(request.getParameter("moduleDescriptionId"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
+                            c.close();
                             return;
                         } else {
-                            if (request.getParameter("deleteModule") != null) {
-                                deleteModule(request.getParameter("deleteModule"), c);
+                            if (request.getParameter("changeStatus") != null) {
+                                out.write(setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c));
+                                c.close();
+                                return;
                             } else {
-                                if (request.getParameter("removeFromModule") != null) {
-                                    removeMeFromModule(request.getSession().getAttribute("user").toString(), Integer.parseInt(request.getParameter("removeFromModule")), c);
-                                    ((ArrayList<Integer>)request.getSession().getAttribute("modules")).remove((Integer)Integer.parseInt(request.getParameter("removeFromModule")));
+                                if (request.getParameter("deleteModule") != null) {
+                                    deleteModule(request.getParameter("deleteModule"), c);
                                 } else {
-                                    if (request.getParameter("saveMessage") != null) {
-                                        saveMessageToDB(request.getParameter("saveMessage"), request.getParameter("id"), request.getSession().getAttribute("name").toString(), request.getSession().getAttribute("user").toString(),  c);
-                                        out.write(getModuleDescription(request.getParameter("id"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
-                                        try {
-                                            c.close();
-                                        } catch (SQLException ex) {
-                                            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-                                        return;
+                                    if (request.getParameter("removeFromModule") != null) {
+                                        removeMeFromModule(request.getSession().getAttribute("user").toString(), Integer.parseInt(request.getParameter("removeFromModule")), c);
+                                        ((ArrayList<Integer>) request.getSession().getAttribute("modules")).remove((Integer) Integer.parseInt(request.getParameter("removeFromModule")));
                                     } else {
-                                        if (request.getParameter("deleteMessageId") != null) {
-                                            deleteMessage(request.getParameter("deleteMessageId"), request.getParameter("modulid"), c);
-                                            out.write(getModuleDescription(request.getParameter("modulid"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
-                                            try {
-                                                c.close();
-                                            } catch (SQLException ex) {
-                                                Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-                                            }
+                                        if (request.getParameter("saveMessage") != null) {
+                                            saveMessageToDB(request.getParameter("saveMessage"), request.getParameter("id"), request.getSession().getAttribute("name").toString(), request.getSession().getAttribute("user").toString(), c);
+                                            out.write(getModuleDescription(request.getParameter("id"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
+                                            c.close();
                                             return;
+                                        } else {
+                                            if (request.getParameter("deleteMessageId") != null) {
+                                                deleteMessage(request.getParameter("deleteMessageId"), request.getParameter("modulid"), c);
+                                                out.write(getModuleDescription(request.getParameter("modulid"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
+                                                c.close();
+                                                return;
+                                            }
                                         }
                                     }
                                 }
@@ -142,41 +102,39 @@ public class Modules extends HttpServlet {
                     }
                 }
             }
-        }
-
-
-        ArrayList<String> names, status;
-        names = new ArrayList<String>();
-        status = new ArrayList<String>();
-        ArrayList<Integer> ids = new ArrayList<Integer>();
-
-        getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids, c);
-        String htmlOutput = "<table border=\"0\" style=\"border-collapse:collapse; position:absolute;\" >"
-                + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
-        for (int i = 0; i < names.size(); i++) {
-            htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\">" + names.get(i) + "</td>"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i),ids.get(i)) + "</td>";
-            if (!((ArrayList<Integer>)request.getSession().getAttribute("modules")).contains(ids.get(i))) {
-                htmlOutput += "<td><input type=\"button\" value=\"Teilnehmen\" onclick=\"addMeToModule(" + ids.get(i) + ")\"/></td>";
-            } else {
-                htmlOutput += "<td><input type=\"button\" value=\"Aufh&ouml;ren\" onclick=\"removeMeFromModule(" + ids.get(i) + ")\"/></td>";
+            ArrayList<String> names;
+            ArrayList<String> status;
+            names = new ArrayList<String>();
+            status = new ArrayList<String>();
+            ArrayList<Integer> ids = new ArrayList<Integer>();
+            getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids, c);
+            String htmlOutput = "<table border=\"0\" style=\"border-collapse:collapse; position:absolute;\" >" + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
+            for (int i = 0; i < names.size(); i++) {
+                htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\">" + names.get(i) + "</td>" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), ids.get(i)) + "</td>";
+                if (!((ArrayList<Integer>) request.getSession().getAttribute("modules")).contains(ids.get(i))) {
+                    htmlOutput += "<td><input type=\"button\" value=\"Teilnehmen\" onclick=\"addMeToModule(" + ids.get(i) + ")\"/></td>";
+                } else {
+                    htmlOutput += "<td><input type=\"button\" value=\"Aufh&ouml;ren\" onclick=\"removeMeFromModule(" + ids.get(i) + ")\"/></td>";
+                }
+                htmlOutput += "</tr>";
             }
-            htmlOutput += "</tr>";
-        }
-        if (request.getSession().getAttribute("status").equals("PL")) {
-            htmlOutput += "<tr><td colspan=\"2\"><input type=\"button\" value=\"Neue Aufgabe anlegen\" onclick=\"addModule()\"/></td></tr>";
-        }
-        htmlOutput += "</table>";
-        htmlOutput += "<div id=\"addModule\"></div>";
-        htmlOutput += "<div id=\"statusBox\" style=\"height:35px; width:393px; position:absolute; margin-left:309px; margin-top:468px;\"></div>";
-        String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>0</error></root>";
-        out.write(xmlResponse);
-        out.close();
-        try {
+            if (request.getSession().getAttribute("status").equals("PL")) {
+                htmlOutput += "<tr><td colspan=\"2\"><input type=\"button\" value=\"Neue Aufgabe anlegen\" onclick=\"addModule()\"/></td></tr>";
+            }
+            htmlOutput += "</table>";
+            htmlOutput += "<div id=\"addModule\"></div>";
+            htmlOutput += "<div id=\"statusBox\" style=\"height:35px; width:393px; position:absolute; margin-left:309px; margin-top:468px;\"></div>";
+            String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>0</error></root>";
+            out.write(xmlResponse);
+            out.close();
             c.close();
         } catch (SQLException ex) {
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MySQLException ex) {
+            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException nex) {
+            request.getSession().invalidate();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Logout");
         }
     } 
 

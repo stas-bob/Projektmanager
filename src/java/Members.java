@@ -37,65 +37,70 @@ public class Members extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("application/xml");
-        PrintWriter out = response.getWriter();
-        HttpSession seas = request.getSession();
-
-        if (request.getParameter("deleteEmail") != null) {
-            String email = request.getParameter("deleteEmail");
-            deleteUser(email);
-        } else {
-            if (request.getParameter("addName") != null) {
-                String userName = request.getParameter("addName");
-                String userEmail = request.getParameter("addEmail");
-                if(new ValidateEmailServlet().validateEmail(userEmail).equals("0")) {
-                    new Registrieren().activate(userName,
-                        "empty",
-                        userEmail,
-                        request.getSession().getAttribute("projectname").toString(), true);
-                } else {
-                    out.write("1");
-                }
+        try {
+            response.setContentType("application/xml");
+            PrintWriter out = response.getWriter();
+            HttpSession seas = request.getSession();
+            Connection c = DBConnector.getConnection();
+            if (request.getParameter("deleteEmail") != null) {
+                String email = request.getParameter("deleteEmail");
+                deleteUser(email, c);
             } else {
-                if (request.getParameter("userDescription") != null) {
-                    out.write(getUserDescription(request.getParameter("userDescription")));
-                    return;
+                if (request.getParameter("addName") != null) {
+                    String userName = request.getParameter("addName");
+                    String userEmail = request.getParameter("addEmail");
+                    if (new ValidateEmailServlet().validateEmail(userEmail).equals("0")) {
+                        new Registrieren().activate(userName, "empty", userEmail, request.getSession().getAttribute("projectname").toString(), true);
+                    } else {
+                        out.write("1");
+                    }
                 } else {
-                    if (request.getParameter("changeStatus") != null) {
-                        out.write(setStatusOnDB(request.getParameter("changeStatus"), request.getParameter("email"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString()));
+                    if (request.getParameter("userDescription") != null) {
+                        out.write(getUserDescription(request.getParameter("userDescription"), c));
+                        c.close();
                         return;
+                    } else {
+                        if (request.getParameter("changeStatus") != null) {
+                            out.write(setStatusOnDB(request.getParameter("changeStatus"), request.getParameter("email"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
+                            c.close();
+                            return;
+                        }
                     }
                 }
             }
-        }
-        ArrayList<String> names, emails, status;
-        names = new ArrayList<String>();
-        emails = new ArrayList<String>();
-        status = new ArrayList<String>();
-
-        getMembers(seas.getAttribute("projectname").toString(), names, emails, status);
-        String htmlOutput = "<div id=\"userDescription\"></div>"
-                + "<table border=\"0\" style=\"border-collapse:collapse\">"
-                + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
-        for (int i = 0; i < names.size(); i++) {
-            htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">"
-                    + "<td style=\"border: 1px solid; padding-left: 10px;  padding-right: 10px; cursor:pointer;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>"
-                    + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), emails.get(i)) + "</td>";
-                    if (request.getSession().getAttribute("status").equals("PL")) {
-                        if (!request.getSession().getAttribute("user").equals(emails.get(i))) {
-                            htmlOutput += "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>";
-                        }
+            ArrayList<String> names;
+            ArrayList<String> emails;
+            ArrayList<String> status;
+            names = new ArrayList<String>();
+            emails = new ArrayList<String>();
+            status = new ArrayList<String>();
+            getMembers(seas.getAttribute("projectname").toString(), names, emails, status, c);
+            String htmlOutput = "<div id=\"userDescription\"></div>" + "<table border=\"0\" style=\"border-collapse:collapse\">" + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
+            for (int i = 0; i < names.size(); i++) {
+                htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" + "<td style=\"border: 1px solid; padding-left: 10px;  padding-right: 10px; cursor:pointer;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), emails.get(i)) + "</td>";
+                if (request.getSession().getAttribute("status").equals("PL")) {
+                    if (!request.getSession().getAttribute("user").equals(emails.get(i))) {
+                        htmlOutput += "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>";
                     }
-            htmlOutput += "</tr>";
+                }
+                htmlOutput += "</tr>";
+            }
+            htmlOutput += "</table>" + "<div id=\"addUserField\"></div>";
+            if (request.getSession().getAttribute("status").equals("PL")) {
+                htmlOutput += "<div><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></div>";
+            }
+            String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><membersCount>" + names.size() + "</membersCount></root>";
+            out.write(xmlResponse);
+            out.close();
+            c.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Members.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MySQLException ex) {
+            Logger.getLogger(Members.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException nex) {
+            request.getSession().invalidate();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Logout");
         }
-        htmlOutput += "</table>"
-                    + "<div id=\"addUserField\"></div>";
-        if (request.getSession().getAttribute("status").equals("PL")) {
-            htmlOutput += "<div><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></div>";
-        }
-        String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><membersCount>" + names.size() + "</membersCount></root>";
-        out.write(xmlResponse);
-        out.close();
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -134,9 +139,8 @@ public class Members extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void getMembers(String projectName, ArrayList<String> names, ArrayList<String> emails, ArrayList<String> status) {
+    private void getMembers(String projectName, ArrayList<String> names, ArrayList<String> emails, ArrayList<String> status, Connection c) {
         try {
-            Connection c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("SELECT name, email, status FROM user WHERE projectname=?");
             ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
@@ -153,9 +157,8 @@ public class Members extends HttpServlet {
     }
 
 
-   private void deleteUser(String email) {
+   private void deleteUser(String email, Connection c) {
         try {
-            Connection c = null;
             String sql = "";
             try {
                 c = DBConnector.getConnection();
@@ -185,9 +188,8 @@ public class Members extends HttpServlet {
         }
     }
 
-public String getUserDescription(String email) {
+public String getUserDescription(String email, Connection c) {
         try {
-            Connection c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("SELECT name, firstname, status FROM user where email = ?");
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
@@ -205,19 +207,16 @@ public String getUserDescription(String email) {
             ps.close();
             c.close();
             return null;
-        } catch (MySQLException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
    }
 
-    private String setStatusOnDB(String status, String email, String myStatus, String myEmail) {
+    private String setStatusOnDB(String status, String email, String myStatus, String myEmail, Connection c) {
         if (myStatus.equals("PL")) {
             if (!myEmail.equals(email)) {
                 try {
-                    Connection c = null;
                     try {
                         c = DBConnector.getConnection();
                         c.setAutoCommit(false);

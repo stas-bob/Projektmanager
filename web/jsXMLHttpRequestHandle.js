@@ -75,6 +75,10 @@ function callbackModules() {
                 }
                 document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
             }
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -167,6 +171,10 @@ function callbackAddModule() {
             document.getElementById("content").style.height = 500 + "px";
             document.getElementById("statusBox").style.marginTop = 468 + "px";
             document.getElementById("addModule").innerHTML = xmlHttp.responseText;
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -311,6 +319,10 @@ function callbackShowModuleDescription() {
                 document.getElementById("addModule").style.border = "0px";
                 document.getElementById("addModule").innerHTML = html[0].childNodes[0].nodeValue;
             }
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -326,6 +338,10 @@ function callbackShowUserDescription() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
             document.getElementById("userDescription").innerHTML = xmlHttp.responseText;
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -356,7 +372,11 @@ function callbackValidateProject() {
                 document.getElementById('statusProjectname').innerHTML = "Projektname schon vergeben!";
             }
         } else {
-            document.getElementById('statusProjectname').innerHTML = "Fehler bei der Valiedierung des Projektnamens";
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            } else {
+                document.getElementById('statusProjectname').innerHTML = "Fehler bei der Valiedierung des Projektnamens";
+            }
         }
     }
 }
@@ -394,8 +414,12 @@ function callbackValidateEmail() {
                 document.getElementById('button').disabled = true;
             }
         } else {
-            document.getElementById('statusEmail').innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
-            document.getElementById('button').disabled = true;
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            } else {
+                document.getElementById('statusEmail').innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
+                document.getElementById('button').disabled = true;
+            }
         }
     }
 }
@@ -432,6 +456,10 @@ function callback()
                 document.write("<a href='Login.html'>Registrierung erfolgreich! Ihnen wurde eine E-Mail zugestellt mit ihren Zugangsdaten.</a>");
             else
                 document.getElementById("statusSubmit").innerHTML = "Es gab einen Fehler";
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -446,6 +474,10 @@ function callbackMembers() {
                 document.getElementById("content").style.height = membersCount*40 + "px";
             }
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -471,7 +503,11 @@ function callbackLogout()
         if (xmlHttp.status == 200) {
             document.write(xmlHttp.responseText);
         } else {
-            document.write("<a href='Login.html'>Schwerwiegender Fehler.</a>");
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            } else {
+                document.write("<a href='Login.html'>Schwerwiegender Fehler.</a>");
+            }
         }
     }
 }
@@ -496,6 +532,10 @@ function callbackOverview() {
             var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -513,6 +553,10 @@ function callbackProfile() {
             var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -530,6 +574,10 @@ function callbackTimes() {
             var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            }
         }
     }
 }
@@ -562,6 +610,10 @@ function callbackPassword() {
         if (xmlHttp.status == 200) {
             document.getElementById("returnChangePasswordText").innerHTML = xmlHttp.responseText;
             document.getElementById("statusChangePassowrd").innerHTML = "";
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+               window.location.href = "Login.html";
+            }
         }
     }
 }
