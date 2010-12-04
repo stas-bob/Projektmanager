@@ -123,7 +123,6 @@ public class Modules extends HttpServlet {
             }
             htmlOutput += "</table>";
             htmlOutput += "<div id=\"addModule\"></div>";
-            htmlOutput += "<div id=\"statusBox\" style=\"height:35px; width:393px; position:absolute; margin-left:309px; margin-top:468px;\"></div>";
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>0</error></root>";
             out.write(xmlResponse);
             out.close();

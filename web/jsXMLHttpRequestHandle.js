@@ -24,7 +24,6 @@ function deleteModule(id) {
 }
 
 function showModules() {
-    document.getElementById("content").style.height = 500 + "px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules", true);
     xmlHttp.onreadystatechange = callbackModules;
@@ -32,8 +31,6 @@ function showModules() {
 }
 
 function addMeToModule(id) {
-    document.getElementById("content").style.height = 500 + "px";
-    document.getElementById("statusBox").style.marginTop = 468 + "px";
     document.getElementById("statusBox").innerHTML = "Bitte warten ...";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?addToModule="+id, true);
@@ -42,8 +39,6 @@ function addMeToModule(id) {
 }
 
 function removeMeFromModule(id) {
-    document.getElementById("content").style.height = 500 + "px";
-    document.getElementById("statusBox").style.marginTop = 468 + "px";
     document.getElementById("statusBox").innerHTML = "Bitte warten ...";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?removeFromModule="+id, true);
@@ -71,7 +66,7 @@ function callbackModules() {
                 document.getElementById("statusBox").innerHTML = html[0].childNodes[0].nodeValue;
             } else {
                 if (modulesCount > 10) {
-                    document.getElementById("content").style.height = modulesCount*40 + "px";
+                //    document.getElementById("content").style.height = modulesCount*40 + "px";
                 }
                 document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
             }
@@ -84,7 +79,6 @@ function callbackModules() {
 }
 
 function showMembers() {
-    document.getElementById("content").style.height = 500 + "px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Members", true);
     xmlHttp.onreadystatechange = callbackMembers;
@@ -168,8 +162,6 @@ function addModule() {
 function callbackAddModule() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            document.getElementById("content").style.height = 500 + "px";
-            document.getElementById("statusBox").style.marginTop = 468 + "px";
             document.getElementById("addModule").innerHTML = xmlHttp.responseText;
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
@@ -280,8 +272,6 @@ function showModuleDescription(id) {
 }
 
 function changeModuleStatus(status, id) {
-    document.getElementById("content").style.height = 500 + "px";
-    document.getElementById("statusBox").style.marginTop = 420 + "px";
     document.getElementById("addModule").innerHTML = "";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?changeStatus=" + status + "&id=" + id, true);
@@ -303,19 +293,11 @@ function callbackShowModuleDescription() {
         if (xmlHttp.status == 200) {
             var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
-            var modulesCount = xmlobject.getElementsByTagName("modulesCount")[0].childNodes[0].nodeValue;
             var error = xmlobject.getElementsByTagName("error")[0].childNodes[0].nodeValue;
             document.getElementById("statusBox").innerHTML = "";
             if (error > 0) {
                 document.getElementById("statusBox").innerHTML = html[0].childNodes[0].nodeValue;
             } else {
-                if (modulesCount > 0) {
-                    document.getElementById("content").style.height = 500 + modulesCount*136 + "px";
-                    document.getElementById("statusBox").style.marginTop = 353 + modulesCount*136 + "px";
-                } else {
-                    document.getElementById("content").style.height = 500 + "px";
-                    document.getElementById("statusBox").style.marginTop = 468 + "px";
-                }
                 document.getElementById("addModule").style.border = "0px";
                 document.getElementById("addModule").innerHTML = html[0].childNodes[0].nodeValue;
             }
@@ -427,7 +409,6 @@ function callbackValidateEmail() {
 
 function startAsync(servlet)
 {
-    document.getElementById("content").style.height = 500 + "px";
     createXMLHttpRequest();
     xmlHttp.open('POST',servlet, true);
     xmlHttp.onreadystatechange = callback;
@@ -471,7 +452,7 @@ function callbackMembers() {
             var html = xmlobject.getElementsByTagName("htmlSeite");
             var membersCount = xmlobject.getElementsByTagName("membersCount")[0].childNodes[0].nodeValue;
             if (membersCount > 10) {
-                document.getElementById("content").style.height = membersCount*40 + "px";
+            //    document.getElementById("content").style.height = membersCount*40 + "px";
             }
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
         } else {
