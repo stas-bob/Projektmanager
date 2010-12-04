@@ -152,7 +152,7 @@ public class MainServlet extends HttpServlet {
         }
         sb.append("</div>");
         sb.append("</div>");
-        sb.append("<div id=\"statusBox\" style=\"text-align:center; border: 1px solid; height: 35px; margin-left: 334px; margin-top: 481px; position: absolute;width: 827px;\"></div>");
+        sb.append("<div id=\"statusBox\" style=\"text-align:center; border: 1px solid; height: 35px; margin-left: 334px; margin-top: 100px; position: absolute;width: 827px;\"></div>");
         sb.append("</body>");
         sb.append("</html>");
         return sb.toString();
