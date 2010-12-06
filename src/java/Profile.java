@@ -69,7 +69,6 @@ public class Profile extends HttpServlet {
                 .append("<table>")
                 .append("<tr>")
                 .append("<th><input type=\"button\" value=\"&Auml;ndern\" onclick=\"changePassword()\" /></th>")
-                .append("<th><div id=\"statusChangePassowrd\"></th>")
                 .append("</table>")
                 .append("<div id=\"returnChangePasswordText\"></div>")
                 .append("</div>");

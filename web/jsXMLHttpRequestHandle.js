@@ -590,7 +590,7 @@ function showHint(element, text) {
 }
 
 function changePassword() {
-    document.getElementById("statusChangePassowrd").innerHTML = "Bitte warten...";
+    document.getElementById("statusBox").innerHTML = "Bitte warten...";
     var oldPassword = document.getElementById("oldPassword").value;
     var newPassword = document.getElementById("newPassword").value;
     var validatePassword = document.getElementById("validatePassword").value;
@@ -605,7 +605,7 @@ function callbackPassword() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
             document.getElementById("returnChangePasswordText").innerHTML = xmlHttp.responseText;
-            document.getElementById("statusChangePassowrd").innerHTML = "";
+            document.getElementById("statusBox").innerHTML = "";
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                window.location.href = "Login.html";
@@ -616,4 +616,34 @@ function callbackPassword() {
 
 function pressedMenueButton(element) {
     element.style.backgroundImage = "url:(grafik/button_pressed.png)";
+}
+
+function saveTimes() {
+    document.getElementById("statusBox").innerHTML = "Bitte warten...";
+    var modul = document.getElementById("modul").value;
+    var date = document.getElementById("date").value;
+    var start = document.getElementById("start").value;
+    var end = document.getElementById("end").value;
+    var description = document.getElementById("description").value;
+    
+    var servlet = "/Projektmanager/Times?modul=" + modul + "&date=" + date + "&start=" + start + "&end=" + end + "&description=" + description;
+    xmlHttp.open('POST',servlet, true);
+    xmlHttp.onreadystatechange = callbackSaveTimes;
+    xmlHttp.send();
+}
+
+function callbackSaveTimes() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+            var status = xmlobject.getElementsByTagName("error");
+            if (status == "") {
+                document.getElementById("statusBox").innerHTML = "";
+            } else {
+                document.getElementById("statusBox").innerHTML = status[0].childNodes[0].nodeValue;
+            }
+        }
+    }
 }
