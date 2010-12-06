@@ -252,7 +252,7 @@ public class Modules extends HttpServlet {
                     + "<tr><td height=\"10\"></td></tr>";
                 }
                 htmlOutput += "<tr style=\"border: 1px solid;\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></tr>"
-                            + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"58\" rows=\"5\"></textarea></tr>"
+                            + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"58\" rows=\"5\" maxlength=\"150\" onkeypress=\"ismaxlength(this)\"></textarea></tr>"
                             + "<tr align=\"right\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></tr>"
                             + "</table>";
                 return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error></root>";
