@@ -208,11 +208,14 @@ function saveModule() {
             && parseInt(endYear)==endYear-0) {
 
 
-            if (startYear > endYear || startYear < 0 || endYear < 0) {
+            if (startYear > endYear || startYear < 0 || endYear < 0 || startYear.length != 2 && startYear.length != 4 || endYear.length != 2 && endYear.length != 4) {
                 if (startYear < 0 || endYear < 0) {
                     document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuelaessig (Jahr)";
                 } else {
                     document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Jahr)";
+                }
+                if (startYear.length != 2 && startYear.length != 4 || endYear.length != 2 && endYear.length != 4) {
+                    document.getElementById("statusBox").innerHTML = "Das Jahr ist vom Format XX oder XXXX (Jahr)";
                 }
                 return;
             } else {
