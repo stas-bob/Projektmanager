@@ -208,18 +208,30 @@ function saveModule() {
             && parseInt(endYear)==endYear-0) {
 
 
-            if (startYear > endYear) {
-                document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Jahr)";
+            if (startYear > endYear || startYear < 0 || endYear < 0) {
+                if (startYear < 0 || endYear < 0) {
+                    document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuelaessig (Jahr)";
+                } else {
+                    document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Jahr)";
+                }
                 return;
             } else {
                 if (startYear == endYear) {
-                    if (startMonth > endMonth) {
-                        document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Monat)";
+                    if (startMonth > endMonth || startMonth > 12 || startMonth < 1 || endMonth > 12 || endMonth < 1) {
+                        if (startMonth > 12 || startMonth < 1 || endMonth > 12 || endMonth < 1) {
+                            document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuelaessig (Monat)";
+                        } else {
+                            document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Monat)";
+                        }
                         return;
                     } else {
                         if (startMonth == endMonth) {
-                            if (startDay > endDay) {
-                                document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Tag)";
+                            if (startDay > endDay || startDay > 31 || startDay < 1 || endDay > 31 || endDay < 1) {
+                                if (startDay > 31 || startDay < 1 || endDay > 31 || endDay < 1) {
+                                    document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuelaessig (Tag)";
+                                } else {
+                                    document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Tag)";
+                                }
                                 return;
                             }
                         }
