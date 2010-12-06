@@ -248,11 +248,11 @@ public class Modules extends HttpServlet {
                     if (email.get(i).equals(myEmail)) {
                         htmlOutput += "<button style=\"margin-left:330px\" onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></tr>";
                     }
-                    htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px;\" height:100px;>" + messages.get(i) + "</div></tr>"
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px; overflow: auto;\">" + messages.get(i) + "</div></tr>"
                     + "<tr><td height=\"10\"></td></tr>";
                 }
                 htmlOutput += "<tr style=\"border: 1px solid;\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></tr>"
-                            + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"58\" rows=\"5\" maxlength=\"150\" onkeypress=\"ismaxlength(this)\"></textarea></tr>"
+                            + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"58\" rows=\"5\" maxlength=\"210\" onkeypress=\"ismaxlength(this)\"></textarea></tr>"
                             + "<tr align=\"right\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></tr>"
                             + "</table>";
                 return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error></root>";
