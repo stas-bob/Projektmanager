@@ -44,6 +44,7 @@ public class Times extends HttpServlet {
         String user = request.getSession().getAttribute("user").toString();
         int user_id = Integer.parseInt(request.getSession().getAttribute("user_id").toString());
         String status = "";
+        String input= "";
         try {
             c = DBConnector.getConnection();
 
@@ -76,6 +77,13 @@ public class Times extends HttpServlet {
                 if (status.equals("")) {
                     insertTime(c, user_id, modul_id, date, start, end, description);
                     status = "Speichern erfolgreich";
+                } else {
+                    input = "<modul>" + request.getParameter("modul").toString() + "</modul>"
+                        + "<date>" + request.getParameter("date").toString() + "</date>"
+                        + "<start>" + request.getParameter("start").toString() + "</start>"
+                        + "<end>" + request.getParameter("end").toString() + "</end>"
+                        + "<description>" + request.getParameter("description").toString() + "</description>"
+                        + "</root>";
                 }
             }
             try {
@@ -137,7 +145,12 @@ public class Times extends HttpServlet {
                         .append("</tr>");
                 htmlOutput.append(getTimes(c, user_id));
                 htmlOutput.append("</table>");
-                String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite><status>" + status +  "</status></root>";
+                String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite>"
+                        + "<status>" + status +  "</status>";
+                if (input.equals("")) {
+                    xmlResponse = xmlResponse + input;
+                }
+                xmlResponse = xmlResponse + "</root>";
                 out.write(xmlResponse);
             } finally {
                 c.close();
@@ -339,7 +352,6 @@ public class Times extends HttpServlet {
                     .append("<tr><th>Gesamt:</th>")
                     .append("<th>&#160;</th><th>&#160;</th>")
                     .append("<th>").append(new Time(totalHour, totalMinute, 0)).append("</th><th>&#160;</th><th>&#160;</th></tr>");
-            System.out.println(new Time(totalHour, totalMinute, 0));
             return sb.toString();
         } catch (SQLException ex) {
             ex.printStackTrace();
