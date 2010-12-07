@@ -644,12 +644,9 @@ function callbackSaveTimes() {
             var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
-            var status = xmlobject.getElementsByTagName("error");
-            if (status == "") {
-                document.getElementById("statusBox").innerHTML = "";
-            } else {
-                document.getElementById("statusBox").innerHTML = status[0].childNodes[0].nodeValue;
-            }
+            
+            var status = xmlobject.getElementsByTagName("status")[0].childNodes[0].nodeValue;
+            document.getElementById("statusBox").innerHTML = status;
         }
     }
 }

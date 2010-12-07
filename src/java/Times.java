@@ -43,29 +43,40 @@ public class Times extends HttpServlet {
 
         String user = request.getSession().getAttribute("user").toString();
         int user_id = Integer.parseInt(request.getSession().getAttribute("user_id").toString());
-        String error = "";
+        String status = "";
         try {
             c = DBConnector.getConnection();
 
             if (request.getParameter("modul") != null) {
-                int modul_id = getModulId(c, request.getParameter("modul").toString());
+                int modul_id = -1;
+                if (request.getParameter("modul").toString().equals("")) {
+                    status = "Sie müssen ein Modul angeben";
+                } else {
+                    modul_id = getModulId(c, request.getParameter("modul").toString());
+                }
+
                 Date date = getDate(request.getParameter("date").toString());
-                if (date == null) {
-                    error = "Fehler beim Datum";
+                if (date == null && status.equals("")) {
+                    status = "Fehler beim Datum. Bitte verwenden Sie folgende Schreibweise: dd.mm.yyyy";
                 }
                 Time start = getTime(request.getParameter("start").toString());
-                if (start == null) {
-                    error = "Fehler bei der Startzeit";
+                if (start == null && status.equals("")) {
+                    status = "Fehler bei der Startzeit. Bitte verwenden Sie folgende Schreibweise: hh:mm";
                 }
                 Time end = getTime(request.getParameter("end").toString());
-                if (end == null) {
-                    error = "Fehler bei der Endzeit";
+                if (end == null && status.equals("")) {
+                    status = "Fehler bei der Endzeit. Bitte verwenden Sie folgende Schreibweise: hh:mm";
                 }
-                if (end.getTime() < start.getTime()) {
-                    error = "Endzeit muss später sein als die Startzeit";
+                if (end != null && start != null && status.equals("")) {
+                    if (end.getTime() < start.getTime()) {
+                        status = "Endzeit muss später sein als die Startzeit";
+                    }
                 }
                 String description = request.getParameter("description").toString();
-                insertTime(c, user_id, modul_id, date, start, end, description);
+                if (status.equals("")) {
+                    insertTime(c, user_id, modul_id, date, start, end, description);
+                    status = "Speichern erfolgreich";
+                }
             }
             try {
                 
@@ -84,7 +95,7 @@ public class Times extends HttpServlet {
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<th>Datum:</th>")
-                        .append("<th><input type=\"text\" id=\"date\" name=\"date\" size=\"10\" maxlength=\"10\" />(dd-mm-yyyy)</th>")
+                        .append("<th><input type=\"text\" id=\"date\" name=\"date\" size=\"10\" maxlength=\"10\" />(dd.mm.yyyy)</th>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<th>Start:</th>")
@@ -94,10 +105,10 @@ public class Times extends HttpServlet {
                         .append("<th>Ende:</th>")
                         .append("<th><input type=\"text\" id=\"end\" name=\"end\" size=\"5\" maxlength=\"5\" />(hh:mm)</th>")
                         .append("</tr>")
-                        .append("<tr align=\"left\">")
-                        .append("<th>Dauer:</th>")
-                        .append("<th><input type=\"text\" id=\"duration\" name=\"duration\" id=\"duration\" size=\"5\" maxlength=\"5\" readonly /></th>")
-                        .append("</tr>")
+                        //.append("<tr align=\"left\">")
+                        //.append("<th>Dauer:</th>")
+                        //.append("<th><input type=\"text\" id=\"duration\" name=\"duration\" id=\"duration\" size=\"5\" maxlength=\"5\" readonly /></th>")
+                        //.append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<th>Beschreibung:</th>")
                         .append("<th><textarea id=\"description\" name=\"description\" cols=\"50\" rows=\"5\" maxlength=\"250\" ></textarea></th>")
@@ -105,8 +116,17 @@ public class Times extends HttpServlet {
                         .append("<tr align=\"left\">")
                         .append("<th><input type=\"button\" value=\"Speichern\" onclick=\"saveTimes()\"")
                         .append("</table>")
-                        .append("<br><br><br>")
+                        .append("<br><br>")
+                        .append("<br>")
                         .append("<table border=1>")
+                        .append("<colgroup>")
+                        .append("<col width=\"70\">")
+                        .append("<col width=\"70\">")
+                        .append("<col width=\"70\">")
+                        .append("<col width=\"70\">")
+                        .append("<col width=\"150\">")
+                        .append("<col width=\"400\">")
+                        .append("</colgroup>")
                         .append("<tr>")
                         .append("<th>Datum</th>")
                         .append("<th>Start</th>")
@@ -117,7 +137,7 @@ public class Times extends HttpServlet {
                         .append("</tr>");
                 htmlOutput.append(getTimes(c, user_id));
                 htmlOutput.append("</table>");
-                String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite><error>" + error +  "</error></root>";
+                String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite><status>" + status +  "</status></root>";
                 out.write(xmlResponse);
             } finally {
                 c.close();
@@ -221,18 +241,16 @@ public class Times extends HttpServlet {
         Date date = null;
 
         try {
-            day = Integer.parseInt(temp.substring(0, temp.indexOf("-")));
-            System.out.println(day);
+            day = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
             if (day > 31 || day < 1) {
                 return null;
             }
-            temp = temp.substring(temp.indexOf("-") + 1);
-            month = Integer.parseInt(temp.substring(0, temp.indexOf("-"))) - 1;
+            temp = temp.substring(temp.indexOf(".") + 1);
+            month = Integer.parseInt(temp.substring(0, temp.indexOf("."))) - 1;
             if (month > 12 || month < 1) {
                 return null;
             }
-            System.out.println(month);
-            temp = temp.substring(temp.indexOf("-") + 1);
+            temp = temp.substring(temp.indexOf(".") + 1);
             year = Integer.parseInt(temp);
             if (year >= 2000) {
                 year -= 1900;
@@ -240,10 +258,8 @@ public class Times extends HttpServlet {
             if (year < 0) {
                 return null;
             }
-            System.out.println(year);
 
             date = new Date(year, month, day);
-            System.out.println(date.toString());
         } catch (Exception ex) {
             return null;
         }
@@ -267,7 +283,6 @@ public class Times extends HttpServlet {
             }
 
             time = new Time(hour, minute, 0);
-            System.out.println(time.toString());
         } catch (Exception ex) {
             return null;
         }
@@ -298,6 +313,8 @@ public class Times extends HttpServlet {
             Time duration;
             int hour;
             int minute;
+            int totalHour = 0;
+            int totalMinute = 0;
             
             PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modul_id, description FROM time WHERE user_id = ? ORDER BY date DESC");
             ps.setInt(1, user_id);
@@ -307,6 +324,8 @@ public class Times extends HttpServlet {
                 end = rs.getTime("end");
                 hour = end.getHours() - start.getHours();
                 minute = end.getMinutes() - start.getMinutes();
+                totalHour = totalHour + hour;
+                totalMinute = totalMinute + minute;
                 duration = new Time(hour, minute, 0);
                 sb.append("<tr>")
                         .append("<th>").append(rs.getDate("date")).append("</th>")
@@ -314,8 +333,13 @@ public class Times extends HttpServlet {
                         .append("<th>").append(end).append("</th>")
                         .append("<th>").append(duration).append("</th>")
                         .append("<th>").append(getModulName(c, rs.getInt(4))).append("</th>")
-                        .append("<th>").append(rs.getString("description")).append("</th>");
+                        .append("<th align=\"left\">").append(rs.getString("description")).append("</th></tr>");
             }
+            sb.append("<tr><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th></tr>")
+                    .append("<tr><th>Gesamt:</th>")
+                    .append("<th>&#160;</th><th>&#160;</th>")
+                    .append("<th>").append(new Time(totalHour, totalMinute, 0)).append("</th><th>&#160;</th><th>&#160;</th></tr>");
+            System.out.println(new Time(totalHour, totalMinute, 0));
             return sb.toString();
         } catch (SQLException ex) {
             ex.printStackTrace();
