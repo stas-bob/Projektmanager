@@ -4,6 +4,7 @@
  */
 
 
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -39,12 +41,13 @@ public class Times extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/xml");
         PrintWriter out = response.getWriter();
+        HttpSession seas = request.getSession();
         Connection c = null;
 
         String user = request.getSession().getAttribute("user").toString();
         int user_id = Integer.parseInt(request.getSession().getAttribute("user_id").toString());
         String status = "";
-        String input= "";
+        String input= "<modul></modul><date></date><start></start><end></end><description></description>";
         try {
             c = DBConnector.getConnection();
 
@@ -56,9 +59,9 @@ public class Times extends HttpServlet {
                     modul_id = getModulId(c, request.getParameter("modul").toString());
                 }
 
-                Date date = getDate(request.getParameter("date").toString());
+                Date date = getDate(request.getParameter("date").toString(), seas);
                 if (date == null && status.equals("")) {
-                    status = "Fehler beim Datum. Bitte verwenden Sie folgende Schreibweise: dd.mm.yyyy";
+                    status = "Fehler beim Datum. Das Datum muss innerhalb des Projektes liegen und bitte verwenden Sie folgende Schreibweise: dd.mm.yyyy";
                 }
                 Time start = getTime(request.getParameter("start").toString());
                 if (start == null && status.equals("")) {
@@ -75,15 +78,17 @@ public class Times extends HttpServlet {
                 }
                 String description = request.getParameter("description").toString();
                 if (status.equals("")) {
-                    insertTime(c, user_id, modul_id, date, start, end, description);
-                    status = "Speichern erfolgreich";
+                    if (insertTime(c, user_id, modul_id, date, start, end, description)) {
+                        status = "Speichern erfolgreich";
+                    } else {
+                        status = "Zu diesem Zeitpunkt haben Sie bereits etwas eine Zeit eingetragen!";
+                    }
                 } else {
                     input = "<modul>" + request.getParameter("modul").toString() + "</modul>"
                         + "<date>" + request.getParameter("date").toString() + "</date>"
                         + "<start>" + request.getParameter("start").toString() + "</start>"
                         + "<end>" + request.getParameter("end").toString() + "</end>"
-                        + "<description>" + request.getParameter("description").toString() + "</description>"
-                        + "</root>";
+                        + "<description>" + request.getParameter("description").toString() + "</description>";
                 }
             }
             try {
@@ -143,7 +148,7 @@ public class Times extends HttpServlet {
                 htmlOutput.append("</table>");
                 String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite>"
                         + "<status>" + status +  "</status>";
-                if (input.equals("")) {
+                if (!input.equals("")) {
                     xmlResponse = xmlResponse + input;
                 }
                 xmlResponse = xmlResponse + "</root>";
@@ -243,7 +248,7 @@ public class Times extends HttpServlet {
         return result;
     }
 
-    private static Date getDate(String temp) {
+    private static Date getDate(String temp, HttpSession seas) {
         int day = -1;
         int month = -1;
         int year = -1;
@@ -272,7 +277,33 @@ public class Times extends HttpServlet {
         } catch (Exception ex) {
             return null;
         }
-        return date;
+
+        String startProject = seas.getAttribute("startProject").toString();
+        year = Integer.parseInt(startProject.substring(0, startProject.indexOf("-")));
+        startProject = startProject.substring(startProject.indexOf("-") + 1);
+        month = Integer.parseInt(startProject.substring(0, startProject.indexOf("-"))) - 1;
+        startProject = startProject.substring(startProject.indexOf("-") + 1);
+        day = Integer.parseInt(startProject);
+        if (year >= 2000) {
+            year -= 1900;
+        }
+        Date start = new Date(year, month, day);
+
+        String endProject = seas.getAttribute("endProject").toString();
+        year = Integer.parseInt(endProject.substring(0, endProject.indexOf("-")));
+        endProject = endProject.substring(endProject.indexOf("-") + 1);
+        month = Integer.parseInt(endProject.substring(0, endProject.indexOf("-"))) - 1;
+        endProject = endProject.substring(endProject.indexOf("-") + 1);
+        day = Integer.parseInt(endProject);
+        if (year >= 2000) {
+            year -= 1900;
+        }
+        Date end = new Date(year, month, day);
+
+        if (start.compareTo(date) < 0  && end.compareTo(date) > 0) {
+            return date;
+        }
+        return null;
     }
 
     private static Time getTime(String temp) {
@@ -298,20 +329,29 @@ public class Times extends HttpServlet {
         return time;
     }
 
-    private static void insertTime(Connection c, int user_id, int modul_id, Date date, Time start, Time end, String description) {
+    private static boolean insertTime(Connection c, int user_id, int modul_id, Date date, Time start, Time end, String description) {
         try {
-            PreparedStatement ps = c.prepareStatement("INSERT INTO time (user_id, modul_id, date, start, end, description) VALUES (?,?,?,?,?,?)");
-            ps.setInt(1, user_id);
-            ps.setInt(2, modul_id);
-            ps.setDate(3, date);
-            ps.setTime(4, start);
-            ps.setTime(5, end);
-            ps.setString(6, description);
-            ps.executeUpdate();
-            ps.close();
+            try {
+                c.setAutoCommit(false);
+                PreparedStatement ps = c.prepareStatement("INSERT INTO time (user_id, modul_id, date, start, end, description) VALUES (?,?,?,?,?,?)");
+                ps.setInt(1, user_id);
+                ps.setInt(2, modul_id);
+                ps.setDate(3, date);
+                ps.setTime(4, start);
+                ps.setTime(5, end);
+                ps.setString(6, description);
+                ps.executeUpdate();
+                ps.close();
+                c.commit();
+                return true;
+            } catch (MySQLIntegrityConstraintViolationException ex) {
+                c.rollback();
+                c.setAutoCommit(true);
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        return false;
     }
 
     private static String getTimes(Connection c, int user_id) {

@@ -458,7 +458,6 @@ function buildQuery(servlet) {
         }
         i++;
     }
-    alert(string);
     startAsync(string);
 }
 
@@ -660,6 +659,13 @@ function callbackSaveTimes() {
             
             var status = xmlobject.getElementsByTagName("status")[0].childNodes[0].nodeValue;
             document.getElementById("statusBox").innerHTML = status;
+
+            if (xmlobject.getElementsByTagName("modul")[0].childNodes[0].nodeValue != "") {
+                document.getElementById("date").value = xmlobject.getElementsByTagName("date")[0].childNodes[0].nodeValue;
+                document.getElementById("start").value = xmlobject.getElementsByTagName("start")[0].childNodes[0].nodeValue;
+                document.getElementById("end").value = xmlobject.getElementsByTagName("end")[0].childNodes[0].nodeValue;
+                document.getElementById("description").value = xmlobject.getElementsByTagName("description")[0].childNodes[0].nodeValue;
+            }
         }
     }
 }
