@@ -52,7 +52,7 @@ function saveMessage(id) {
     var i = 1;
     while (i < message.length) {
         if (i % 40 == 0) {
-             message = message.substring(0, i) + '<br>' + message.substr(i);
+            message = message.substring(0, i) + '<br>' + message.substr(i);
         }
         i++;
     }
@@ -94,16 +94,16 @@ function showMembers() {
 
 function addUser() {
     var html = "<head><head><script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script></head><body><table border=\"0\">"
-            + "<tr>"
-            + "<td>Name:<input type=\"text\" id=\"name\" maxlength=\"40\"/></td>"
-            + "</tr>"
-            + "<tr>"
-            + "<td>Email: <input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
-            + "</tr>"
-            + "<tr>"
-            + "<td><input id=\"button\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
-            + "</tr>"
-            + "</body></html>";
+    + "<tr>"
+    + "<td>Name:<input type=\"text\" id=\"name\" maxlength=\"40\"/></td>"
+    + "</tr>"
+    + "<tr>"
+    + "<td>Email: <input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
+    + "</tr>"
+    + "<tr>"
+    + "<td><input id=\"button\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
+    + "</tr>"
+    + "</body></html>";
     document.getElementById("addUserField").innerHTML = html;
 }
 
@@ -194,7 +194,7 @@ function saveModule() {
     var i = 1;
     while (i < description.length) {
         if (i % 40 == 0) {
-             description = description.substring(0, i) + '<br>' + description.substr(i);
+            description = description.substring(0, i) + '<br>' + description.substr(i);
         }
         i++;
     }
@@ -249,11 +249,11 @@ function saveModule() {
                 }
             }
             var query = "description=" + description + "&" +
-                        "name=" + name + "&" +
-                        "startDate=" + (startYear.length == 2 ? "20" + startYear : startYear) + "-" + (startMonth.length == 1 ? "0" + startMonth : startMonth) + "-" + (startDay.length == 1 ? "0" + startDay : startDay) + "&" +
-                        "endDate=" + (endYear.length == 2 ? "20" + endYear : endYear) + "-" + (endMonth.length == 1 ? "0" + endMonth : endMonth) + "-" + (endDay.length == 1 ? "0" + endDay : endDay) + "&" +
-                        "membersToAdd=" + membersToAdd + "&" +
-                        "prio=" + prio;
+            "name=" + name + "&" +
+            "startDate=" + (startYear.length == 2 ? "20" + startYear : startYear) + "-" + (startMonth.length == 1 ? "0" + startMonth : startMonth) + "-" + (startDay.length == 1 ? "0" + startDay : startDay) + "&" +
+            "endDate=" + (endYear.length == 2 ? "20" + endYear : endYear) + "-" + (endMonth.length == 1 ? "0" + endMonth : endMonth) + "-" + (endDay.length == 1 ? "0" + endDay : endDay) + "&" +
+            "membersToAdd=" + membersToAdd + "&" +
+            "prio=" + prio;
 
             xmlHttp.open('POST',"/Projektmanager/Modules?" + query, true);
             xmlHttp.onreadystatechange = callbackModules;
@@ -355,12 +355,17 @@ function hideAddUser() {
 
 function validateProjectServlet()
 {
-    var servlet = "/Projektmanager/ValidateProjectServlet";
-    servlet += "?projectname=" + document.getElementById('projectname').value;
-    createXMLHttpRequest();
-    xmlHttp.open('POST',servlet, true);
-    xmlHttp.onreadystatechange = callbackValidateProject;
-    xmlHttp.send(null);
+    if (document.getElementById('projectname').value != "") {
+        var servlet = "/Projektmanager/ValidateProjectServlet";
+        servlet += "?projectname=" + document.getElementById('projectname').value;
+        createXMLHttpRequest();
+        xmlHttp.open('POST',servlet, true);
+        xmlHttp.onreadystatechange = callbackValidateProject;
+        xmlHttp.send(null);
+    } else {
+        document.getElementById('imgProjectname').innerHTML = "<img src=grafik/error.gif />";
+        document.getElementById('statusProjectname').innerHTML = "Bitte Projektname eingeben!";
+    }
 }
 
 function callbackValidateProject() {
@@ -386,21 +391,26 @@ function callbackValidateProject() {
 
 function validateEmailServlet()
 {
-    var email = document.getElementById('email').value;
-    var emailRegxp =/^.+@.+\..{2,5}$/;
+    if (document.getElementById('email').value != "") {
+        var email = document.getElementById('email').value;
+        var emailRegxp =/^.+@.+\..{2,5}$/;
 
-    if(!email.match(emailRegxp)) {
+        if(!email.match(emailRegxp)) {
+            document.getElementById('imgEmail').innerHTML = "<img src=grafik/error.gif />";
+            document.getElementById('statusEmail').innerHTML = "Keine regul&auml;re E-Mail eingegeben!";
+            return;
+        }
+
+        var servlet = "/Projektmanager/ValidateEmailServlet";
+        servlet += "?email=" + email;
+        createXMLHttpRequest();
+        xmlHttp.open('POST',servlet, true);
+        xmlHttp.onreadystatechange = callbackValidateEmail;
+        xmlHttp.send(null);
+    } else {
         document.getElementById('imgEmail').innerHTML = "<img src=grafik/error.gif />";
-        document.getElementById('statusEmail').innerHTML = "Keine regul&auml;re E-Mail eingegeben!";
-        return;
+        document.getElementById('statusEmail').innerHTML = "Bitte E-Mail eingeben!"
     }
-
-    var servlet = "/Projektmanager/ValidateEmailServlet";
-    servlet += "?email=" + email;
-    createXMLHttpRequest();
-    xmlHttp.open('POST',servlet, true);
-    xmlHttp.onreadystatechange = callbackValidateEmail;
-    xmlHttp.send(null);
 }
 
 function callbackValidateEmail() {
@@ -437,6 +447,7 @@ function startAsync(servlet)
 }
 
 function buildQuery(servlet) {
+    document.getElementById("submitData").disabled = false;
     elements = document.getElementsByTagName("input");
     string = servlet + "?";
     i = 0;
@@ -447,6 +458,7 @@ function buildQuery(servlet) {
         }
         i++;
     }
+    alert(string);
     startAsync(string);
 }
 
@@ -458,6 +470,7 @@ function callback()
                 document.write("<a href='Login.html'>Registrierung erfolgreich! Ihnen wurde eine E-Mail zugestellt mit ihren Zugangsdaten.</a>");
             else
                 document.getElementById("statusSubmit").innerHTML = "Es gab einen Fehler";
+            document.getElementById("submitData").disabled = true;
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
@@ -614,7 +627,7 @@ function callbackPassword() {
             document.getElementById("statusBox").innerHTML = "";
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
-               window.location.href = "Login.html";
+                window.location.href = "Login.html";
             }
         }
     }
@@ -649,4 +662,105 @@ function callbackSaveTimes() {
             document.getElementById("statusBox").innerHTML = status;
         }
     }
+}
+
+function today() {
+    var date = new Date();
+    document.getElementById("startProject").value = date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+}
+
+function checkDate() {
+    var index;
+
+    var startDay;
+    var startMonth;
+    var startYear = document.getElementById("startProject").value;
+    if (startYear != "") {
+        index = startYear.indexOf(".");
+        if (index != -1) {
+            startDay = startYear.substring(0, index);
+            if (startDay.length != 2) {
+                document.getElementById("statusDate").innerHTML = "Falsches Format beim Startdatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+                return;
+            }
+            startYear = startYear.substring(index + 1);
+
+            index = startYear.indexOf(".")
+            if (index != -1) {
+                startMonth = startYear.substring(0, index);
+                if (startMonth.length != 2) {
+                    document.getElementById("statusDate").innerHTML = "Falsches Format beim Startdatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+                    return;
+                }
+                startYear = startYear.substring(index + 1);
+                if (startYear.length != 4) {
+                    document.getElementById("statusDate").innerHTML = "Falsches Format beim Startdatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+                    return;
+                }
+            } else {
+                document.getElementById("statusDate").innerHTML = "Falsches Format beim Startdatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+                return;
+            }
+        } else {
+            document.getElementById("statusDate").innerHTML = "Falsches Format beim Startdatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+            return;
+        }
+    }
+    document.getElementById("statusDate").innerHTML = "";
+
+    
+    var endDay;
+    var endMonth;
+    var endYear = document.getElementById("endProject").value;
+    if (endYear != "") {
+        index = endYear.indexOf(".");
+        if (index != -1) {
+            endDay = endYear.substring(0, index);
+            if (endDay.length != 2) {
+                document.getElementById("statusDate").innerHTML = "Falsches Format beim Enddatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+                return;
+            }
+            endYear = endYear.substring(index + 1);
+
+            index = endYear.indexOf(".")
+            if (index != -1) {
+                endMonth = endYear.substring(0, index);
+                if (endMonth.length != 2) {
+                    document.getElementById("statusDate").innerHTML = "Falsches Format beim Enddatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+                    return;
+                }
+                endYear = endYear.substring(index + 1);
+                if (endYear.length != 4) {
+                    document.getElementById("statusDate").innerHTML = "Falsches Format beim Enddatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+                    return;
+                }
+            } else {
+                document.getElementById("statusDate").innerHTML = "Falsches Format beim Enddatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+                return;
+            }
+        } else {
+            document.getElementById("statusDate").innerHTML = "Falsches Format beim Enddatum! Bitte folgendes Format verwenden: dd.mm.yyyy";
+            return;
+        }
+    }
+    document.getElementById("statusDate").innerHTML = "";
+
+    if (startYear != "" && endYear != "") {
+        if (endYear < startYear) {
+            document.getElementById("statusDate").innerHTML = "Enddatum muss nach Startdatum liegen!";
+            return;
+        } else if (endYear == startYear) {
+            if (endMonth < startMonth) {
+                document.getElementById("statusDate").innerHTML = "Enddatum muss nach Startdatum liegen!";
+                return;
+            } else if (endMonth == startMonth) {
+                if (endDay <= startDay) {
+                    document.getElementById("statusDate").innerHTML = "Enddatum muss nach Startdatum liegen!";
+                    return;
+                }
+            }
+        }
+    }
+
+    document.getElementById("statusDate").innerHTML = "";
 }

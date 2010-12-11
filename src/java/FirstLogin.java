@@ -59,13 +59,11 @@ public class FirstLogin extends HttpServlet {
     }
 
     public static int changePassword(HttpServletRequest request) {
-        System.out.println("Hallo2");
         Connection c = null;
         String user = request.getSession().getAttribute("user").toString();
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String validatePassword = request.getParameter("validatePassword");
-        System.out.println(oldPassword + " " + validatePassword);
         try {
             c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE email = ?");

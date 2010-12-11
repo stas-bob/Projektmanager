@@ -10,10 +10,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,9 +49,13 @@ public class Registrieren extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         if (validateProject(request.getParameter("projectname"), request.getParameter("email"))) {
+            Date startProject = getDate(request.getParameter("startProject"));
+            Date endProject = getDate(request.getParameter("endProject"));
             activate(request.getParameter("name"),
                     request.getParameter("firstname"),
                     request.getParameter("email"),
+                    startProject,
+                    endProject,
                     request.getParameter("projectname"), false);    //false == projektleiter dh. es wird ein projekt angelegt
             out.write("0");
         } else {
@@ -60,7 +64,7 @@ public class Registrieren extends HttpServlet {
         out.close();
     }
 
-    public void activate(String name, String firstname, String toEmail, String projectName, boolean member) {
+    public void activate(String name, String firstname, String toEmail, Date startProject, Date endProject, String projectName, boolean member) {
         try {
             String smtp = "mail.gmx.net";
             String fromEmail = "htw-projektmanager@gmx.de";
@@ -79,8 +83,10 @@ public class Registrieren extends HttpServlet {
                 PreparedStatement ps = null;
                 String status = "MEM";
                 if (!member) {
-                    ps = c.prepareStatement("INSERT INTO project (name) VALUES (?)");
+                    ps = c.prepareStatement("INSERT INTO project (name, start, end) VALUES (?,?,?)");
                     ps.setString(1, projectName);
+                    ps.setDate(2, startProject);
+                    ps.setDate(3, endProject);
                     ps.executeUpdate();
                     ps.close();
                     status = "PL";
@@ -97,7 +103,7 @@ public class Registrieren extends HttpServlet {
                 ps.executeUpdate();
                 ps.close();
                 c.commit();
-                sendMail(smtp, fromEmail, emailPw, fromEmail, toEmail, subject, text);
+                //sendMail(smtp, fromEmail, emailPw, fromEmail, toEmail, subject, text);
             } catch (SQLException e) {
                 c.rollback();
                 e.printStackTrace();
@@ -134,7 +140,7 @@ public class Registrieren extends HttpServlet {
             msg.setText(text);
 
             msg.setHeader("Test", "Test");
-            msg.setSentDate(new Date());
+            msg.setSentDate(new java.util.Date());
 
             Transport.send(msg);
         } catch (MessagingException ex) {
@@ -176,6 +182,28 @@ public class Registrieren extends HttpServlet {
             return false;
         }
         return true;
+    }
+
+    private static Date getDate(String temp) {
+        int day = -1;
+        int month = -1;
+        int year = -1;
+        Date date = null;
+
+            System.out.println("HALLO1");
+            day = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
+            temp = temp.substring(temp.indexOf(".") + 1);
+            month = Integer.parseInt(temp.substring(0, temp.indexOf("."))) - 1;
+            temp = temp.substring(temp.indexOf(".") + 1);
+            year = Integer.parseInt(temp);
+            if (year >= 2000) {
+                year -= 1900;
+            }
+            System.out.println("HALLO2");
+            date = new Date(year, month, day);
+            System.out.println(date.toString());
+
+        return date;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

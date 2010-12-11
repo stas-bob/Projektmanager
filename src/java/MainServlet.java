@@ -42,6 +42,8 @@ public class MainServlet extends HttpServlet {
             seas.setAttribute("user", request.getParameter("user"));
             seas.setAttribute("user_id", getUserId(request.getParameter("user"), connection));
             seas.setAttribute("password", request.getParameter("password"));
+            seas.setAttribute("startProject", getStartProject(Integer.parseInt(seas.getAttribute("user_id").toString()), connection));
+            seas.setAttribute("endProject", getEndProject(Integer.parseInt(seas.getAttribute("user_id").toString()), connection));
             seas.setAttribute("status", getMyStatus(request.getParameter("user"), connection));
             seas.setAttribute("modules", getMyModules(request.getParameter("user"), connection));
             seas.setAttribute("name", getName(request.getParameter("user"), connection));
@@ -351,4 +353,37 @@ public class MainServlet extends HttpServlet {
         }
         return user_id;
     }
+
+    private static String getStartProject(int user_id, Connection c) {
+        String date = "";
+        try {
+            PreparedStatement ps = c.prepareStatement("SELECT start FROM project WHERE name = (SELECT projectname FROM user WHERE id = ?)");
+            ps.setInt(1, user_id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                date = rs.getString(1);
+            }
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return date;
+    }
+
+    private static String getEndProject(int user_id, Connection c) {
+        String date = "";
+        try {
+            PreparedStatement ps = c.prepareStatement("SELECT end FROM project WHERE name = (SELECT projectname FROM user WHERE id = ?)");
+            ps.setInt(1, user_id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                date = rs.getString(1);
+            }
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return date;
+    }
 }
+

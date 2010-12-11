@@ -50,7 +50,7 @@ public class Members extends HttpServlet {
                     String userName = request.getParameter("addName");
                     String userEmail = request.getParameter("addEmail");
                     if (new ValidateEmailServlet().validateEmail(userEmail).equals("0")) {
-                        new Registrieren().activate(userName, "empty", userEmail, request.getSession().getAttribute("projectname").toString(), true);
+                        new Registrieren().activate(userName, "empty", userEmail, null, null, request.getSession().getAttribute("projectname").toString(), true);
                     } else {
                         out.write("1");
                     }

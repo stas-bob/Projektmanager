@@ -16,6 +16,18 @@
                     <th><div id="statusProjectname" /></th>
                 </tr>
                 <tr>
+                    <th align="left">Startdatum:</th>
+                    <th><input id="startProject" onblur="checkDate()" name="startProject" type="text" size="30" maxlength="20"/></th>
+                    <th>(dd.mm.yyyy)</th>
+                    <th align="left"><input type="button" onclick="today()" value="Heute"></th>
+                </tr>
+                <tr>
+                    <th align="left">Enddatum:</th>
+                    <th><input id="endProject" onblur="checkDate()" name="endProject" type="text" size="30" maxlength="20"/></th>
+                    <th>(dd.mm.yyyy)</th>
+                    <th><div id="statusDate" /></th>
+                </tr>
+                <tr>
                     <th align="left">Name:</th>
                     <th><input name="name" type="text" size="30" maxlength="20"/></th>
                 </tr>
@@ -30,7 +42,7 @@
                     <th><div id="statusEmail" /></th>
                 </tr>
                 <tr>
-                    <th><input type="submit" value="Senden" onclick="printWait('statusSubmit');buildQuery('/Projektmanager/Registrieren')" /></th>
+                    <th><input type="submit" id="submitData" value="Senden" onclick="printWait('statusSubmit');buildQuery('/Projektmanager/Registrieren')" /></th>
                     <th><div id="statusSubmit"/></th>
                 </tr>
                 <tr>
