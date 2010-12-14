@@ -391,7 +391,7 @@ public class Times extends HttpServlet {
                     .append("<th>&#160;</th><th>&#160;</th>")
                     .append("<th>").append(new Time(totalHour, totalMinute, 0)).append("</th><th>&#160;</th><th>&#160;</th></tr>")
                     .append("</table>");
-            if (totalHour != 0 && totalMinute != 0) {
+            if (totalHour != 0 || totalMinute != 0) {
                 downloadTimes(user_id, c);
                 System.out.println("Test");
                 sb.append("<br>")

@@ -22,7 +22,6 @@
 
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        System.out.println(request.getParameter("file"));
         File file = getFileToDownload(request.getParameter("file"));
         prepareResponseFor(response, file);
         streamFileTo(response, file);
