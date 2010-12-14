@@ -121,7 +121,7 @@ public class MainServlet extends HttpServlet {
         sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>");
         sb.append("<script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script>");
         sb.append("</head>");
-        sb.append("<body>");
+        sb.append("<body onLoad=\"showOverview()\">");
         sb.append("<div id=\"frame\">");
         sb.append("<div id=\"title\">");
         sb.append(projectName);

@@ -1,3 +1,5 @@
+body { font-family: Gill, Helvetica, sans-serif; }
+
 #frame{
     background-image:url("grafik/bg-main.png");
     background-repeat:no-repeat;
