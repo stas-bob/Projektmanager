@@ -7,6 +7,9 @@
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import db.DBConnector;
 import exceptions.MySQLException;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -126,26 +129,8 @@ public class Times extends HttpServlet {
                         .append("<th><input type=\"button\" value=\"Speichern\" onclick=\"saveTimes()\"")
                         .append("</table>")
                         .append("<br><br>")
-                        .append("<br>")
-                        .append("<table border=1>")
-                        .append("<colgroup>")
-                        .append("<col width=\"100\">")
-                        .append("<col width=\"70\">")
-                        .append("<col width=\"70\">")
-                        .append("<col width=\"70\">")
-                        .append("<col width=\"120\">")
-                        .append("<col width=\"400\">")
-                        .append("</colgroup>")
-                        .append("<tr>")
-                        .append("<th>Datum</th>")
-                        .append("<th>Start</th>")
-                        .append("<th>Ende</th>")
-                        .append("<th>Dauer</th>")
-                        .append("<th>Modul</th>")
-                        .append("<th>Beschreibung</th>")
-                        .append("</tr>");
+                        .append("<br>");
                 htmlOutput.append(getTimes(c, user_id));
-                htmlOutput.append("</table>");
                 String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite>"
                         + "<status>" + status +  "</status>";
                 if (!input.equals("")) {
@@ -364,7 +349,24 @@ public class Times extends HttpServlet {
             int minute;
             int totalHour = 0;
             int totalMinute = 0;
-            
+
+            sb.append("<table border=1>")
+                    .append("<colgroup>")
+                    .append("<col width=\"100\">")
+                    .append("<col width=\"70\">")
+                    .append("<col width=\"70\">")
+                    .append("<col width=\"70\">")
+                    .append("<col width=\"120\">")
+                    .append("<col width=\"400\">")
+                    .append("</colgroup>")
+                    .append("<tr>")
+                    .append("<th>Datum</th>")
+                    .append("<th>Start</th>")
+                    .append("<th>Ende</th>")
+                    .append("<th>Dauer</th>")
+                    .append("<th>Modul</th>")
+                    .append("<th>Beschreibung</th>")
+                    .append("</tr>");
             PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modul_id, description FROM time WHERE user_id = ? ORDER BY date DESC");
             ps.setInt(1, user_id);
             ResultSet rs = ps.executeQuery();
@@ -387,11 +389,70 @@ public class Times extends HttpServlet {
             sb.append("<tr><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th></tr>")
                     .append("<tr><th>Gesamt:</th>")
                     .append("<th>&#160;</th><th>&#160;</th>")
-                    .append("<th>").append(new Time(totalHour, totalMinute, 0)).append("</th><th>&#160;</th><th>&#160;</th></tr>");
+                    .append("<th>").append(new Time(totalHour, totalMinute, 0)).append("</th><th>&#160;</th><th>&#160;</th></tr>")
+                    .append("</table>");
+            if (totalHour != 0 && totalMinute != 0) {
+                downloadTimes(user_id, c);
+                sb.append("<br>")
+                        .append("<a href=\"" + user_id + ".csv\">Download Tablle als .csv</a>");
+            }
             return sb.toString();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return "";
+    }
+
+    private static void downloadTimes(int user_id, Connection c) {
+        StringBuilder sb = new StringBuilder(1000);
+        try {
+            Time start;
+            Time end;
+            Time duration;
+            int hour;
+            int minute;
+            int totalHour = 0;
+            int totalMinute = 0;
+
+            sb.append("Datum;Start;Ende;Dauer;Modul;Beschreibung\n");
+            PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modul_id, description FROM time WHERE user_id = ? ORDER BY date DESC");
+            ps.setInt(1, user_id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                start = rs.getTime("start");
+                end = rs.getTime("end");
+                hour = end.getHours() - start.getHours();
+                minute = end.getMinutes() - start.getMinutes();
+                totalHour = totalHour + hour;
+                totalMinute = totalMinute + minute;
+                duration = new Time(hour, minute, 0);
+                sb.append(rs.getDate("date")).append(";")
+                        .append(start).append(";")
+                        .append(end).append(";")
+                        .append(duration).append(";")
+                        .append(getModulName(c, rs.getInt(4))).append(";")
+                        .append(rs.getString("description")).append(";\n");
+            }
+            sb.append("\nGesamt:;;").append(new Time(totalHour, totalMinute, 0)).append("<br>");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+
+        File ausgabedatei;
+        FileWriter fw;
+        BufferedWriter bw;
+        try {
+            ausgabedatei = new File(user_id + ".csv");
+            fw = new FileWriter(ausgabedatei);
+            bw = new BufferedWriter(fw);
+            bw.write(sb.toString());
+            bw.close();
+        } catch (ArrayIndexOutOfBoundsException aioobe) {
+            System.out.println("Aufruf mit: java SchreibeDatei name");
+            System.out.println("erzeugt eine Datei name.html");
+        } catch (IOException ioe) {
+            System.out.println("Habe gefangen: "+ioe);
+        }
     }
 }
