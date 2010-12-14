@@ -246,7 +246,7 @@ public class Modules extends HttpServlet {
                 for (int i = 0; i < messages.size(); i++) {
                     htmlOutput += "<tr style=\"border: 1px solid;\"><td><b>" + username.get(i) + "</b> schrieb ";
                     if (email.get(i).equals(myEmail)) {
-                        htmlOutput += "<button style=\"margin-left:330px\" onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></tr>";
+                        htmlOutput += "<button style=\"margin-left:295px\" onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></tr>";
                     }
                     htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px; overflow: auto;\">" + messages.get(i) + "</div></tr>"
                     + "<tr><td height=\"10\"></td></tr>";
