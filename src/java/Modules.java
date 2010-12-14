@@ -46,7 +46,7 @@ public class Modules extends HttpServlet {
                 ArrayList<String> members = getMembers(request.getParameter("membersToAdd"), request.getSession().getAttribute("projectname").toString(), c);
                 if (validateModuleName(request.getParameter("name").toString(), request.getSession().getAttribute("projectname").toString(), c)) {
                     error = saveMouleToDB(members, request.getParameter("name"), request.getParameter("description"), request.getParameter("startDate"), request.getParameter("endDate"), request.getParameter("prio"), request.getSession().getAttribute("projectname").toString(), request.getSession().getAttribute("startProject").toString(), request.getSession().getAttribute("endProject").toString(), c);
-                    errorMsg = "Datum ausserhalb projektzeit";
+                    errorMsg = "Datum ausserhalb projektzeit oder datum nicht korrekt";
                     if (members.contains(request.getSession().getAttribute("user").toString())) {
                         int modulid = getModulId(request.getSession().getAttribute("projectname").toString(), request.getParameter("name"), c);
                         ((ArrayList<Integer>) request.getSession().getAttribute("modules")).add(modulid);
