@@ -223,8 +223,8 @@ public class Times extends HttpServlet {
             PreparedStatement ps = c.prepareStatement("SELECT name FROM module WHERE id = ?");
             ps.setInt(1, modul_id);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            result = rs.getString(1);
+            if (rs.next())
+                result = rs.getString(1);
             ps.close();
             return result;
         } catch (SQLException ex) {

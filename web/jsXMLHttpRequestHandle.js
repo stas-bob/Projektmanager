@@ -69,8 +69,9 @@ function callbackModules() {
             var html = xmlobject.getElementsByTagName("htmlSeite");
             var modulesCount = xmlobject.getElementsByTagName("modulesCount")[0].childNodes[0].nodeValue;
             var error = xmlobject.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+            var errorMsg = xmlobject.getElementsByTagName("errorMsg")[0].childNodes[0].nodeValue;
             if (error > 0) {
-                document.getElementById("statusBox").innerHTML = html[0].childNodes[0].nodeValue;
+                document.getElementById("statusBox").innerHTML = errorMsg;
             } else {
                 if (modulesCount > 10) {
                 //    document.getElementById("content").style.height = modulesCount*40 + "px";

@@ -40,16 +40,19 @@ public class Modules extends HttpServlet {
             response.setContentType("application/xml");
             PrintWriter out = response.getWriter();
             Connection c = DBConnector.getConnection();
+            int error = 0;
+            String errorMsg = " ";
             if (request.getParameter("description") != null) {
                 ArrayList<String> members = getMembers(request.getParameter("membersToAdd"), request.getSession().getAttribute("projectname").toString(), c);
                 if (validateModuleName(request.getParameter("name").toString(), request.getSession().getAttribute("projectname").toString(), c)) {
-                    saveMouleToDB(members, request.getParameter("name"), request.getParameter("description"), request.getParameter("startDate"), request.getParameter("endDate"), request.getParameter("prio"), request.getSession().getAttribute("projectname").toString(), c);
+                    error = saveMouleToDB(members, request.getParameter("name"), request.getParameter("description"), request.getParameter("startDate"), request.getParameter("endDate"), request.getParameter("prio"), request.getSession().getAttribute("projectname").toString(), request.getSession().getAttribute("startProject").toString(), request.getSession().getAttribute("endProject").toString(), c);
+                    errorMsg = "Datum ausserhalb projektzeit";
                     if (members.contains(request.getSession().getAttribute("user").toString())) {
                         int modulid = getModulId(request.getSession().getAttribute("projectname").toString(), request.getParameter("name"), c);
                         ((ArrayList<Integer>) request.getSession().getAttribute("modules")).add(modulid);
                     }
                 } else {
-                    String xmlResponse = "<root><htmlSeite><![CDATA[Der Name " + request.getParameter("name").toString() + " ist in diesem Projekt bereits vorhanden]]></htmlSeite><modulesCount>0</modulesCount><error>1</error></root>";
+                    String xmlResponse = "<root><htmlSeite><![CDATA[...]]></htmlSeite><modulesCount>0</modulesCount><error>1</error><errorMsg>Der Name " + request.getParameter("name").toString() + " ist in diesem Projekt bereits vorhanden</errorMsg></root>";
                     out.write(xmlResponse);
                     c.close();
                     return;
@@ -123,15 +126,18 @@ public class Modules extends HttpServlet {
             }
             htmlOutput += "</table>";
             htmlOutput += "<div id=\"addModule\"></div>";
-            String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>0</error></root>";
+            String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>" + error + "</error><errorMsg>" + errorMsg + "</errorMsg></root>";
             out.write(xmlResponse);
             out.close();
             c.close();
         } catch (SQLException ex) {
+            ex.printStackTrace();
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MySQLException ex) {
+            ex.printStackTrace();
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NullPointerException nex) {
+            nex.printStackTrace();
             request.getSession().invalidate();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Logout");
         }
@@ -255,7 +261,7 @@ public class Modules extends HttpServlet {
                             + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"58\" rows=\"5\" maxlength=\"210\" onkeypress=\"ismaxlength(this)\"></textarea></tr>"
                             + "<tr align=\"right\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></tr>"
                             + "</table>";
-                return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error></root>";
+                return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error><errorMsg> </errorMsg></root>";
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -308,8 +314,19 @@ public class Modules extends HttpServlet {
         return members;
     }
 
-    private void saveMouleToDB(ArrayList<String> members, String name, String description, String start, String end, String prio, String projectName, Connection c) {
+    private int saveMouleToDB(ArrayList<String> members, String name, String description, String start, String end, String prio, String projectName, String projectStart, String projectEnd, Connection c) {
         try {
+            Date moduleStartDate = getDateFromString(start);
+            Date moduleEndDate = getDateFromString(end);
+            Date projectStartDate = getDateFromString(projectStart);
+            Date projectEndDate = getDateFromString(projectEnd);
+
+            if (moduleStartDate == null || moduleEndDate == null || projectStartDate == null || projectEndDate == null) {
+                return 1;
+            }
+            if (moduleStartDate.before(projectStartDate) || moduleEndDate.after(projectEndDate)) {
+                return 1;
+            }
             PreparedStatement ps = c.prepareStatement("INSERT INTO module (name,start,end,prio,status,description,projectname) VALUES (?,?,?,?,'open',?,?)");
             ps.setString(1, name);
             ps.setString(2, start);
@@ -328,8 +345,9 @@ public class Modules extends HttpServlet {
                 ps.executeUpdate();
             }
             ps.close();
+            return 0;
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            return 1;
         }
     }
 
@@ -379,7 +397,7 @@ public class Modules extends HttpServlet {
             ps.setString(2, id);
             ps.executeUpdate();
             ps.close();
-            return "<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>0</error></root>";
+            return "<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>0</error><errorMsg> </errorMsg></root>";
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -497,5 +515,33 @@ public class Modules extends HttpServlet {
         }
     }
 
-
+    private Date getDateFromString(String str) {
+        System.out.println(str);
+        int year = Integer.parseInt(str.substring(0, str.indexOf("-")));
+        str = str.substring(str.indexOf("-") + 1);
+        int month = Integer.parseInt(str.substring(0, str.indexOf("-")));
+        str = str.substring(str.indexOf("-") + 1);
+        int day = Integer.parseInt(str);
+        str = str.substring(str.indexOf("-") + 1);
+        System.out.println(day + " " + month + " " + year);
+        if (year >= 2010) {
+            if (month > 0 && month < 13) {
+                if (day > 0 && (month == 1 && day < 32) ||
+                               (month == 2 && day < 29) ||
+                               (month == 3 && day < 32) ||
+                               (month == 4 && day < 31) ||
+                               (month == 5 && day < 32) ||
+                               (month == 6 && day < 31) ||
+                               (month == 7 && day < 32) ||
+                               (month == 8 && day < 32) ||
+                               (month == 9 && day < 31) ||
+                               (month == 10 && day < 32) ||
+                               (month == 11 && day < 31) ||
+                               (month == 12 && day < 32)) {
+                    return new Date(year, month, day);
+                }
+            }
+        }
+        return null;
+    }
 }
