@@ -747,6 +747,39 @@ function checkDate() {
         }
     }
 
+    if (startYear != "") {
+        if (startDay < 1 || startDay > 31) {
+            document.getElementById("statusDate").innerHTML = "Ungültiger Tag beim Startdatum!";
+            return;
+        }
+
+        if (startMonth < 1 || startMonth > 12) {
+            document.getElementById("statusDate").innerHTML = "Ungültiger Monat beim Startdatum!";
+            return;
+        }
+
+        if (startYear < 2010 || startYear > 9999) {
+            document.getElementById("statusDate").innerHTML = "Ungültiges Jahr beim Startdatum!";
+            return;
+        }
+
+    }
+    
+    if (endYear != "") {
+        if (endDay < 1 || endDay > 31) {
+            document.getElementById("statusDate").innerHTML = "Ungültiger Tag beim Enddatum!";
+            return;
+        }
+        if (endMonth < 1 || endMonth > 12) {
+            document.getElementById("statusDate").innerHTML = "Ungültiger Monat beim Enddatum!";
+            return;
+        }
+        if (endYear < 2010 || endYear > 9999) {
+            document.getElementById("statusDate").innerHTML = "Ungültiges Jahr beim Enddatum!";
+            return;
+        }
+    }
+
     if (startYear != "" && endYear != "") {
         if (endYear < startYear) {
             document.getElementById("statusDate").innerHTML = "Enddatum muss nach Startdatum liegen!";
