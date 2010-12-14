@@ -52,7 +52,7 @@ function saveMessage(id) {
     var i = 1;
     while (i < message.length) {
         if (i % 40 == 0) {
-            message = message.substring(0, i) + '<br>' + message.substr(i);
+            message = message.substring(0, i) + "<br>" + message.substr(i);
         }
         i++;
     }
@@ -98,7 +98,7 @@ function addUser() {
     + "<td>Name:<input type=\"text\" id=\"name\" maxlength=\"40\"/></td>"
     + "</tr>"
     + "<tr>"
-    + "<td>Email: <input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
+    + "<td>Email: <input type=\"text\" onblur=\"printWait(\"statusEmail\");validateEmailServlet()\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
     + "</tr>"
     + "<tr>"
     + "<td><input id=\"button\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
@@ -114,10 +114,10 @@ function addMemberToModuleBox() {
     var i = 0;
     if (membersInModuleBox.innerHTML.length > 0) {
         while (i < membersInModuleBox.innerHTML.length) {
-            if (membersInModuleBox.innerHTML.charAt(i) == '[') {
+            if (membersInModuleBox.innerHTML.charAt(i) == "[") {
                 var tmpMember = "";
                 i++;
-                while (membersInModuleBox.innerHTML.charAt(i) != ']') {
+                while (membersInModuleBox.innerHTML.charAt(i) != "]") {
                     tmpMember += membersInModuleBox.innerHTML.charAt(i);
                     i++;
                 }
@@ -138,11 +138,11 @@ function removeMemberFromModuleBox() {
     var membersInModuleBox = document.getElementById("membersInModuleBox");
     var i = 0;
     while (i < membersInModuleBox.innerHTML.length) {
-        if (membersInModuleBox.innerHTML.charAt(i) == '[') {
+        if (membersInModuleBox.innerHTML.charAt(i) == "[") {
             var fromPos = i;
             var tmpMember = "";
             i++;
-            while (membersInModuleBox.innerHTML.charAt(i) != ']') {
+            while (membersInModuleBox.innerHTML.charAt(i) != "]") {
                 tmpMember += membersInModuleBox.innerHTML.charAt(i);
                 i++;
             }
@@ -194,7 +194,7 @@ function saveModule() {
     var i = 1;
     while (i < description.length) {
         if (i % 40 == 0) {
-            description = description.substring(0, i) + '<br>' + description.substr(i);
+            description = description.substring(0, i) + "<br>" + description.substr(i);
         }
         i++;
     }
@@ -355,16 +355,16 @@ function hideAddUser() {
 
 function validateProjectServlet()
 {
-    if (document.getElementById('projectname').value != "") {
+    if (document.getElementById("projectname").value != "") {
         var servlet = "/Projektmanager/ValidateProjectServlet";
-        servlet += "?projectname=" + document.getElementById('projectname').value;
+        servlet += "?projectname=" + document.getElementById("projectname").value;
         createXMLHttpRequest();
         xmlHttp.open('POST',servlet, true);
         xmlHttp.onreadystatechange = callbackValidateProject;
         xmlHttp.send(null);
     } else {
-        document.getElementById('imgProjectname').innerHTML = "<img src=grafik/error.gif />";
-        document.getElementById('statusProjectname').innerHTML = "Bitte Projektname eingeben!";
+        document.getElementById("imgProjectname").innerHTML = "<img src=grafik/error.gif />";
+        document.getElementById("statusProjectname").innerHTML = "Bitte Projektname eingeben!";
     }
 }
 
@@ -373,31 +373,32 @@ function callbackValidateProject() {
         if (xmlHttp.status == 200) {
             var status = xmlHttp.responseText;
             if (status == "0") {
-                document.getElementById('imgProjectname').innerHTML = "<img src=grafik/ok.gif />";
-                document.getElementById('statusProjectname').innerHTML = "Projektname noch nicht vergeben!";
+                document.getElementById("imgProjectname").innerHTML = "<img src=grafik/ok.gif />";
+                document.getElementById("statusProjectname").innerHTML = "Projektname noch nicht vergeben!";
             } else {
-                document.getElementById('imgProjectname').innerHTML = "<img src=grafik/error.gif />";
-                document.getElementById('statusProjectname').innerHTML = "Projektname schon vergeben!";
+                document.getElementById("imgProjectname").innerHTML = "<img src=grafik/error.gif />";
+                document.getElementById("statusProjectname").innerHTML = "Projektname schon vergeben!";
             }
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
             } else {
-                document.getElementById('statusProjectname').innerHTML = "Fehler bei der Valiedierung des Projektnamens";
+                document.getElementById("statusProjectname").innerHTML = "Fehler bei der Valiedierung des Projektnamens";
             }
         }
     }
+    checkInputs();
 }
 
 function validateEmailServlet()
 {
-    if (document.getElementById('email').value != "") {
-        var email = document.getElementById('email').value;
+    if (document.getElementById("email").value != "") {
+        var email = document.getElementById("email").value;
         var emailRegxp =/^.+@.+\..{2,5}$/;
 
         if(!email.match(emailRegxp)) {
-            document.getElementById('imgEmail').innerHTML = "<img src=grafik/error.gif />";
-            document.getElementById('statusEmail').innerHTML = "Keine regul&auml;re E-Mail eingegeben!";
+            document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+            document.getElementById("statusEmail").innerHTML = "Keine regul&auml;re E-Mail eingegeben!";
             return;
         }
 
@@ -408,8 +409,8 @@ function validateEmailServlet()
         xmlHttp.onreadystatechange = callbackValidateEmail;
         xmlHttp.send(null);
     } else {
-        document.getElementById('imgEmail').innerHTML = "<img src=grafik/error.gif />";
-        document.getElementById('statusEmail').innerHTML = "Bitte E-Mail eingeben!"
+        document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+        document.getElementById("statusEmail").innerHTML = "Bitte E-Mail eingeben!"
     }
 }
 
@@ -418,23 +419,24 @@ function callbackValidateEmail() {
         if (xmlHttp.status == 200) {
             var status = xmlHttp.responseText;
             if (status == "0") {
-                document.getElementById('imgEmail').innerHTML = "<img src=grafik/ok.gif />";
-                document.getElementById('statusEmail').innerHTML = "E-Mail noch nicht vergeben!";
-                document.getElementById('button').disabled = false;
+                document.getElementById("imgEmail").innerHTML = "<img src=grafik/ok.gif />";
+                document.getElementById("statusEmail").innerHTML = "E-Mail noch nicht vergeben!";
+                document.getElementById("button").disabled = false;
             } else {
-                document.getElementById('imgEmail').innerHTML = "<img src=grafik/error.gif />";
-                document.getElementById('statusEmail').innerHTML = "E-Mail schon vergeben!";
-                document.getElementById('button').disabled = true;
+                document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+                document.getElementById("statusEmail").innerHTML = "E-Mail schon vergeben!";
+                document.getElementById("button").disabled = true;
             }
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
             } else {
-                document.getElementById('statusEmail').innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
-                document.getElementById('button').disabled = true;
+                document.getElementById("statusEmail").innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
+                document.getElementById("button").disabled = true;
             }
         }
     }
+    checkInputs();
 }
 
 
@@ -466,7 +468,7 @@ function callback()
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
             if (xmlHttp.responseText == "0")
-                document.write("<a href='Login.html'>Registrierung erfolgreich! Ihnen wurde eine E-Mail zugestellt mit ihren Zugangsdaten.</a>");
+                document.write("<a href=\"Login.html\">Registrierung erfolgreich! Ihnen wurde eine E-Mail zugestellt mit ihren Zugangsdaten.</a>");
             else
                 document.getElementById("statusSubmit").innerHTML = "Es gab einen Fehler";
             document.getElementById("submitData").disabled = true;
@@ -520,7 +522,7 @@ function callbackLogout()
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
             } else {
-                document.write("<a href='Login.html'>Schwerwiegender Fehler.</a>");
+                document.write("<a href=\"Login.html\">Schwerwiegender Fehler.</a>");
             }
         }
     }
@@ -769,4 +771,15 @@ function checkDate() {
     }
 
     document.getElementById("statusDate").innerHTML = "";
+    checkInputs();
+}
+
+function checkInputs() {
+    if (document.getElementById("statusEmail").innerHTML == "E-Mail noch nicht vergeben!" &&
+            document.getElementById("statusDate").innerHTML == "" &&
+            document.getElementById("statusProjectname").innerHTML == "Projektname noch nicht vergeben!") {
+        document.getElementById("submitData").disabled = false;
+    } else {
+        document.getElementById("submitData").disabled = true;
+    }
 }
