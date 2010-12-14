@@ -350,7 +350,7 @@ public class Times extends HttpServlet {
             int totalHour = 0;
             int totalMinute = 0;
 
-            sb.append("<table border=1>")
+            sb.append("<table border=1 style=\"border-collapse: collapse;\" cellpadding=\"3\">")
                     .append("<colgroup>")
                     .append("<col width=\"100\">")
                     .append("<col width=\"70\">")
