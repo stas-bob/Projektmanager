@@ -74,7 +74,9 @@ public class Modules extends HttpServlet {
                             return;
                         } else {
                             if (request.getParameter("changeStatus") != null) {
-                                out.write(setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c));
+                                error = setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c);
+                                if (error == 1) throw new NullPointerException("db error");
+                                out.write("<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>" + error + "</error><errorMsg>" + errorMsg + "</errorMsg></root>");
                                 c.close();
                                 return;
                             } else {
@@ -390,18 +392,18 @@ public class Modules extends HttpServlet {
         return select + "</select>";
     }
 
-    public String setModuleStatusOnDB(String status, String id, Connection c) {
+    public int setModuleStatusOnDB(String status, String id, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("UPDATE module SET status = ? WHERE id = ?");
             ps.setString(1, status);
             ps.setString(2, id);
             ps.executeUpdate();
             ps.close();
-            return "<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>0</error><errorMsg> </errorMsg></root>";
+            return 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return null;
+        return 1;
     }
 
     private void deleteModule(String id, Connection c) {
