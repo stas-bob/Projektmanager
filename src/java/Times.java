@@ -393,8 +393,9 @@ public class Times extends HttpServlet {
                     .append("</table>");
             if (totalHour != 0 && totalMinute != 0) {
                 downloadTimes(user_id, c);
+                System.out.println("Test");
                 sb.append("<br>")
-                        .append("<a href=\"" + user_id + ".csv\">Download Tablle als .csv</a>");
+                        .append("<a href=\"").append(user_id).append(".csv\">Download Tabelle als .csv</a>");
             }
             return sb.toString();
         } catch (SQLException ex) {
@@ -402,7 +403,7 @@ public class Times extends HttpServlet {
         }
         return "";
     }
-
+    
     private static void downloadTimes(int user_id, Connection c) {
         StringBuilder sb = new StringBuilder(1000);
         try {
@@ -433,7 +434,7 @@ public class Times extends HttpServlet {
                         .append(getModulName(c, rs.getInt(4))).append(";")
                         .append(rs.getString("description")).append(";\n");
             }
-            sb.append("\nGesamt:;;").append(new Time(totalHour, totalMinute, 0)).append("<br>");
+            sb.append("\nGesamt:;;").append(new Time(totalHour, totalMinute, 0));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
