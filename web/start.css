@@ -83,12 +83,12 @@
 .menuTopButton a:hover
 {
     background-image:url(grafik/button_hover.png);
-    color:white;
+    color:#40666d;
 }
 
 .menuTopButton a:active
 {
     background-image:url(grafik/button_pressed.png);
-    color:white;
+    color:#40666d;
 }
 
