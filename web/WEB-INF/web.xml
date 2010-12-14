@@ -8,6 +8,10 @@
         <servlet-name>ChangePassword</servlet-name>
         <servlet-class>ChangePassword</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DownloadServlet</servlet-name>
+        <servlet-class>DownloadServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -87,6 +91,10 @@
     <servlet-mapping>
         <servlet-name>ChangePassword</servlet-name>
         <url-pattern>/ChangePassword</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DownloadServlet</servlet-name>
+        <url-pattern>/DownloadServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

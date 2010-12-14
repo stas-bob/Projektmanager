@@ -395,7 +395,7 @@ public class Times extends HttpServlet {
                 downloadTimes(user_id, c);
                 System.out.println("Test");
                 sb.append("<br>")
-                        .append("<a href=\"").append(user_id).append(".csv\">Download Tabelle als .csv</a>");
+                        .append("<a href=\"/Projektmanager/DownloadServlet?file=").append(user_id).append(".csv\">Download Tabelle als .csv</a>");
             }
             return sb.toString();
         } catch (SQLException ex) {
