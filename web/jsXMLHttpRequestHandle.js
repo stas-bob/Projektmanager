@@ -379,6 +379,7 @@ function callbackValidateProject() {
                 document.getElementById("imgProjectname").innerHTML = "<img src=grafik/error.gif />";
                 document.getElementById("statusProjectname").innerHTML = "Projektname schon vergeben!";
             }
+            checkInputs();
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
@@ -387,7 +388,6 @@ function callbackValidateProject() {
             }
         }
     }
-    checkInputs();
 }
 
 function validateEmailServlet()
@@ -399,6 +399,7 @@ function validateEmailServlet()
         if(!email.match(emailRegxp)) {
             document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
             document.getElementById("statusEmail").innerHTML = "Keine regul&auml;re E-Mail eingegeben!";
+            checkInputs();
             return;
         }
 
@@ -421,22 +422,19 @@ function callbackValidateEmail() {
             if (status == "0") {
                 document.getElementById("imgEmail").innerHTML = "<img src=grafik/ok.gif />";
                 document.getElementById("statusEmail").innerHTML = "E-Mail noch nicht vergeben!";
-                document.getElementById("button").disabled = false;
             } else {
                 document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
                 document.getElementById("statusEmail").innerHTML = "E-Mail schon vergeben!";
-                document.getElementById("button").disabled = true;
             }
+            checkInputs();
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
             } else {
                 document.getElementById("statusEmail").innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
-                document.getElementById("button").disabled = true;
             }
         }
     }
-    checkInputs();
 }
 
 
@@ -449,7 +447,6 @@ function startAsync(servlet)
 }
 
 function buildQuery(servlet) {
-    document.getElementById("submitData").disabled = false;
     elements = document.getElementsByTagName("input");
     string = servlet + "?";
     i = 0;
@@ -471,7 +468,6 @@ function callback()
                 document.write("<a href=\"Login.html\">Registrierung erfolgreich! Ihnen wurde eine E-Mail zugestellt mit ihren Zugangsdaten.</a>");
             else
                 document.getElementById("statusSubmit").innerHTML = "Es gab einen Fehler";
-            document.getElementById("submitData").disabled = true;
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
@@ -714,7 +710,6 @@ function checkDate() {
             return;
         }
     }
-    document.getElementById("statusDate").innerHTML = "";
 
     
     var endDay;
@@ -751,7 +746,6 @@ function checkDate() {
             return;
         }
     }
-    document.getElementById("statusDate").innerHTML = "";
 
     if (startYear != "" && endYear != "") {
         if (endYear < startYear) {
@@ -765,18 +759,24 @@ function checkDate() {
                 if (endDay <= startDay) {
                     document.getElementById("statusDate").innerHTML = "Enddatum muss nach Startdatum liegen!";
                     return;
+                } else {
+                    document.getElementById("statusDate").innerHTML = "Datum OK!";
+                    checkInputs();
                 }
+            } else {
+                document.getElementById("statusDate").innerHTML = "Datum OK!";
+                checkInputs();
             }
+        } else {
+            document.getElementById("statusDate").innerHTML = "Datum OK!";
+            checkInputs();
         }
     }
-
-    document.getElementById("statusDate").innerHTML = "";
-    checkInputs();
 }
 
 function checkInputs() {
     if (document.getElementById("statusEmail").innerHTML == "E-Mail noch nicht vergeben!" &&
-            document.getElementById("statusDate").innerHTML == "" &&
+            document.getElementById("statusDate").innerHTML == "Datum OK!" &&
             document.getElementById("statusProjectname").innerHTML == "Projektname noch nicht vergeben!") {
         document.getElementById("submitData").disabled = false;
     } else {
