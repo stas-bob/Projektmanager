@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -318,10 +319,10 @@ public class Modules extends HttpServlet {
 
     private int saveMouleToDB(ArrayList<String> members, String name, String description, String start, String end, String prio, String projectName, String projectStart, String projectEnd, Connection c) {
         try {
-            Date moduleStartDate = getDateFromString(start);
-            Date moduleEndDate = getDateFromString(end);
-            Date projectStartDate = getDateFromString(projectStart);
-            Date projectEndDate = getDateFromString(projectEnd);
+            GregorianCalendar moduleStartDate = getDateFromString(start);
+            GregorianCalendar moduleEndDate = getDateFromString(end);
+            GregorianCalendar projectStartDate = getDateFromString(projectStart);
+            GregorianCalendar projectEndDate = getDateFromString(projectEnd);
 
             if (moduleStartDate == null || moduleEndDate == null || projectStartDate == null || projectEndDate == null) {
                 return 1;
@@ -517,7 +518,7 @@ public class Modules extends HttpServlet {
         }
     }
 
-    private Date getDateFromString(String str) {
+    public static GregorianCalendar getDateFromString(String str) {
         System.out.println(str);
         int year = Integer.parseInt(str.substring(0, str.indexOf("-")));
         str = str.substring(str.indexOf("-") + 1);
@@ -540,7 +541,7 @@ public class Modules extends HttpServlet {
                                (month == 10 && day < 32) ||
                                (month == 11 && day < 31) ||
                                (month == 12 && day < 32)) {
-                    return new Date(year, month, day);
+                    return new GregorianCalendar(year, month, day);
                 }
             }
         }
