@@ -163,8 +163,23 @@ public class Members extends HttpServlet {
             try {
                 c = DBConnector.getConnection();
                 c.setAutoCommit(false);
-                sql = "DELETE FROM user WHERE email = ?";
+                sql = "SELECT id FROM user WHERE email = ?";
                 PreparedStatement ps = c.prepareStatement(sql);
+                ps.setString(1, email);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    System.out.println(id);
+                    ps.close();
+                    sql = "DELETE FROM time WHERE user_id = ?";
+                    ps = c.prepareStatement(sql);
+                    ps.setInt(1, id);
+                    ps.executeUpdate();
+                }
+                rs.close();
+                ps.close();
+                sql = "DELETE FROM user WHERE email = ?";
+                ps = c.prepareStatement(sql);
                 ps.setString(1, email);
                 ps.executeUpdate();
                 ps.close();
@@ -173,10 +188,13 @@ public class Members extends HttpServlet {
                 ps.setString(1, email);
                 ps.executeUpdate();
                 ps.close();
+                
+                
                 c.commit();
             } catch (MySQLException e) {
                 e.printStackTrace();
             } catch (SQLException e) {
+                e.printStackTrace();
                 c.rollback();
                 throw new SQLException("Fehler beim Statement: " + sql);
             } finally {

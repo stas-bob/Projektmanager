@@ -240,13 +240,16 @@ public class Times extends HttpServlet {
         Date date = null;
 
         try {
+            System.out.println(temp);
             day = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
             if (day > 31 || day < 1) {
+                System.out.println("day");
                 return null;
             }
             temp = temp.substring(temp.indexOf(".") + 1);
-            month = Integer.parseInt(temp.substring(0, temp.indexOf("."))) - 1;
+            month = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
             if (month > 12 || month < 1) {
+                System.out.println("month");
                 return null;
             }
             temp = temp.substring(temp.indexOf(".") + 1);
@@ -255,11 +258,14 @@ public class Times extends HttpServlet {
                 year -= 1900;
             }
             if (year < 0) {
+                System.out.println("year");
                 return null;
             }
 
             date = new Date(year, month, day);
+            System.out.println("das datum ist" + date.toString());
         } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
 
@@ -273,6 +279,7 @@ public class Times extends HttpServlet {
             year -= 1900;
         }
         Date start = new Date(year, month, day);
+        System.out.println("project date start:" + start.toString());
 
         String endProject = seas.getAttribute("endProject").toString();
         year = Integer.parseInt(endProject.substring(0, endProject.indexOf("-")));
@@ -285,17 +292,19 @@ public class Times extends HttpServlet {
         }
         Date end = new Date(year, month, day);
 
+        System.out.println("project date end:" + end.toString());
+
         if (start.compareTo(date) < 0  && end.compareTo(date) > 0) {
             return date;
         }
         return null;
     }
 
-    private static Time getTime(String temp) {
+    public static Time getTime(String temp) {
         int hour = -1;
         int minute = -1;
         Time time = null;
-
+        System.out.println("here " + temp);
         try {
             hour = Integer.parseInt(temp.substring(0, temp.indexOf(":")));
             if (hour > 23 || hour < 0) {

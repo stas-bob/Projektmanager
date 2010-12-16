@@ -94,12 +94,12 @@ function showMembers() {
 }
 
 function addUser() {
-    var html = "<head><head><script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script></head><body><table border=\"0\">"
+    var html = "<html><head><script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script></head><body><table border=\"0\">"
     + "<tr>"
     + "<td>Name:<input type=\"text\" id=\"name\" maxlength=\"40\"/></td>"
     + "</tr>"
     + "<tr>"
-    + "<td>Email: <input type=\"text\" onblur=\"printWait(\"statusEmail\");validateEmailServlet()\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
+    + "<td>Email: <input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
     + "</tr>"
     + "<tr>"
     + "<td><input id=\"button\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
@@ -396,7 +396,6 @@ function validateEmailServlet()
     if (document.getElementById("email").value != "") {
         var email = document.getElementById("email").value;
         var emailRegxp =/^.+@.+\..{2,5}$/;
-
         if(!email.match(emailRegxp)) {
             document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
             document.getElementById("statusEmail").innerHTML = "Keine regul&auml;re E-Mail eingegeben!";

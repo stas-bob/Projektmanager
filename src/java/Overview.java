@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -48,18 +49,34 @@ public class Overview extends HttpServlet {
             }
             GregorianCalendar projectEndDate = Modules.getDateFromString(request.getSession().getAttribute("endProject").toString());
             projectEndDate.set(GregorianCalendar.MONTH, (projectEndDate.get(GregorianCalendar.MONTH) + 11) % 12);
-            projectEndDate.set(GregorianCalendar.YEAR, (projectEndDate.get(GregorianCalendar.YEAR) - 1));
+           // projectEndDate.set(GregorianCalendar.YEAR, (projectEndDate.get(GregorianCalendar.YEAR) - 1));
 
             long daysLeft = (projectEndDate.getTime().getTime() - new GregorianCalendar().getTime().getTime())/(1000*60*60*24);
 
-            String htmlOutput = "<div style=\"border:1px dashed; width:" + divWidth + "px; height:100px; position:absolute; background-color: ##EEEEFF;\">"
-                                  + "<div style=\"margin-left:30%; margin-top:35px; position:absolute; text-shadow: 2px 2px 0 #AAAAAA;\">Fortschritt " + (int)((float)progress*100/divWidth) + "%</div>"
-                                  + "<div style=\"border:1px solid blue; width:" + progress + "px; height:100px; margin-top: -1px; margin-left: -1px; color:white; background-color: LightSteelBlue;\"></div>"
+            ArrayList<Time> hours = new ArrayList<Time>();
+            ArrayList<String> names = new ArrayList<String>();
+            ArrayList<Long> progresses = new ArrayList<Long>();
+            int width = 60;
+            fillTimeSpent(hours, names, progresses, width, request.getSession().getAttribute("projectname").toString(), c);
+            String htmlOutput = "<div style=\"margin-top:20px;\">" + getProgressBar(100, 200, progress, "Fortschritt")
                               + "</div>"
                               + "<div style=\"margin-top:200px;\">"
                                 + "Projektende ist am: " + projectEndDate.getTime().toString()
                                 + "<br>es bleiben nur noch <span  style=\"font-weight:bold; color:" + (daysLeft < 50 ? "red" : "green") + "\">" + daysLeft + "</span> Tage"
-                              + "</div>";
+                              + "</div>"
+                              + "<br>"
+                              + "<table border=\"1\" style=\"border-collapse:collapse;\">"
+                              + "<tr>"
+                                + "<td>Name</td><td>Zeit</td><td>Progress</td>"
+                              + "</tr>";
+                                for (int i = 0; i < hours.size(); i++) {
+                                    if (progresses.size() > 0) {
+                                        htmlOutput +=  "<tr>"
+                                                        + "<td>" + names.get(i) + "</td><td>" + hours.get(i) + "</td><td>" + getProgressBar(15, width, progresses.get(i), "") + "</td>"
+                                                     + "</tr>";
+                                    }
+                                }
+                              htmlOutput += "</table>";
 
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite></root>";
             out.write(xmlResponse);
@@ -134,6 +151,51 @@ public class Overview extends HttpServlet {
             Logger.getLogger(Overview.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
+    }
+
+    public static String getProgressBar(int height, int width, long progress, String text) {
+        return "<div style=\"border:1px dashed; width:" + width + "px; height:" + height + "px; position:absolute; background-color: ##EEEEFF; margin-top:-9px\">"
+                  + "<div style=\"border:1px solid blue; width:" + progress + "px; height:100%; margin-top: -1px; margin-left: -1px; color:white; background-color: LightSteelBlue;\">"
+                    + "<div style=\"margin-left:30%; margin-top:" + (height/2 - 10) + "px; position:absolute; text-shadow: 2px 2px 0 #AAAAAA; color:black\">" + text + (int)((float)progress*100/width) + "%</div>"
+                  + "</div>"
+              + "</div>";
+    }
+
+    private void fillTimeSpent(ArrayList<Time> hours, ArrayList<String> names, ArrayList<Long> progress, int width, String projectName, Connection c) {
+        try {
+            PreparedStatement ps = c.prepareStatement("SELECT name, id FROM `user` WHERE projectname=?");
+            ps.setString(1, projectName);
+            ResultSet rs = ps.executeQuery();
+            long maxTimeSpent = 0;
+            while (rs.next()) {
+                PreparedStatement ps2 = c.prepareStatement("SELECT start, end FROM `time` WHERE user_id=?");
+                ps2.setInt(1, rs.getInt(2));
+                ResultSet rs2 = ps2.executeQuery();
+                long timeSpent = 0L;
+                while (rs2.next()) {
+                    Time start = rs2.getTime(1);
+                    Time end = rs2.getTime(2);
+                    timeSpent += end.getTime() - start.getTime();
+
+                }
+                if (timeSpent != 0) {
+                    timeSpent -= 3600000;
+                }
+                if (timeSpent >= maxTimeSpent) {
+                    maxTimeSpent = timeSpent;
+                }
+                hours.add(new Time(timeSpent));
+                names.add(rs.getString(1));
+            }
+            if (maxTimeSpent > 0) {
+                for (int i = 0; i < hours.size(); i++) {
+                    progress.add(width*hours.get(i).getTime()/maxTimeSpent);
+                }
+            }
+            ps.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
