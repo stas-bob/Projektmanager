@@ -42,7 +42,7 @@ public class Overview extends HttpServlet {
             Connection c = DBConnector.getConnection();
             int modulesCount = getModulesCount(c, request.getSession().getAttribute("projectname").toString());
             int doneCount = getModulesDoneCount(c, request.getSession().getAttribute("projectname").toString());
-            int divWidth = 200;
+            int divWidth = 795;
             int progress = 0;
             if (modulesCount > 0) {
                 progress = (divWidth*doneCount)/modulesCount;
@@ -58,7 +58,7 @@ public class Overview extends HttpServlet {
             ArrayList<Long> progresses = new ArrayList<Long>();
             int width = 60;
             fillTimeSpent(hours, names, progresses, width, request.getSession().getAttribute("projectname").toString(), c);
-            String htmlOutput = "<div style=\"margin-top:20px;\">" + getProgressBar(100, 200, progress, "Fortschritt")
+            String htmlOutput = "<div style=\"margin-top:20px;\">" + getProgressBar(100, divWidth, progress, "Fortschritt ")
                               + "</div>"
                               + "<div style=\"margin-top:200px;\">"
                                 + "Projektende ist am: " + projectEndDate.getTime().toString()
