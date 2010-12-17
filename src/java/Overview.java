@@ -178,9 +178,10 @@ public class Overview extends HttpServlet {
                     timeSpent += end.getTime() - start.getTime();
 
                 }
-                if (timeSpent != 0) {
-                    timeSpent -= 3600000;
-                }
+                
+                timeSpent -= 3600000;
+                
+
                 if (timeSpent >= maxTimeSpent) {
                     maxTimeSpent = timeSpent;
                 }
@@ -188,8 +189,13 @@ public class Overview extends HttpServlet {
                 names.add(rs.getString(1));
             }
             if (maxTimeSpent > 0) {
+
                 for (int i = 0; i < hours.size(); i++) {
-                    progress.add(width*hours.get(i).getTime()/maxTimeSpent);
+                    if (hours.get(i).getTime() <= 0) {
+                        progress.add(0L);
+                    } else {
+                        progress.add(width*hours.get(i).getTime()/maxTimeSpent);
+                    }
                 }
             }
             ps.close();
