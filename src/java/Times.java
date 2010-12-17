@@ -443,7 +443,7 @@ public class Times extends HttpServlet {
                         .append(getModulName(c, rs.getInt(4))).append(";")
                         .append(rs.getString("description")).append(";\n");
             }
-            sb.append("\nGesamt:;;").append(new Time(totalHour, totalMinute, 0));
+            sb.append("\nGesamt:;;").append(new Time(totalHour, totalMinute, 0)).append(";");
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
