@@ -56,7 +56,7 @@ public class Overview extends HttpServlet {
             ArrayList<Time> hours = new ArrayList<Time>();
             ArrayList<String> names = new ArrayList<String>();
             ArrayList<Long> progresses = new ArrayList<Long>();
-            int width = 60;
+            int width = 68;
             fillTimeSpent(hours, names, progresses, width, request.getSession().getAttribute("projectname").toString(), c);
             String htmlOutput = "<div style=\"margin-top:20px;\">" + getProgressBar(100, divWidth, progress, "Fortschritt ")
                               + "</div>"
@@ -67,7 +67,7 @@ public class Overview extends HttpServlet {
                               + "<br>"
                               + "<table border=\"1\" style=\"border-collapse:collapse;\">"
                               + "<tr>"
-                                + "<td>Name</td><td>Zeit</td><td>Progress</td>"
+                                + "<td>Name</td><td>Zeit</td><td>Insgesamt</td>"
                               + "</tr>";
                                 for (int i = 0; i < hours.size(); i++) {
                                     if (progresses.size() > 0) {
