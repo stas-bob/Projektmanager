@@ -251,7 +251,7 @@ public class Modules extends HttpServlet {
                             htmlOutput += "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\"><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
                         }
                 htmlOutput += "</table>"
-                            + "<table border=\"0\" style=\"border-collapse: collapse; margin-top: 10px; width: 490px;\">";
+                            + "<table border=\"0\" style=\"border-collapse: collapse; margin-top: 10px; width: 480px;\">";
                 for (int i = 0; i < messages.size(); i++) {
                     htmlOutput += "<tr style=\"border: 1px solid;\"><td><b>" + username.get(i) + "</b> schrieb ";
                     if (email.get(i).equals(myEmail)) {
@@ -261,7 +261,7 @@ public class Modules extends HttpServlet {
                     + "<tr><td height=\"10\"></td></tr>";
                 }
                 htmlOutput += "<tr style=\"border: 1px solid;\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></tr>"
-                            + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"58\" rows=\"5\" maxlength=\"210\" onkeypress=\"ismaxlength(this)\"></textarea></tr>"
+                            + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"56\" rows=\"5\" maxlength=\"210\" onkeypress=\"ismaxlength(this)\"></textarea></tr>"
                             + "<tr align=\"right\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></tr>"
                             + "</table>";
                 return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error><errorMsg> </errorMsg></root>";
