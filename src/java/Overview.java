@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -56,21 +57,25 @@ public class Overview extends HttpServlet {
             ArrayList<Time> hours = new ArrayList<Time>();
             ArrayList<String> names = new ArrayList<String>();
             ArrayList<Long> progresses = new ArrayList<Long>();
-            int width = 68;
+            int width = 100;
             fillTimeSpent(hours, names, progresses, width, request.getSession().getAttribute("projectname").toString(), c);
+
             String htmlOutput = "<div style=\"margin-top:20px;\">" + getProgressBar(100, divWidth, progress, "Fortschritt ")
                               + "</div>"
-                              + "<div style=\"margin-top:200px;\">"
-                                + "Projektende ist am: " + projectEndDate.getTime().toString()
+                              + "<br>"
+                              + "<br>"
+                              + "<div>"
+                                + "Projektende ist am: " + projectEndDate.getTime().getDate() + "." + (projectEndDate.getTime().getMonth() + 1) + "." + (projectEndDate.getTime().getYear() + 1900)
                                 + "<br>es bleiben nur noch <span  style=\"font-weight:bold; color:" + (daysLeft < 50 ? "red" : "green") + "\">" + daysLeft + "</span> Tage"
                               + "</div>"
                               + "<br>"
-                              + "<table border=\"1\" style=\"border-collapse:collapse;\">"
+                              + "<table cellpadding=\"10\" border=\"1\" style=\"border-collapse:collapse;\">"
                               + "<tr>"
-                                + "<td>Name</td><td>Zeit</td><td>Insgesamt</td>"
+                                + "<td align=\"center\" colspan=\"3\">Vergleich zur Gesamtzeit</td>"
                               + "</tr>";
                                 for (int i = 0; i < hours.size(); i++) {
                                     if (progresses.size() > 0) {
+                                        hours.get(i).setHours(hours.get(i).getHours() - 1);
                                         htmlOutput +=  "<tr>"
                                                         + "<td>" + names.get(i) + "</td><td>" + hours.get(i) + "</td><td>" + getProgressBar(15, width, progresses.get(i), "") + "</td>"
                                                      + "</tr>";
@@ -154,7 +159,7 @@ public class Overview extends HttpServlet {
     }
 
     public static String getProgressBar(int height, int width, long progress, String text) {
-        return "<div style=\"border:1px dashed; width:" + width + "px; height:" + height + "px; position:absolute; background-color: ##EEEEFF; margin-top:-9px\">"
+        return "<div style=\"border:1px dashed; width:" + width + "px; height:" + height + "px; position:relative; background-color: ##EEEEFF; margin-top:0px\">"
                   + "<div style=\"border:1px solid blue; width:" + progress + "px; height:100%; margin-top: -1px; margin-left: -1px; color:white; background-color: LightSteelBlue;\">"
                     + "<div style=\"margin-left:30%; margin-top:" + (height/2 - 10) + "px; position:absolute; text-shadow: 2px 2px 0 #AAAAAA; color:black\">" + text + (int)((float)progress*100/width) + "%</div>"
                   + "</div>"
@@ -166,7 +171,7 @@ public class Overview extends HttpServlet {
             PreparedStatement ps = c.prepareStatement("SELECT name, id FROM `user` WHERE projectname=?");
             ps.setString(1, projectName);
             ResultSet rs = ps.executeQuery();
-            long maxTimeSpent = 0;
+            long sumTimeSpent = 0;
             while (rs.next()) {
                 PreparedStatement ps2 = c.prepareStatement("SELECT start, end FROM `time` WHERE user_id=?");
                 ps2.setInt(1, rs.getInt(2));
@@ -178,24 +183,18 @@ public class Overview extends HttpServlet {
                     timeSpent += end.getTime() - start.getTime();
 
                 }
-                
-                timeSpent -= 3600000;
-                
 
-                if (timeSpent >= maxTimeSpent) {
-                    maxTimeSpent = timeSpent;
-                }
+                sumTimeSpent += timeSpent;
+                
                 hours.add(new Time(timeSpent));
+
                 names.add(rs.getString(1));
             }
-            if (maxTimeSpent > 0) {
-
-                for (int i = 0; i < hours.size(); i++) {
-                    if (hours.get(i).getTime() <= 0) {
-                        progress.add(0L);
-                    } else {
-                        progress.add(width*hours.get(i).getTime()/maxTimeSpent);
-                    }
+            for (int i = 0; i < hours.size(); i++) {
+                if (hours.get(i).getTime() == -3600000) {
+                    progress.add(0L);
+                } else {
+                    progress.add(width*hours.get(i).getTime()/sumTimeSpent);
                 }
             }
             ps.close();

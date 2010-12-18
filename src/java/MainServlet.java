@@ -154,7 +154,7 @@ public class MainServlet extends HttpServlet {
             sb.append("Und hier kommt der Inhalt.");
         }
         sb.append("</div>");
-        sb.append("<div id=\"statusBox\" style=\"text-align: center; height: 25px; position: absolute; margin-left: -340px; width: 218px; margin-top: 30px;\"></div>");
+        sb.append("<div id=\"statusBox\" style=\"text-align: center; border: 1px solid; margin-left: 0px; width: 820px; position: relative; height: 25px;\"></div>");
         sb.append("</div>");
         sb.append("</body>");
         sb.append("</html>");
