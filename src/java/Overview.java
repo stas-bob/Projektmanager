@@ -66,7 +66,7 @@ public class Overview extends HttpServlet {
                               + "<br>"
                               + "<div>"
                                 + "Projektende ist am: " + projectEndDate.getTime().getDate() + "." + (projectEndDate.getTime().getMonth() + 1) + "." + (projectEndDate.getTime().getYear() + 1900)
-                                + "<br>es bleiben nur noch <span  style=\"font-weight:bold; color:" + (daysLeft < 50 ? "red" : "green") + "\">" + daysLeft + "</span> Tage"
+                                + "<br>Es bleiben nur noch <span  style=\"font-weight:bold; color:" + (daysLeft < 50 ? "red" : "green") + "\">" + daysLeft + "</span> Tage."
                               + "</div>"
                               + "<br>"
                               + "<table cellpadding=\"10\" border=\"1\" style=\"border-collapse:collapse;\">"
