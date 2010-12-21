@@ -150,8 +150,6 @@ public class MainServlet extends HttpServlet {
         sb.append("<div id=\"content\">");
         if (passwordChange) {
             sb.append("Ihr Kennwort wurde erfolgreich ge&auml;ndert.");
-        } else {
-            sb.append("Und hier kommt der Inhalt.");
         }
         sb.append("</div>");
         sb.append("<div id=\"statusBox\" style=\"text-align: center; border: 1px solid; margin-left: 0px; width: 820px; position: relative; height: 25px;\"></div>");
