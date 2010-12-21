@@ -213,7 +213,7 @@ public class MainServlet extends HttpServlet {
         sb.append("</tr>");
         sb.append("<tr>");
         sb.append("<td align=\"left\">");
-        sb.append("Neues Passwort bestätigen:");
+        sb.append("Neues Passwort best&auml;tigen:");
         sb.append("</td>");
         sb.append("<td>");
         sb.append("<input id=\"validatePassword\" name=\"validatePassword\" type=\"password\">");

@@ -69,7 +69,7 @@ public class Overview extends HttpServlet {
                               + "<br>"
                               + "<table cellpadding=\"10\" border=\"1\" style=\"border-collapse:collapse;\">"
                               + "<tr>"
-                                + "<td align=\"center\" colspan=\"3\">Überblick der Arbeitszeiten</td>"
+                                + "<td align=\"center\" colspan=\"3\">&Uuml;berblick der Arbeitszeiten</td>"
                               + "</tr>";
                                 for (int i = 0; i < hours.size(); i++) {
                                     if (progresses.size() > 0) {

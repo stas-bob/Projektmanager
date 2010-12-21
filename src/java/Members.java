@@ -80,7 +80,7 @@ public class Members extends HttpServlet {
                 htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" + "<td style=\"border: 1px solid; padding-left: 10px;  padding-right: 10px; cursor:pointer;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), emails.get(i)) + "</td>";
                 if (request.getSession().getAttribute("status").equals("PL")) {
                     if (!request.getSession().getAttribute("user").equals(emails.get(i))) {
-                        htmlOutput += "<td><input type=\"button\" value=\"loeschen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>";
+                        htmlOutput += "<td><input type=\"button\" value=\"l&ouml;schen\"/ onclick=\"deleteUser('" + emails.get(i) + "')\"></td>";
                     }
                 }
                 htmlOutput += "</tr>";
