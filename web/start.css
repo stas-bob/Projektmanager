@@ -2,6 +2,12 @@ body {
     font-family: Gill, Helvetica, sans-serif;
 }
 
+table {
+    font-family: Gill, Helvetica, sans-serif;
+    font-size: 12pt;
+    font-weight: normal;
+}
+
 #frame{
     background-image:url("grafik/bg-main.png");
     background-repeat:no-repeat;
@@ -59,16 +65,6 @@ body {
 
 #textLogout{
     text-align: center;
-    font-size: 12pt;
-    font-weight: bold;
-}
-
-#changePasswordText {
-    font-size: 12pt;
-    font-weight: bold;
-}
-
-#returnChangePasswordText {
     font-size: 12pt;
     font-weight: bold;
 }

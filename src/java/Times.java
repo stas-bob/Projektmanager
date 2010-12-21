@@ -99,32 +99,32 @@ public class Times extends HttpServlet {
                 htmlOutput.append("<table>")
                         .append("<colgroup width=\"200\" />")
                         .append("<tr align=\"left\">")
-                        .append("<th>Modul:</th>")
-                        .append("<th><select id=\"modul\"size=1>")
+                        .append("<td>Modul:</td>")
+                        .append("<td><select id=\"modul\"size=1>")
                         .append("<option></option>");
                 for (String modul : moduls) {
                     htmlOutput.append("<option>").append(modul).append("</option>");
                 }
-                htmlOutput.append("</select></th>")
+                htmlOutput.append("</select></td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
-                        .append("<th>Datum:</th>")
-                        .append("<th><input type=\"text\" id=\"date\" name=\"date\" size=\"10\" maxlength=\"10\" />(dd.mm.yyyy)</th>")
+                        .append("<td>Datum:</td>")
+                        .append("<td><input type=\"text\" id=\"date\" name=\"date\" size=\"10\" maxlength=\"10\" />(dd.mm.yyyy)</td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
-                        .append("<th>Start:</th>")
-                        .append("<th><input type=\"text\" id=\"start\" name=\"start\" size=\"5\" maxlength=\"5\" />(hh:mm)</th>")
+                        .append("<td>Start:</td>")
+                        .append("<td><input type=\"text\" id=\"start\" name=\"start\" size=\"5\" maxlength=\"5\" />(hh:mm)</td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
-                        .append("<th>Ende:</th>")
-                        .append("<th><input type=\"text\" id=\"end\" name=\"end\" size=\"5\" maxlength=\"5\" />(hh:mm)</th>")
+                        .append("<td>Ende:</td>")
+                        .append("<td><input type=\"text\" id=\"end\" name=\"end\" size=\"5\" maxlength=\"5\" />(hh:mm)</td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
-                        .append("<th>Beschreibung:</th>")
-                        .append("<th><textarea id=\"description\" name=\"description\" cols=\"50\" rows=\"5\" maxlength=\"150\" ></textarea></th>")
+                        .append("<td>Beschreibung:</td>")
+                        .append("<td><textarea id=\"description\" name=\"description\" cols=\"50\" rows=\"5\" maxlength=\"150\" ></textarea></td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
-                        .append("<th><input type=\"button\" value=\"Speichern\" onclick=\"saveTimes()\">")
+                        .append("<td><input type=\"button\" value=\"Speichern\" onclick=\"saveTimes()\">")
                         .append("</table>")
                         .append("<br><br>")
                         .append("<br>");
@@ -336,12 +336,12 @@ public class Times extends HttpServlet {
                     .append("<col width=\"30\">")
                     .append("</colgroup>")
                     .append("<tr>")
-                    .append("<th>Datum</th>")
-                    .append("<th>Start</th>")
-                    .append("<th>Ende</th>")
-                    .append("<th>Dauer</th>")
-                    .append("<th>Modul</th>")
-                    .append("<th>Beschreibung</th>")
+                    .append("<td>Datum</td>")
+                    .append("<td>Start</td>")
+                    .append("<td>Ende</td>")
+                    .append("<td>Dauer</td>")
+                    .append("<td>Modul</td>")
+                    .append("<td>Beschreibung</td>")
                     .append("</tr>");
             PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modulname, description FROM time WHERE user_id = ? ORDER BY date DESC");
             ps.setInt(1, user_id);
@@ -355,18 +355,18 @@ public class Times extends HttpServlet {
                 totalMinute = totalMinute + minute;
                 duration = new Time(hour, minute, 0);
                 sb.append("<tr>")
-                        .append("<th>").append(rs.getDate("date")).append("</th>")
-                        .append("<th>").append(start).append("</th>")
-                        .append("<th>").append(end).append("</th>")
-                        .append("<th>").append(duration).append("</th>")
-                        .append("<th>").append(rs.getString("modulname")).append("</th>")
-                        .append("<th align=\"left\">").append(rs.getString("description")).append("</th>")
-                        .append("<th><input type=\"button\" value=\"X\" onclick=\"deleteTime('").append(user_id).append("','").append(rs.getDate("date")).append("','").append(start).append("')\"></th></tr>");
+                        .append("<td>").append(rs.getDate("date")).append("</td>")
+                        .append("<td>").append(start).append("</td>")
+                        .append("<td>").append(end).append("</td>")
+                        .append("<td>").append(duration).append("</td>")
+                        .append("<td>").append(rs.getString("modulname")).append("</td>")
+                        .append("<td align=\"left\">").append(rs.getString("description")).append("</td>")
+                        .append("<td><input type=\"button\" value=\"X\" onclick=\"deleteTime('").append(user_id).append("','").append(rs.getDate("date")).append("','").append(start).append("')\"></td></tr>");
             }
-            sb.append("<tr><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th></tr>")
-                    .append("<tr><th>Gesamt:</th>")
-                    .append("<th>&#160;</th><th>&#160;</th>")
-                    .append("<th>").append(new Time(totalHour, totalMinute, 0)).append("</th><th>&#160;</th><th>&#160;</th></tr>")
+            sb.append("<tr><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td></tr>")
+                    .append("<tr><td>Gesamt:</td>")
+                    .append("<td>&#160;</td><td>&#160;</td>")
+                    .append("<td>").append(new Time(totalHour, totalMinute, 0)).append("</td><td>&#160;</td><td>&#160;</td></tr>")
                     .append("</table>");
             if (totalHour != 0 || totalMinute != 0) {
                 sb.append("<br>")

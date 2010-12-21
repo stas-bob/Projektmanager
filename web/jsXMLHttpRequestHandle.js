@@ -620,8 +620,7 @@ function changePassword() {
 function callbackPassword() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            document.getElementById("returnChangePasswordText").innerHTML = xmlHttp.responseText;
-            document.getElementById("statusBox").innerHTML = "";
+            document.getElementById("statusBox").innerHTML = xmlHttp.responseText;
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";

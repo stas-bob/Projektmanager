@@ -37,29 +37,29 @@ public class Profile extends HttpServlet {
                 .append("<table cellspacing=\"5\">")
                 .append("<colgroup width=\"200\" />")
                 .append("<tr align=\"left\">")
-                .append("<th>Name:</th>")
-                .append("<th>").append(seas.getAttribute("name")).append("</th>")
+                .append("<td>Name:</td>")
+                .append("<td>").append(seas.getAttribute("name")).append("</td>")
                 .append("</tr>")
                 .append("<tr align=\"left\">")
-                .append("<th>Vorname:</th>")
-                .append("<th>").append(seas.getAttribute("firstname")).append("</th>")
+                .append("<td>Vorname:</td>")
+                .append("<td>").append(seas.getAttribute("firstname")).append("</td>")
                 .append("</tr>")
                 .append("<tr align=\"left\">")
-                .append("<th>E-Mail:</th>")
-                .append("<th>").append(seas.getAttribute("user")).append("</th>")
-                .append("</tr><tr><th>&#160;</th></tr>")
+                .append("<td>E-Mail:</td>")
+                .append("<td>").append(seas.getAttribute("user")).append("</td>")
+                .append("</tr><tr><td>&#160;</td></tr>")
                 .append("<tr align=\"left\">")
-                .append("<th>Projekt:</th>")
-                .append("<th>").append(seas.getAttribute("projectname")).append("</th>")
+                .append("<td>Projekt:</td>")
+                .append("<td>").append(seas.getAttribute("projectname")).append("</td>")
                 .append("</tr>")
                 .append("<tr align=\"left\">")
-                .append("<th>Status:</th>");
+                .append("<td>Status:</td>");
             if (seas.getAttribute("status").equals("PL")) {
-                htmlOutput.append("<th>Projektleiter</th>");
+                htmlOutput.append("<td>Projektleiter</td>");
             } else if (seas.getAttribute("status").equals("CPL")) {
-                htmlOutput.append("<th>Co- Projektleiter</th>");
+                htmlOutput.append("<td>Co- Projektleiter</td>");
             } else {
-                htmlOutput.append("<th>Mitglied</th>");
+                htmlOutput.append("<td>Mitglied</td>");
             }
             htmlOutput.append("</tr>")
                 .append("</table>")
@@ -68,9 +68,8 @@ public class Profile extends HttpServlet {
                 .append(MainServlet.changePasswordArea())
                 .append("<table>")
                 .append("<tr>")
-                .append("<th><input type=\"button\" value=\"&Auml;ndern\" onclick=\"changePassword()\" /></th>")
+                .append("<td><input type=\"button\" value=\"&Auml;ndern\" onclick=\"changePassword()\" /></td>")
                 .append("</table>")
-                .append("<div id=\"returnChangePasswordText\"></div>")
                 .append("</div>")
                 .append("<br><br>")
                 .append("<input type=\"submit\" value=\"Account l&ouml;schen\" onclick=\"deleteAccount()\" />");
