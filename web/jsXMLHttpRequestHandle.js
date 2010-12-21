@@ -818,7 +818,6 @@ function checkInputs() {
 }
 
 function deleteTime(user_id, date, start) {
-    alert(1);
     document.getElementById("statusBox").innerHTML = "Bitte warten...";
 
     var servlet = "/Projektmanager/Times?user_id=" + user_id + "&date=" + date + "&start=" + start;

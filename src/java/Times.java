@@ -123,7 +123,7 @@ public class Times extends HttpServlet {
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<th>Beschreibung:</th>")
-                        .append("<th><textarea id=\"description\" name=\"description\" cols=\"50\" rows=\"5\" maxlength=\"250\" ></textarea></th>")
+                        .append("<th><textarea id=\"description\" name=\"description\" cols=\"50\" rows=\"5\" maxlength=\"150\" ></textarea></th>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<th><input type=\"button\" value=\"Speichern\" onclick=\"saveTimes()\">")
@@ -287,7 +287,7 @@ public class Times extends HttpServlet {
         Date end = new Date(year, month, day);
 
         java.util.Date today = new java.util.Date();
-        if (start.compareTo(date) < 0  && end.compareTo(date) > 0 && today.compareTo(date) > 0) {
+        if (start.compareTo(date) < 0  && end.compareTo(date) > 0 && today.compareTo(date) <= 0) {
             return date;
         }
         return null;
@@ -352,14 +352,14 @@ public class Times extends HttpServlet {
             int totalHour = 0;
             int totalMinute = 0;
 
-            sb.append("<table border=1 style=\"border-collapse: collapse;\" cellpadding=\"3\">")
+            sb.append("<table width=\"800\" border=1 style=\"border-collapse: collapse;\" cellpadding=\"3\">")
                     .append("<colgroup>")
                     .append("<col width=\"100\">")
                     .append("<col width=\"70\">")
                     .append("<col width=\"70\">")
                     .append("<col width=\"70\">")
                     .append("<col width=\"120\">")
-                    .append("<col width=\"370\">")
+                    .append("<col width=\"360\">")
                     .append("<col width=\"30\">")
                     .append("</colgroup>")
                     .append("<tr>")
@@ -368,7 +368,7 @@ public class Times extends HttpServlet {
                     .append("<th>Ende</th>")
                     .append("<th>Dauer</th>")
                     .append("<th>Modul</th>")
-                    .append("<th>Beschreibung</th>")
+                    .append("<th align=\"left\">Beschreibung</th>")
                     .append("</tr>");
             PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modul_id, description FROM time WHERE user_id = ? ORDER BY date DESC");
             ps.setInt(1, user_id);
@@ -388,7 +388,7 @@ public class Times extends HttpServlet {
                         .append("<th>").append(duration).append("</th>")
                         .append("<th>").append(getModulName(c, rs.getInt(4))).append("</th>")
                         .append("<th align=\"left\">").append(rs.getString("description")).append("</th>")
-                        .append("<th><input type=\"button\" value=\"X\" onclick=\"deleteTime(").append(user_id).append(",").append(rs.getDate("date")).append(",").append(rs.getTime("start")).append(")\"></th></tr>");
+                        .append("<th><input type=\"button\" value=\"X\" onclick=\"deleteTime('").append(user_id).append("','").append(rs.getDate("date")).append("','").append(start).append("')\"></th></tr>");
             }
             sb.append("<tr><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th></tr>")
                     .append("<tr><th>Gesamt:</th>")
