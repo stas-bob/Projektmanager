@@ -55,6 +55,11 @@ public class Times extends HttpServlet {
                 int modul_id = -1;
                 if (request.getParameter("modul").toString().equals("")) {
                     status = "Sie müssen ein Modul angeben";
+                    input = "<modul>" + request.getParameter("modul").toString() + "</modul>"
+                            + "<date>" + request.getParameter("date").toString() + "</date>"
+                            + "<start>" + request.getParameter("start").toString() + "</start>"
+                            + "<end>" + request.getParameter("end").toString() + "</end>"
+                            + "<description>" + request.getParameter("description").toString() + "</description>";
                 } else {
                     modul_id = getModulId(c, request.getParameter("modul").toString());
                 }
@@ -81,7 +86,12 @@ public class Times extends HttpServlet {
                     if (insertTime(c, user_id, modul_id, date, start, end, description)) {
                         status = "Speichern erfolgreich";
                     } else {
-                        status = "Zu diesem Zeitpunkt haben Sie bereits etwas eine Zeit eingetragen!";
+                        status = "Zu diesem Zeitpunkt haben Sie bereits eine Zeit eingetragen!";
+                        input = "<modul>" + request.getParameter("modul").toString() + "</modul>"
+                            + "<date>" + request.getParameter("date").toString() + "</date>"
+                            + "<start>" + request.getParameter("start").toString() + "</start>"
+                            + "<end>" + request.getParameter("end").toString() + "</end>"
+                            + "<description>" + request.getParameter("description").toString() + "</description>";
                     }
                 } else {
                     input = "<modul>" + request.getParameter("modul").toString() + "</modul>"
@@ -297,7 +307,6 @@ public class Times extends HttpServlet {
         int hour = -1;
         int minute = -1;
         Time time = null;
-        System.out.println("here " + temp);
         try {
             hour = Integer.parseInt(temp.substring(0, temp.indexOf(":")));
             if (hour > 23 || hour < 0) {
@@ -352,14 +361,14 @@ public class Times extends HttpServlet {
             int totalHour = 0;
             int totalMinute = 0;
 
-            sb.append("<table width=\"800\" border=1 style=\"border-collapse: collapse;\" cellpadding=\"3\">")
+            sb.append("<table width=\"790\" border=1 style=\"border-collapse: collapse;\" cellpadding=\"3\">")
                     .append("<colgroup>")
                     .append("<col width=\"100\">")
                     .append("<col width=\"70\">")
                     .append("<col width=\"70\">")
                     .append("<col width=\"70\">")
                     .append("<col width=\"120\">")
-                    .append("<col width=\"360\">")
+                    .append("<col width=\"350\">")
                     .append("<col width=\"30\">")
                     .append("</colgroup>")
                     .append("<tr>")
@@ -368,7 +377,7 @@ public class Times extends HttpServlet {
                     .append("<th>Ende</th>")
                     .append("<th>Dauer</th>")
                     .append("<th>Modul</th>")
-                    .append("<th align=\"left\">Beschreibung</th>")
+                    .append("<th>Beschreibung</th>")
                     .append("</tr>");
             PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modul_id, description FROM time WHERE user_id = ? ORDER BY date DESC");
             ps.setInt(1, user_id);
