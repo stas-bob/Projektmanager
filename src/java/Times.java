@@ -7,9 +7,6 @@
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import db.DBConnector;
 import exceptions.MySQLException;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -93,6 +90,9 @@ public class Times extends HttpServlet {
                         + "<end>" + request.getParameter("end").toString() + "</end>"
                         + "<description>" + request.getParameter("description").toString() + "</description>";
                 }
+            } else if (request.getParameter("user_id") != null) {
+                deleteTime(c, request.getParameter("user_id").toString(), request.getParameter("date").toString(), request.getParameter("start").toString());
+                status = "Zeit erfolgreich gelöscht";
             }
             try {
                 
@@ -126,7 +126,7 @@ public class Times extends HttpServlet {
                         .append("<th><textarea id=\"description\" name=\"description\" cols=\"50\" rows=\"5\" maxlength=\"250\" ></textarea></th>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
-                        .append("<th><input type=\"button\" value=\"Speichern\" onclick=\"saveTimes()\"")
+                        .append("<th><input type=\"button\" value=\"Speichern\" onclick=\"saveTimes()\">")
                         .append("</table>")
                         .append("<br><br>")
                         .append("<br>");
@@ -217,7 +217,7 @@ public class Times extends HttpServlet {
         return result;
     }
 
-    private static String getModulName(Connection c, int modul_id) {
+    public static String getModulName(Connection c, int modul_id) {
         String result = "";
         try {
             PreparedStatement ps = c.prepareStatement("SELECT name FROM module WHERE id = ?");
@@ -240,16 +240,13 @@ public class Times extends HttpServlet {
         Date date = null;
 
         try {
-            System.out.println(temp);
             day = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
             if (day > 31 || day < 1) {
-                System.out.println("day");
                 return null;
             }
             temp = temp.substring(temp.indexOf(".") + 1);
             month = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
             if (month > 12 || month < 1) {
-                System.out.println("month");
                 return null;
             }
             temp = temp.substring(temp.indexOf(".") + 1);
@@ -258,12 +255,10 @@ public class Times extends HttpServlet {
                 year -= 1900;
             }
             if (year < 0) {
-                System.out.println("year");
                 return null;
             }
 
             date = new Date(year, month, day);
-            System.out.println("das datum ist" + date.toString());
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
@@ -279,7 +274,6 @@ public class Times extends HttpServlet {
             year -= 1900;
         }
         Date start = new Date(year, month, day);
-        System.out.println("project date start:" + start.toString());
 
         String endProject = seas.getAttribute("endProject").toString();
         year = Integer.parseInt(endProject.substring(0, endProject.indexOf("-")));
@@ -292,9 +286,8 @@ public class Times extends HttpServlet {
         }
         Date end = new Date(year, month, day);
 
-        System.out.println("project date end:" + end.toString());
-
-        if (start.compareTo(date) < 0  && end.compareTo(date) > 0) {
+        java.util.Date today = new java.util.Date();
+        if (start.compareTo(date) < 0  && end.compareTo(date) > 0 && today.compareTo(date) > 0) {
             return date;
         }
         return null;
@@ -366,7 +359,8 @@ public class Times extends HttpServlet {
                     .append("<col width=\"70\">")
                     .append("<col width=\"70\">")
                     .append("<col width=\"120\">")
-                    .append("<col width=\"400\">")
+                    .append("<col width=\"370\">")
+                    .append("<col width=\"30\">")
                     .append("</colgroup>")
                     .append("<tr>")
                     .append("<th>Datum</th>")
@@ -393,7 +387,8 @@ public class Times extends HttpServlet {
                         .append("<th>").append(end).append("</th>")
                         .append("<th>").append(duration).append("</th>")
                         .append("<th>").append(getModulName(c, rs.getInt(4))).append("</th>")
-                        .append("<th align=\"left\">").append(rs.getString("description")).append("</th></tr>");
+                        .append("<th align=\"left\">").append(rs.getString("description")).append("</th>")
+                        .append("<th><input type=\"button\" value=\"X\" onclick=\"deleteTime(").append(user_id).append(",").append(rs.getDate("date")).append(",").append(rs.getTime("start")).append(")\"></th></tr>");
             }
             sb.append("<tr><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th></tr>")
                     .append("<tr><th>Gesamt:</th>")
@@ -401,8 +396,6 @@ public class Times extends HttpServlet {
                     .append("<th>").append(new Time(totalHour, totalMinute, 0)).append("</th><th>&#160;</th><th>&#160;</th></tr>")
                     .append("</table>");
             if (totalHour != 0 || totalMinute != 0) {
-                downloadTimes(user_id, c);
-                System.out.println("Test");
                 sb.append("<br>")
                         .append("<a href=\"/Projektmanager/DownloadServlet?file=").append(user_id).append(".csv\">Download Tabelle als .csv</a>");
             }
@@ -413,56 +406,23 @@ public class Times extends HttpServlet {
         return "";
     }
     
-    private static void downloadTimes(int user_id, Connection c) {
-        StringBuilder sb = new StringBuilder(1000);
+    private static void deleteTime(Connection c, String user_id, String date, String start) {
         try {
-            Time start;
-            Time end;
-            Time duration;
-            int hour;
-            int minute;
-            int totalHour = 0;
-            int totalMinute = 0;
-
-            sb.append("Datum;Start;Ende;Dauer;Modul;Beschreibung\n");
-            PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modul_id, description FROM time WHERE user_id = ? ORDER BY date DESC");
-            ps.setInt(1, user_id);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                start = rs.getTime("start");
-                end = rs.getTime("end");
-                hour = end.getHours() - start.getHours();
-                minute = end.getMinutes() - start.getMinutes();
-                totalHour = totalHour + hour;
-                totalMinute = totalMinute + minute;
-                duration = new Time(hour, minute, 0);
-                sb.append(rs.getDate("date")).append(";")
-                        .append(start).append(";")
-                        .append(end).append(";")
-                        .append(duration).append(";")
-                        .append(getModulName(c, rs.getInt(4))).append(";")
-                        .append(rs.getString("description")).append(";\n");
+            try {
+                c.setAutoCommit(false);
+                PreparedStatement ps = c.prepareStatement("DELETE FROM time WHERE user_id = ? AND date = ? AND start = ?");
+                ps.setString(1, user_id);
+                ps.setString(2, date);
+                ps.setString(3, start);
+                ps.executeUpdate();
+                ps.close();
+                c.commit();
+            } catch (MySQLIntegrityConstraintViolationException ex) {
+                c.rollback();
+                c.setAutoCommit(true);
             }
-            sb.append("\nGesamt:;;").append(new Time(totalHour, totalMinute, 0)).append(";");
         } catch (SQLException ex) {
             ex.printStackTrace();
-        }
-
-
-        File ausgabedatei;
-        FileWriter fw;
-        BufferedWriter bw;
-        try {
-            ausgabedatei = new File(user_id + ".csv");
-            fw = new FileWriter(ausgabedatei);
-            bw = new BufferedWriter(fw);
-            bw.write(sb.toString());
-            bw.close();
-        } catch (ArrayIndexOutOfBoundsException aioobe) {
-            System.out.println("Aufruf mit: java SchreibeDatei name");
-            System.out.println("erzeugt eine Datei name.html");
-        } catch (IOException ioe) {
-            System.out.println("Habe gefangen: "+ioe);
         }
     }
 }

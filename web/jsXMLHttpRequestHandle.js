@@ -816,3 +816,26 @@ function checkInputs() {
         document.getElementById("submitData").disabled = true;
     }
 }
+
+function deleteTime(user_id, date, start) {
+    alert(1);
+    document.getElementById("statusBox").innerHTML = "Bitte warten...";
+
+    var servlet = "/Projektmanager/Times?user_id=" + user_id + "&date=" + date + "&start=" + start;
+    xmlHttp.open('POST',servlet, true);
+    xmlHttp.onreadystatechange = callbackDeleteTimes;
+    xmlHttp.send();
+}
+
+function callbackDeleteTimes() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
+
+            var status = xmlobject.getElementsByTagName("status")[0].childNodes[0].nodeValue;
+            document.getElementById("statusBox").innerHTML = status;
+        }
+    }
+}
