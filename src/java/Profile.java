@@ -71,7 +71,10 @@ public class Profile extends HttpServlet {
                 .append("<th><input type=\"button\" value=\"&Auml;ndern\" onclick=\"changePassword()\" /></th>")
                 .append("</table>")
                 .append("<div id=\"returnChangePasswordText\"></div>")
-                .append("</div>");
+                .append("</div>")
+                .append("<br><br>")
+                .append("<input type=\"submit\" value=\"Account l&ouml;schen\" onclick=\"deleteAccount()\" />");
+
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite></root>";
             out.write(xmlResponse);
         } finally {

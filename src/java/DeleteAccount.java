@@ -3,7 +3,6 @@
  * and open the template in the editor.
  */
 
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -12,23 +11,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author tA88
  */
-public class PasswordForget extends HttpServlet {
-   
+public class DeleteAccount extends HttpServlet {
+
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -37,53 +33,64 @@ public class PasswordForget extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-
         Connection c = null;
-        String email = request.getParameter("email").toString();
+        HttpSession seas = request.getSession();
+
+
+        int user_id = Integer.parseInt(seas.getAttribute("user_id").toString());
+        String email = seas.getAttribute("user").toString();
         try {
             c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT name, firstname, password FROM user WHERE email = ?");
-            ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            String name = rs.getString("name");
-            String firstname = rs.getString("firstname");
-            String pw = rs.getString("password");
-            String text = createText(firstname, name, pw);
-            Registrieren.sendMail(email, "Ihr vergessenes Passwort", text);
+            try {
+                c.setAutoCommit(false);
 
-            out.write("<html>");
-            out.write("<head>");
-            out.write("<title>Passwort vergessen</title>");
-            out.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\" />");
-            out.write("</head>");
-            out.write("<body>");
-            out.write("<div id=\"textPasswordForget\" />");
-            out.write("Ihr Passwort wurde an die von Ihnen eingegeben E-Mail geschickt!");
-            out.write("<br>");
-            out.write("<a href='Login.html'>Zur&uuml;ck zum Login</a>");
-            out.write("</div>");
-            out.write("</body>");
-            out.write("</html>");
-        } catch (MySQLException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally { 
+                PreparedStatement ps = c.prepareStatement("DELETE FROM time WHERE user_id = ?");
+                ps.setInt(1, user_id);
+                ps.executeUpdate();
+                ps.close();
+
+                ps = c.prepareStatement("DELETE FROM rel_module_user WHERE email = ?");
+                ps.setString(1, email);
+                ps.executeUpdate();
+                ps.close();
+
+                ps = c.prepareStatement("DELETE FROM user WHERE id = ?");
+                ps.setInt(1, user_id);
+                ps.executeUpdate();
+                ps.close();
+
+                c.commit();
+
+                request.logout();
+                out.write("<html>");
+                out.write("<head>");
+                out.write("<title>Account löschen</title>");
+                out.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\" />");
+                out.write("</head>");
+                out.write("<body>");
+                out.write("<div id=\"textPasswordForget\" />");
+                out.write("Ihr Account wurde gel&ouml;scht!");
+                out.write("</div>");
+                out.write("</body>");
+                out.write("</html>");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                c.rollback();
+            } finally {
+                c.setAutoCommit(true);
+                c.close();
+            }
+        } catch (MySQLException ex) {
+            ex.printStackTrace();
+        } catch (SQLException ex) {
+            Logger.getLogger(Times.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
             out.close();
         }
-    }
 
-    private String createText(String firstname, String name, String pw) {
-        StringBuilder sb = new StringBuilder(200);
-        sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n")
-                .append("Ihr Passwort ist:\n")
-                .append(pw).append("\n\n")
-                .append("Ihr Entwickler Team");
-        return sb.toString();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -96,9 +103,9 @@ public class PasswordForget extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
-    } 
+    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -109,7 +116,7 @@ public class PasswordForget extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -121,5 +128,4 @@ public class PasswordForget extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

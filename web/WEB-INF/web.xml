@@ -16,6 +16,10 @@
         <servlet-name>PasswordForget</servlet-name>
         <servlet-class>PasswordForget</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteAccount</servlet-name>
+        <servlet-class>DeleteAccount</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -103,6 +107,10 @@
     <servlet-mapping>
         <servlet-name>PasswordForget</servlet-name>
         <url-pattern>/PasswordForget</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteAccount</servlet-name>
+        <url-pattern>/DeleteAccount</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

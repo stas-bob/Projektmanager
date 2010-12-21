@@ -910,3 +910,23 @@ function callbackPasswordForget() {
         }
     }
 }
+
+function deleteAccount() {
+    bestaetigt = window.confirm ("Wollen Sie wirklich Ihren Account löschen?");
+    if (bestaetigt == true) {
+        createXMLHttpRequest();
+        xmlHttp.open('POST',"/Projektmanager/DeleteAccount", true);
+        xmlHttp.onreadystatechange = callbackDeleteAccoutn;
+        xmlHttp.send(null);
+    }   
+}
+
+function callbackDeleteAccoutn() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            document.write(xmlHttp.responseText);
+        } else {
+            document.getElementById("statusBox").innerHTML = "Fehler";
+        }
+    }
+}
