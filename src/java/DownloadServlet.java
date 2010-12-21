@@ -62,7 +62,7 @@ import javax.servlet.http.HttpServletResponse;
             int totalMinute = 0;
 
             sb.append("Datum;Start;Ende;Dauer;Modul;Beschreibung\n");
-            PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modul_id, description FROM time WHERE user_id = ? ORDER BY date DESC");
+            PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modulname, description FROM time WHERE user_id = ? ORDER BY date DESC");
             ps.setInt(1, user_id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -77,7 +77,7 @@ import javax.servlet.http.HttpServletResponse;
                         .append(start).append(";")
                         .append(end).append(";")
                         .append(duration).append(";")
-                        .append(Times.getModulName(c, rs.getInt(4))).append(";")
+                        .append(rs.getString("modulname")).append(";")
                         .append(rs.getString("description")).append(";\n");
             }
             sb.append("\nGesamt:;;").append(new Time(totalHour, totalMinute, 0)).append(";");

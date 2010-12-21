@@ -427,11 +427,6 @@ public class Modules extends HttpServlet {
                 ps.setString(1, id);
                 ps.executeUpdate();
                 ps.close();
-                sql = "DELETE FROM time WHERE modul_id = ?";
-                ps = c.prepareStatement(sql);
-                ps.setString(1, id);
-                ps.executeUpdate();
-                ps.close();
                 c.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -525,14 +520,12 @@ public class Modules extends HttpServlet {
     }
 
     public static GregorianCalendar getDateFromString(String str) {
-        System.out.println(str);
         int year = Integer.parseInt(str.substring(0, str.indexOf("-")));
         str = str.substring(str.indexOf("-") + 1);
         int month = Integer.parseInt(str.substring(0, str.indexOf("-")));
         str = str.substring(str.indexOf("-") + 1);
         int day = Integer.parseInt(str);
         str = str.substring(str.indexOf("-") + 1);
-        System.out.println(day + " " + month + " " + year);
         if (year >= 2010) {
             if (month > 0 && month < 13) {
                 if (day > 0 && (month == 1 && day < 32) ||

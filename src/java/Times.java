@@ -52,16 +52,12 @@ public class Times extends HttpServlet {
             c = DBConnector.getConnection();
 
             if (request.getParameter("modul") != null) {
-                int modul_id = -1;
+                String modulname = "";
                 if (request.getParameter("modul").toString().equals("")) {
                     status = "Sie müssen ein Modul angeben";
-                    input = "<modul>" + request.getParameter("modul").toString() + "</modul>"
-                            + "<date>" + request.getParameter("date").toString() + "</date>"
-                            + "<start>" + request.getParameter("start").toString() + "</start>"
-                            + "<end>" + request.getParameter("end").toString() + "</end>"
-                            + "<description>" + request.getParameter("description").toString() + "</description>";
+                    input = getInput(request);
                 } else {
-                    modul_id = getModulId(c, request.getParameter("modul").toString());
+                    modulname = request.getParameter("modul").toString();
                 }
 
                 Date date = getDate(request.getParameter("date").toString(), seas);
@@ -83,22 +79,14 @@ public class Times extends HttpServlet {
                 }
                 String description = request.getParameter("description").toString();
                 if (status.equals("")) {
-                    if (insertTime(c, user_id, modul_id, date, start, end, description)) {
+                    if (insertTime(c, user_id, modulname, date, start, end, description)) {
                         status = "Speichern erfolgreich";
                     } else {
                         status = "Zu diesem Zeitpunkt haben Sie bereits eine Zeit eingetragen!";
-                        input = "<modul>" + request.getParameter("modul").toString() + "</modul>"
-                            + "<date>" + request.getParameter("date").toString() + "</date>"
-                            + "<start>" + request.getParameter("start").toString() + "</start>"
-                            + "<end>" + request.getParameter("end").toString() + "</end>"
-                            + "<description>" + request.getParameter("description").toString() + "</description>";
+                        input = getInput(request);
                     }
                 } else {
-                    input = "<modul>" + request.getParameter("modul").toString() + "</modul>"
-                        + "<date>" + request.getParameter("date").toString() + "</date>"
-                        + "<start>" + request.getParameter("start").toString() + "</start>"
-                        + "<end>" + request.getParameter("end").toString() + "</end>"
-                        + "<description>" + request.getParameter("description").toString() + "</description>";
+                    input = getInput(request);
                 }
             } else if (request.getParameter("user_id") != null) {
                 deleteTime(c, request.getParameter("user_id").toString(), request.getParameter("date").toString(), request.getParameter("start").toString());
@@ -195,6 +183,14 @@ public class Times extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private static String getInput(HttpServletRequest request) {
+        return "<modul>" + request.getParameter("modul").toString() + "</modul>"
+                        + "<date>" + request.getParameter("date").toString() + "</date>"
+                        + "<start>" + request.getParameter("start").toString() + "</start>"
+                        + "<end>" + request.getParameter("end").toString() + "</end>"
+                        + "<description>" + request.getParameter("description").toString() + "</description>";
+    }
+
     private static ArrayList<String> getModules(Connection c, String user) {
         ArrayList<String> result = new ArrayList<String>();
         try {
@@ -205,38 +201,6 @@ public class Times extends HttpServlet {
                 result.add(rs.getString("name"));
             }
             ps.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return result;
-    }
-
-    private static int getModulId(Connection c, String modulname) {
-        int result = -1;
-        try {
-            PreparedStatement ps = c.prepareStatement("SELECT id FROM module WHERE name = ?");
-            ps.setString(1, modulname);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            result = rs.getInt(1);
-            ps.close();
-            return result;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return result;
-    }
-
-    public static String getModulName(Connection c, int modul_id) {
-        String result = "";
-        try {
-            PreparedStatement ps = c.prepareStatement("SELECT name FROM module WHERE id = ?");
-            ps.setInt(1, modul_id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next())
-                result = rs.getString(1);
-            ps.close();
-            return result;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -325,13 +289,13 @@ public class Times extends HttpServlet {
         return time;
     }
 
-    private static boolean insertTime(Connection c, int user_id, int modul_id, Date date, Time start, Time end, String description) {
+    private static boolean insertTime(Connection c, int user_id, String modulname, Date date, Time start, Time end, String description) {
         try {
             try {
                 c.setAutoCommit(false);
-                PreparedStatement ps = c.prepareStatement("INSERT INTO time (user_id, modul_id, date, start, end, description) VALUES (?,?,?,?,?,?)");
+                PreparedStatement ps = c.prepareStatement("INSERT INTO time (user_id, modulname, date, start, end, description) VALUES (?,?,?,?,?,?)");
                 ps.setInt(1, user_id);
-                ps.setInt(2, modul_id);
+                ps.setString(2, modulname);
                 ps.setDate(3, date);
                 ps.setTime(4, start);
                 ps.setTime(5, end);
@@ -379,7 +343,7 @@ public class Times extends HttpServlet {
                     .append("<th>Modul</th>")
                     .append("<th>Beschreibung</th>")
                     .append("</tr>");
-            PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modul_id, description FROM time WHERE user_id = ? ORDER BY date DESC");
+            PreparedStatement ps = c.prepareStatement("SELECT date, start, end, modulname, description FROM time WHERE user_id = ? ORDER BY date DESC");
             ps.setInt(1, user_id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -395,7 +359,7 @@ public class Times extends HttpServlet {
                         .append("<th>").append(start).append("</th>")
                         .append("<th>").append(end).append("</th>")
                         .append("<th>").append(duration).append("</th>")
-                        .append("<th>").append(getModulName(c, rs.getInt(4))).append("</th>")
+                        .append("<th>").append(rs.getString("modulname")).append("</th>")
                         .append("<th align=\"left\">").append(rs.getString("description")).append("</th>")
                         .append("<th><input type=\"button\" value=\"X\" onclick=\"deleteTime('").append(user_id).append("','").append(rs.getDate("date")).append("','").append(start).append("')\"></th></tr>");
             }
