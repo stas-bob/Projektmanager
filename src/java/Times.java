@@ -388,7 +388,7 @@ public class Times extends HttpServlet {
                         .append("<th>").append(duration).append("</th>")
                         .append("<th>").append(getModulName(c, rs.getInt(4))).append("</th>")
                         .append("<th align=\"left\">").append(rs.getString("description")).append("</th>")
-                        .append("<th><input type=\"button\" value=\"X\" onclick=\"deleteTime(").append(user_id).append(",").append(rs.getDate("date")).append(",").append(rs.getTime("start")).append(")\"></th></tr>");
+                        .append("<th><input type=\"button\" value=\"X\" onclick=\"deleteTime('").append(user_id).append(",").append(rs.getDate("date")).append(",").append(rs.getTime("start")).append("')\"></th></tr>");
             }
             sb.append("<tr><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th><th>&#160;</th></tr>")
                     .append("<tr><th>Gesamt:</th>")
