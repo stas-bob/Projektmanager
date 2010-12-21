@@ -33,6 +33,14 @@
         <url-pattern>/ValidateProjectServlet</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>ValidateEmailServlet</servlet-name>
+        <servlet-class>ValidateEmailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ValidateEmailServlet</servlet-name>
+        <url-pattern>/ValidateEmailServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>Members</servlet-name>
         <servlet-class>Members</servlet-class>
     </servlet>

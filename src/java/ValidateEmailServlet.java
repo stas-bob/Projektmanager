@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bline
  */
-@WebServlet(name="ValidateEmailServlet", urlPatterns={"/ValidateEmailServlet"})
 public class ValidateEmailServlet extends HttpServlet {
    
     /** 
@@ -40,7 +39,7 @@ public class ValidateEmailServlet extends HttpServlet {
         out.close();
     } 
 
-        public String validateEmail(String emailName) {
+    public String validateEmail(String emailName) {
         String status = "0";
         try {
             Connection c = DBConnector.getConnection();
