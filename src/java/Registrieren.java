@@ -66,9 +66,7 @@ public class Registrieren extends HttpServlet {
 
     public void activate(String name, String firstname, String toEmail, Date startProject, Date endProject, String projectName, boolean member) {
         try {
-            String smtp = "mail.gmx.net";
-            String fromEmail = "htw-projektmanager@gmx.de";
-            String emailPw = new BufferedReader(new FileReader("/pw.txt")).readLine();
+            
             String subject = "Anmeldung fuer das Projekt " + projectName;
             String genPW = (int) (Math.random() * 10000000) + "";
             String text = createText(firstname,
@@ -103,7 +101,7 @@ public class Registrieren extends HttpServlet {
                 ps.executeUpdate();
                 ps.close();
                 c.commit();
-                //sendMail(smtp, fromEmail, emailPw, fromEmail, toEmail, subject, text);
+                sendMail(toEmail, subject, text);
             } catch (SQLException e) {
                 c.rollback();
                 e.printStackTrace();
@@ -111,8 +109,6 @@ public class Registrieren extends HttpServlet {
                 c.setAutoCommit(true);
                 c.close();
             }
-        } catch (IOException ex) {
-            Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MySQLException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -120,7 +116,15 @@ public class Registrieren extends HttpServlet {
         }
     }
 
-    private void sendMail(String smtpHost, String username, String password, String senderAddress, String recipientsAddress, String subject, String text) {
+    public static void sendMail(String recipientsAddress, String subject, String text) {
+        String smtpHost = "mail.gmx.net";
+        String username = "htw-projektmanager@gmx.de";
+        String password = "";
+        try {
+            password = new BufferedReader(new FileReader("/pw.txt")).readLine();
+        } catch (IOException ex) {
+            Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
+        }
         MailAuthenticator auth = new MailAuthenticator(username, password);
 
         Properties properties = System.getProperties();
@@ -132,7 +136,7 @@ public class Registrieren extends HttpServlet {
         try {
             Message msg = new MimeMessage(session);
 
-            msg.setFrom(new InternetAddress(senderAddress));
+            msg.setFrom(new InternetAddress(username));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(
                     recipientsAddress, false));
 
@@ -144,7 +148,7 @@ public class Registrieren extends HttpServlet {
 
             Transport.send(msg);
         } catch (MessagingException ex) {
-            System.out.println("Fehler in Registrieren/sendMail(...)");
+            System.out.println("Fehler in sendMail(...)");
         }
     }
 

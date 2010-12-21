@@ -11,10 +11,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -71,7 +69,7 @@ public class Overview extends HttpServlet {
                               + "<br>"
                               + "<table cellpadding=\"10\" border=\"1\" style=\"border-collapse:collapse;\">"
                               + "<tr>"
-                                + "<td align=\"center\" colspan=\"3\">Vergleich zur Gesamtzeit</td>"
+                                + "<td align=\"center\" colspan=\"3\">Überblick der Arbeitszeiten</td>"
                               + "</tr>";
                                 for (int i = 0; i < hours.size(); i++) {
                                     if (progresses.size() > 0) {
@@ -191,7 +189,7 @@ public class Overview extends HttpServlet {
                 names.add(rs.getString(1));
             }
             for (int i = 0; i < hours.size(); i++) {
-                if (hours.get(i).getTime() == -3600000) {
+                if (hours.get(i).getTime() == -3600000 || sumTimeSpent == 0) {
                     progress.add(0L);
                 } else {
                     progress.add(width*hours.get(i).getTime()/sumTimeSpent);

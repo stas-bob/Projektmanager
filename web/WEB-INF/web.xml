@@ -12,6 +12,10 @@
         <servlet-name>DownloadServlet</servlet-name>
         <servlet-class>DownloadServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PasswordForget</servlet-name>
+        <servlet-class>PasswordForget</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -95,6 +99,10 @@
     <servlet-mapping>
         <servlet-name>DownloadServlet</servlet-name>
         <url-pattern>/DownloadServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PasswordForget</servlet-name>
+        <url-pattern>/PasswordForget</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

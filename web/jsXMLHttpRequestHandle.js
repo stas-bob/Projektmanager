@@ -818,7 +818,6 @@ function checkInputs() {
 }
 
 function deleteTime(user_id, date, start) {
-    alert(1);
     document.getElementById("statusBox").innerHTML = "Bitte warten...";
 
     var servlet = "/Projektmanager/Times?user_id=" + user_id + "&date=" + date + "&start=" + start;
@@ -836,6 +835,78 @@ function callbackDeleteTimes() {
 
             var status = xmlobject.getElementsByTagName("status")[0].childNodes[0].nodeValue;
             document.getElementById("statusBox").innerHTML = status;
+        }
+    }
+}
+
+
+function validateEmailServletPasswordForget()
+{
+    document.getElementById("submitPasswordForget").disabled = true;
+    document.getElementById("statusEmail").disabled = "Bitte warten ...";
+    if (document.getElementById("email").value != "") {
+        var email = document.getElementById("email").value;
+        var emailRegxp =/^.+@.+\..{2,5}$/;
+        if(!email.match(emailRegxp)) {
+            document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+            document.getElementById("statusEmail").innerHTML = "Keine regul&auml;re E-Mail eingegeben!";
+            checkInputs();
+            return;
+        }
+
+        var servlet = "/Projektmanager/ValidateEmailServlet?email=" + email;
+        createXMLHttpRequest();
+        xmlHttp.open('POST',servlet, true);
+        xmlHttp.onreadystatechange = callbackValidateEmailPasswordForget;
+        xmlHttp.send(null);
+    } else {
+        document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+        document.getElementById("statusEmail").innerHTML = "Bitte E-Mail eingeben!"
+    }
+}
+
+function callbackValidateEmailPasswordForget() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var status = xmlHttp.responseText;
+            if (status == "0") {
+                document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+                document.getElementById("statusEmail").innerHTML = "E-Mail nicht vorhanden!";
+                document.getElementById("submitPasswordForget").disabled = true;
+            } else {
+                document.getElementById("imgEmail").innerHTML = "<img src=grafik/ok.gif />";
+                document.getElementById("statusEmail").innerHTML = "E-Mail ok!";
+                document.getElementById("submitPasswordForget").disabled = false;
+            }
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            } else {
+                document.getElementById("statusEmail").innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
+            }
+        }
+    }
+}
+
+function passwordForget(servlet) {
+    var email = document.getElementById("email").value;
+    servlet += "?email=" + email;
+    createXMLHttpRequest();
+    xmlHttp.open('POST',servlet, true);
+    xmlHttp.onreadystatechange = callbackPasswordForget;
+    xmlHttp.send(null);
+}
+
+function callbackPasswordForget() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            document.write(xmlHttp.responseText);
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            } else {
+                document.write("<a href=\"Login.html\">Schwerwiegender Fehler.</a>");
+            }
         }
     }
 }
