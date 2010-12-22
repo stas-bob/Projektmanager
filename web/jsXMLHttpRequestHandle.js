@@ -99,6 +99,9 @@ function addUser() {
     + "<td>Name:<input type=\"text\" id=\"name\" maxlength=\"40\"/></td>"
     + "</tr>"
     + "<tr>"
+    + "<td>Vorname:<input type=\"text\" id=\"firstname\" maxlength=\"40\"/></td>"
+    + "</tr>"
+    + "<tr>"
     + "<td>Email: <input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
     + "</tr>"
     + "<tr>"
@@ -270,9 +273,10 @@ function saveModule() {
 function saveUser() {
     createXMLHttpRequest();
     var name = document.getElementById("name").value;
+    var firstname = document.getElementById("firstname").value;
     var email = document.getElementById("email").value;
-    if (name.length != 0 && email.length != 0) {
-        xmlHttp.open('POST',"/Projektmanager/Members?addName=" + name + "&addEmail=" + email, true);
+    if (name.length != 0 && firstname.length != 0 && email.length != 0) {
+        xmlHttp.open('POST',"/Projektmanager/Members?addName=" + name + "&addFirstname=" + firstname + "&addEmail=" + email, true);
         xmlHttp.onreadystatechange = showMembers;
         xmlHttp.send();
     }

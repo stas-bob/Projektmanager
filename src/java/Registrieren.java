@@ -119,12 +119,12 @@ public class Registrieren extends HttpServlet {
     public static void sendMail(String recipientsAddress, String subject, String text) {
         String smtpHost = "mail.gmx.net";
         String username = "htw-projektmanager@gmx.de";
-        String password = "stas-thomas";
-/*      try {
+        String password = "";
+        try {
             password = new BufferedReader(new FileReader("/pw.txt")).readLine();
         } catch (IOException ex) {
             Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }
         MailAuthenticator auth = new MailAuthenticator(username, password);
 
         Properties properties = System.getProperties();

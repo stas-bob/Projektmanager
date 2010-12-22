@@ -34,9 +34,9 @@ public class DBConnector {
 	 */
 	public static Connection getConnection() throws SQLException, MySQLException{
             try {
-                String pw = "stas-thomas";
-                //BufferedReader in = new BufferedReader(new FileReader("/pw.txt"));
-                //pw = in.readLine();
+                String pw = "";
+                BufferedReader in = new BufferedReader(new FileReader("/pw.txt"));
+                pw = in.readLine();
                 Class.forName(driver).newInstance();
                 return DriverManager.getConnection(host, username, pw);
             } catch(Exception e) {
