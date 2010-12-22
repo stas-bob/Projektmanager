@@ -48,9 +48,10 @@ public class Members extends HttpServlet {
             } else {
                 if (request.getParameter("addName") != null) {
                     String userName = request.getParameter("addName");
+                    String userFirstname = request.getParameter("addFirstname");
                     String userEmail = request.getParameter("addEmail");
                     if (new ValidateEmailServlet().validateEmail(userEmail).equals("0")) {
-                        new Registrieren().activate(userName, "empty", userEmail, null, null, request.getSession().getAttribute("projectname").toString(), true);
+                        new Registrieren().activate(userName, userFirstname, userEmail, null, null, request.getSession().getAttribute("projectname").toString(), true);
                     } else {
                         out.write("1");
                     }
@@ -85,7 +86,7 @@ public class Members extends HttpServlet {
                 }
                 htmlOutput += "</tr>";
             }
-            htmlOutput += "</table>" + "<div id=\"addUserField\"></div>";
+            htmlOutput += "</table><br>" + "<div id=\"addUserField\"></div>";
             if (request.getSession().getAttribute("status").equals("PL")) {
                 htmlOutput += "<div><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></div>";
             }
