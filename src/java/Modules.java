@@ -182,7 +182,7 @@ public class Modules extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void getModules(String projectName, ArrayList<String> names, ArrayList<String> status, ArrayList<Integer> ids, Connection c) {
+    public static void getModules(String projectName, ArrayList<String> names, ArrayList<String> status, ArrayList<Integer> ids, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT name, status, id FROM module WHERE projectname = ?");
             ps.setString(1, projectName);
