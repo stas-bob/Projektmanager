@@ -58,6 +58,13 @@ public class Overview extends HttpServlet {
             int width = 100;
             fillTimeSpent(hours, names, progresses, width, request.getSession().getAttribute("projectname").toString(), c);
 
+            ArrayList<String> moduleNames;
+            ArrayList<String> status;
+            moduleNames = new ArrayList<String>();
+            status = new ArrayList<String>();
+            ArrayList<Integer> ids = new ArrayList<Integer>();
+            Modules.getModules(request.getSession().getAttribute("projectname").toString(), moduleNames, status, ids, c);
+            
             String htmlOutput = "<div style=\"margin-top:20px;\">" + getProgressBar(100, divWidth, progress, "Fortschritt ")
                               + "</div>"
                               + "<br>"
@@ -79,7 +86,16 @@ public class Overview extends HttpServlet {
                                                      + "</tr>";
                                     }
                                 }
-                              htmlOutput += "</table>";
+                              htmlOutput += "</table>"
+                                      + "<table cellpadding=\"10\" border=\"1\" style=\"margin-left:300px; margin-top:-201px; border-collapse: collapse;\">"
+                                        + "<tr><td align=\"center\">Offene Aufgaben</td></tr>";
+                                        for (int i = 0; i < moduleNames.size(); i++) {
+                                            if (status.get(i).equals("open")) {
+                                                htmlOutput += "<tr><td>" + moduleNames.get(i) + "</td></tr>";
+                                            }
+                                        }
+                                        
+                                      htmlOutput += "</table>";
 
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite></root>";
             out.write(xmlResponse);
