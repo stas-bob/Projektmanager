@@ -109,15 +109,15 @@ public class Times extends HttpServlet {
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<td>Datum:</td>")
-                        .append("<td><input type=\"text\" id=\"date\" name=\"date\" size=\"10\" maxlength=\"10\" />(dd.mm.yyyy)</td>")
+                        .append("<td><input type=\"text\" id=\"date\" name=\"date\" size=\"10\" maxlength=\"10\" />(dd.mm.yyyy)<input type=\"button\" value=\"Heute\" onclick=\"today('").append("date").append("')\"></td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<td>Start:</td>")
-                        .append("<td><input type=\"text\" id=\"start\" name=\"start\" size=\"5\" maxlength=\"5\" />(hh:mm)</td>")
+                        .append("<td><input type=\"text\" id=\"start\" name=\"start\" size=\"5\" maxlength=\"5\" />(hh:mm)<input type=\"button\" value=\"Jetzt\" onclick=\"now('").append("start").append("')\"></td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<td>Ende:</td>")
-                        .append("<td><input type=\"text\" id=\"end\" name=\"end\" size=\"5\" maxlength=\"5\" />(hh:mm)</td>")
+                        .append("<td><input type=\"text\" id=\"end\" name=\"end\" size=\"5\" maxlength=\"5\" />(hh:mm)<input type=\"button\" value=\"Jetzt\" onclick=\"now('").append("end").append("')\"></td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<td>Beschreibung:</td>")
@@ -219,7 +219,7 @@ public class Times extends HttpServlet {
                 return null;
             }
             temp = temp.substring(temp.indexOf(".") + 1);
-            month = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
+            month = Integer.parseInt(temp.substring(0, temp.indexOf("."))) - 1;
             if (month > 12 || month < 1) {
                 return null;
             }
@@ -261,8 +261,10 @@ public class Times extends HttpServlet {
         Date end = new Date(year, month, day);
 
         java.util.Date today = new java.util.Date();
-        if (start.compareTo(date) < 0  && end.compareTo(date) > 0 && today.compareTo(date) <= 0) {
-            return date;
+        if (today.compareTo(date) >= 0) {
+            if (start.compareTo(date) <= 0  && end.compareTo(date) >= 0) {
+                return date;
+            }
         }
         return null;
     }

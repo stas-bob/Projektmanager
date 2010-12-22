@@ -671,9 +671,14 @@ function callbackSaveTimes() {
     }
 }
 
-function today() {
+function now(id) {
+    var time = new Date();
+    document.getElementById(id).value = time.getHours() + ":" + time.getMinutes();
+}
+
+function today(id) {
     var date = new Date();
-    document.getElementById("startProject").value = date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+    document.getElementById(id).value = date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
 }
 
 function checkDate() {

@@ -101,7 +101,7 @@ public class Registrieren extends HttpServlet {
                 ps.executeUpdate();
                 ps.close();
                 c.commit();
-                sendMail(toEmail, subject, text);
+                //sendMail(toEmail, subject, text);
             } catch (SQLException e) {
                 c.rollback();
                 e.printStackTrace();

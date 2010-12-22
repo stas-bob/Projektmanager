@@ -53,7 +53,7 @@ public class PasswordForget extends HttpServlet {
             String firstname = rs.getString("firstname");
             String pw = rs.getString("password");
             String text = createText(firstname, name, pw);
-            Registrieren.sendMail(email, "Ihr vergessenes Passwort", text);
+            //Registrieren.sendMail(email, "Ihr vergessenes Passwort", text);
 
             out.write("<html>");
             out.write("<head>");
