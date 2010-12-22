@@ -77,9 +77,11 @@ public class Modules extends HttpServlet {
                             if (request.getParameter("changeStatus") != null) {
                                 error = setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c);
                                 if (error == 1) throw new NullPointerException("db error");
-                                out.write("<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>" + error + "</error><errorMsg>" + errorMsg + "</errorMsg></root>");
-                                c.close();
-                                return;
+                                errorMsg = "Aenderung gespeichert.";
+                                error = -1;
+                                //out.write("<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>" + error + "</error><errorMsg>" + errorMsg + "</errorMsg></root>");
+                                //c.close();
+                                //return;
                             } else {
                                 if (request.getParameter("deleteModule") != null) {
                                     deleteModule(request.getParameter("deleteModule"), c);
@@ -118,7 +120,9 @@ public class Modules extends HttpServlet {
             for (int i = 0; i < names.size(); i++) {
                 htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\">" + names.get(i) + "</td>" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), ids.get(i)) + "</td>";
                 if (!((ArrayList<Integer>) request.getSession().getAttribute("modules")).contains(ids.get(i))) {
-                    htmlOutput += "<td><input type=\"button\" value=\"Teilnehmen\" onclick=\"addMeToModule(" + ids.get(i) + ")\"/></td>";
+                    if (status.get(i).equals("open")) {
+                        htmlOutput += "<td><input type=\"button\" value=\"Teilnehmen\" onclick=\"addMeToModule(" + ids.get(i) + ")\"/></td>";
+                    }
                 } else {
                     htmlOutput += "<td><input type=\"button\" value=\"Aufh&ouml;ren\" onclick=\"removeMeFromModule(" + ids.get(i) + ")\"/></td>";
                 }

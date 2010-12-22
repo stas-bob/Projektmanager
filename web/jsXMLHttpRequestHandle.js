@@ -73,6 +73,9 @@ function callbackModules() {
             if (error > 0) {
                 document.getElementById("statusBox").innerHTML = errorMsg;
             } else {
+                if (error == -1) {
+                    document.getElementById("statusBox").innerHTML = errorMsg;
+                }
                 if (modulesCount > 10) {
                 //    document.getElementById("content").style.height = modulesCount*40 + "px";
                 }
@@ -301,7 +304,7 @@ function changeModuleStatus(status, id) {
     document.getElementById("addModule").innerHTML = "";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?changeStatus=" + status + "&id=" + id, true);
-    xmlHttp.onreadystatechange = callbackShowModuleDescription;
+    xmlHttp.onreadystatechange = callbackModules;
     xmlHttp.send();
 }
 
