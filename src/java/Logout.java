@@ -30,7 +30,7 @@ public class Logout extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
-            request.logout();
+            request.getSession().invalidate();
             out.write("<html>");
             out.write("<head>");
             out.write("<title>Logout</title>");

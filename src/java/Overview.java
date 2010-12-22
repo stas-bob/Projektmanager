@@ -47,7 +47,8 @@ public class Overview extends HttpServlet {
                 progress = (divWidth*doneCount)/modulesCount;
             }
             GregorianCalendar projectEndDate = Modules.getDateFromString(request.getSession().getAttribute("endProject").toString());
-            projectEndDate.set(GregorianCalendar.MONTH, (projectEndDate.get(GregorianCalendar.MONTH) + 11) % 12);
+            System.out.println(projectEndDate.getTime().toString());
+            projectEndDate.set(GregorianCalendar.MONTH, (projectEndDate.get(GregorianCalendar.MONTH) - 1));
            // projectEndDate.set(GregorianCalendar.YEAR, (projectEndDate.get(GregorianCalendar.YEAR) - 1));
 
             long daysLeft = (projectEndDate.getTime().getTime() - new GregorianCalendar().getTime().getTime())/(1000*60*60*24);
@@ -74,28 +75,30 @@ public class Overview extends HttpServlet {
                                 + "<br>Es bleiben nur noch <span  style=\"font-weight:bold; color:" + (daysLeft < 50 ? "red" : "green") + "\">" + daysLeft + "</span> Tage."
                               + "</div>"
                               + "<br>"
-                              + "<table cellpadding=\"10\" border=\"1\" style=\"border-collapse:collapse;\">"
-                              + "<tr>"
-                                + "<td align=\"center\" colspan=\"3\">&Uuml;berblick der Arbeitszeiten</td>"
-                              + "</tr>";
-                                for (int i = 0; i < hours.size(); i++) {
-                                    if (progresses.size() > 0) {
-                                        hours.get(i).setHours(hours.get(i).getHours() - 1);
-                                        htmlOutput +=  "<tr>"
-                                                        + "<td>" + names.get(i) + "</td><td>" + hours.get(i) + "</td><td>" + getProgressBar(15, width, progresses.get(i), "") + "</td>"
-                                                     + "</tr>";
-                                    }
-                                }
-                              htmlOutput += "</table>"
-                                      + "<table cellpadding=\"10\" border=\"1\" style=\"margin-left:300px; margin-top:-201px; border-collapse: collapse;\">"
-                                        + "<tr><td align=\"center\">Offene Aufgaben</td></tr>";
-                                        for (int i = 0; i < moduleNames.size(); i++) {
-                                            if (status.get(i).equals("open")) {
-                                                htmlOutput += "<tr><td>" + moduleNames.get(i) + "</td></tr>";
+                              + "<table border=\"0\">"
+                                + "<tr><td>"
+                                    + "<table cellpadding=\"10\" border=\"1\" style=\"border-collapse:collapse;\">"
+                                      + "<tr>"
+                                        + "<td align=\"center\" colspan=\"3\">&Uuml;berblick der Arbeitszeiten</td>"
+                                      + "</tr>";
+                                        for (int i = 0; i < hours.size(); i++) {
+                                            if (progresses.size() > 0) {
+                                                hours.get(i).setHours(hours.get(i).getHours() - 1);
+                                                htmlOutput +=  "<tr>"
+                                                                + "<td>" + names.get(i) + "</td><td>" + hours.get(i) + "</td><td>" + getProgressBar(15, width, progresses.get(i), "") + "</td>"
+                                                             + "</tr>";
                                             }
                                         }
-                                        
-                                      htmlOutput += "</table>";
+                                      htmlOutput += "</td></table><td valign=\"top\">"
+                                              + "<table cellpadding=\"10\" border=\"1\" style=\"border-collapse: collapse;\">"
+                                                + "<tr><td align=\"center\">Offene Aufgaben</td></tr>";
+                                                for (int i = 0; i < moduleNames.size(); i++) {
+                                                    if (status.get(i).equals("open")) {
+                                                        htmlOutput += "<tr><td>" + moduleNames.get(i) + "</td></tr>";
+                                                    }
+                                                }
+
+                                              htmlOutput += "</table></td></tr></table>";
 
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite></root>";
             out.write(xmlResponse);
