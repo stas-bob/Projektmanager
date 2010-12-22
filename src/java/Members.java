@@ -279,13 +279,9 @@ public String getUserDescription(String email, Connection c) {
 
         String select = "<select name=\"statusSelect\" size=\"1\">";
         if (status.equals("MEM")) {
-            select += MEM + CPL + PL;
+            select += MEM + PL;
         } else {
-            if (status.equals("CPL")) {
-                select += CPL + MEM + PL;
-            } else {
-                select += PL + CPL + MEM;
-            }
+            select += PL + MEM;
         }
         return select + "</select>";
     }
