@@ -34,7 +34,7 @@ public class DeleteAccount extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/xml");
         PrintWriter out = response.getWriter();
         Connection c = null;
         HttpSession seas = request.getSession();
@@ -42,15 +42,48 @@ public class DeleteAccount extends HttpServlet {
 
         int user_id = Integer.parseInt(seas.getAttribute("user_id").toString());
         String email = seas.getAttribute("user").toString();
+        String projectName = seas.getAttribute("projectname").toString();
+        String status = seas.getAttribute("status").toString();
         try {
             c = DBConnector.getConnection();
             try {
-                c.setAutoCommit(false);
+              //  c.setAutoCommit(false);
 
-                PreparedStatement ps = c.prepareStatement("DELETE FROM time WHERE user_id = ?");
+                PreparedStatement ps = null;
+                ps = c.prepareStatement("SELECT COUNT(*) FROM user");
+                ResultSet rs = ps.executeQuery();
+                int anzahl = 0;
+                if (rs.next()) {
+                    anzahl = rs.getInt(1);
+                }
+                rs.close();
+                ps.close();
+                
+                if (anzahl > 1) {
+                    if (status.equals("PL")) {
+                        ps = c.prepareStatement("SELECT id FROM user WHERE status=?");
+                        ps.setString(1, status);
+                        rs = ps.executeQuery();
+                        boolean secondPLFound = false;
+                        while (rs.next()) {
+                            if (rs.getInt(1) != user_id) {
+                                secondPLFound = true;
+                            }
+                        }
+                        if (!secondPLFound) {
+                            System.out.println("here");
+                            out.write("<root><htmlSeite><![CDATA[]]></htmlSeite><message>Ernenen sie erst einen anderen zum Projektleiter</message></root>");
+                            return;
+                        }
+
+                    }
+                }
+
+                ps = c.prepareStatement("DELETE FROM time WHERE user_id = ?");
                 ps.setInt(1, user_id);
                 ps.executeUpdate();
                 ps.close();
+
 
                 ps = c.prepareStatement("DELETE FROM rel_module_user WHERE email = ?");
                 ps.setString(1, email);
@@ -61,21 +94,18 @@ public class DeleteAccount extends HttpServlet {
                 ps.setInt(1, user_id);
                 ps.executeUpdate();
                 ps.close();
+                anzahl--;
 
-                c.commit();
+                if (anzahl == 0) {
+                    deleteProject(user_id, projectName, c);
+                }
+
+
+               // c.commit();
 
                 request.getSession().invalidate();
-                out.write("<html>");
-                out.write("<head>");
-                out.write("<title>Account loeschen</title>");
-                out.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\" />");
-                out.write("</head>");
-                out.write("<body>");
-                out.write("<div id=\"textPasswordForget\" />");
-                out.write("Ihr Account wurde gel&ouml;scht!");
-                out.write("</div>");
-                out.write("</body>");
-                out.write("</html>");
+                out.write("<root><htmlSeite><![CDATA[<html><head><title>Account loeschen</title><link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\" /></head>"
+                        + "<body><div id=\"textPasswordForget\" />Ihr Account wurde gel&ouml;scht!</div></body></html>]]></htmlSeite><message> </message></root>");
             } catch (SQLException e) {
                 e.printStackTrace();
                 c.rollback();
@@ -93,6 +123,32 @@ public class DeleteAccount extends HttpServlet {
 
     }
 
+    public static void deleteProject(int user_id, String projectName, Connection c) {
+        try {
+            PreparedStatement ps = c.prepareStatement("DELETE FROM project WHERE name = ?");
+            ps.setString(1, projectName);
+            ps.executeUpdate();
+            ps.close();
+            ps = c.prepareStatement("SELECT id FROM module WHERE projectname = ?");
+            ps.setString(1, projectName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Modules.deleteModule(rs.getString(1), c);
+            }
+            ps.close();
+            ps = c.prepareStatement("DELETE FROM time WHERE user_id = ?");
+            ps.setInt(1, user_id);
+            ps.executeUpdate();
+            ps.close();
+            ps = c.prepareStatement("DELETE FROM user WHERE id = ?");
+            ps.setInt(1, user_id);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DeleteAccount.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.

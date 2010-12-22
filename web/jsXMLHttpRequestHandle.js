@@ -943,7 +943,14 @@ function deleteAccount() {
 function callbackDeleteAccoutn() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            document.write(xmlHttp.responseText);
+            var xmlobject = xmlHttp.responseXML;
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            var message = xmlobject.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+            if (message != " ") {
+                document.getElementById("statusBox").innerHTML = message;
+            } else {
+                document.write(html[0].childNodes[0].nodeValue);
+            }
         } else {
             document.getElementById("statusBox").innerHTML = "Fehler";
         }

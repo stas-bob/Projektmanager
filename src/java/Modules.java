@@ -411,7 +411,7 @@ public class Modules extends HttpServlet {
         return 1;
     }
 
-    private void deleteModule(String id, Connection c) {
+    public static void deleteModule(String id, Connection c) {
         try {
             String sql = "";
             try {
