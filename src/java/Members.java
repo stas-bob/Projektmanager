@@ -57,12 +57,16 @@ public class Members extends HttpServlet {
                     }
                 } else {
                     if (request.getParameter("userDescription") != null) {
-                        out.write(getUserDescription(request.getParameter("userDescription"), c));
+                        String htmlOutput = getUserDescription(request.getParameter("userDescription"), c);
+                        String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><message> </message></root>";
+                        out.write(xmlResponse);
                         c.close();
                         return;
                     } else {
                         if (request.getParameter("changeStatus") != null) {
-                            out.write(setStatusOnDB(request.getParameter("changeStatus"), request.getParameter("email"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c));
+                            String message = setStatusOnDB(request.getParameter("changeStatus"), request.getParameter("email"), request.getSession().getAttribute("status").toString(), request.getSession().getAttribute("user").toString(), c);
+                            String xmlResponse = "<root><htmlSeite><![CDATA[]]></htmlSeite><message><![CDATA[" + message + "]]></message></root>";
+                            out.write(xmlResponse);
                             c.close();
                             return;
                         }

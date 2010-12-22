@@ -348,7 +348,16 @@ function deleteMessage(modulid, messageid) {
 function callbackShowUserDescription() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            document.getElementById("userDescription").innerHTML = xmlHttp.responseText;
+            var xmlobject = xmlHttp.responseXML;
+            var html = xmlobject.getElementsByTagName("htmlSeite");
+            var message = xmlobject.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+
+            if (message != " ") {
+                document.getElementById("statusBox").innerHTML = message;
+            }
+            document.getElementById("userDescription").innerHTML = html[0].childNodes[0].nodeValue;
+            
+            
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
