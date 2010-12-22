@@ -54,7 +54,7 @@ public class Times extends HttpServlet {
             if (request.getParameter("modul") != null) {
                 String modulname = "";
                 if (request.getParameter("modul").toString().equals("")) {
-                    status = "Sie müssen ein Modul angeben";
+                    status = "Sie muessen ein Modul angeben";
                     input = getInput(request);
                 } else {
                     modulname = request.getParameter("modul").toString();
@@ -74,7 +74,7 @@ public class Times extends HttpServlet {
                 }
                 if (end != null && start != null && status.equals("")) {
                     if (end.getTime() < start.getTime()) {
-                        status = "Endzeit muss später sein als die Startzeit";
+                        status = "Endzeit muss spaeter sein als die Startzeit";
                     }
                 }
                 String description = request.getParameter("description").toString();
@@ -90,7 +90,7 @@ public class Times extends HttpServlet {
                 }
             } else if (request.getParameter("user_id") != null) {
                 deleteTime(c, request.getParameter("user_id").toString(), request.getParameter("date").toString(), request.getParameter("start").toString());
-                status = "Zeit erfolgreich gelöscht";
+                status = "Zeit erfolgreich geloescht";
             }
             try {
                 

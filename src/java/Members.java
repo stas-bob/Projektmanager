@@ -263,7 +263,7 @@ public String getUserDescription(String email, Connection c) {
                     e.printStackTrace();
                 }
             } else {
-                return "Sie dürfen sich nicht selbst &auml;ndern";
+                return "Sie duerfen sich nicht selbst &auml;ndern";
             }
         } else {
             //TODO was passiert bei CPL ???

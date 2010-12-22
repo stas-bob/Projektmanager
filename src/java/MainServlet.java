@@ -173,9 +173,9 @@ public class MainServlet extends HttpServlet {
         if (falsePassword == 0) {
             sb.append("Herzlich Wilkommen,");
             sb.append("<br>");
-            sb.append("da das Ihr erster Login ist, ändern Sie bitte ihr Passwort.");
+            sb.append("da das Ihr erster Login ist, aendern Sie bitte ihr Passwort.");
         } else if (falsePassword == 1) {
-            sb.append("Die neu eingebenen Passw&ouml;rter stimmen nicht überein!");
+            sb.append("Die neu eingebenen Passw&ouml;rter stimmen nicht ueberein!");
         } else if (falsePassword == 2) {
             sb.append("Das eingegebene bisherige Passwort ist falsch!");
         } else {

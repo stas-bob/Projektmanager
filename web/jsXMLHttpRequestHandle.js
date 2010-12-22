@@ -225,7 +225,7 @@ function saveModule() {
                 if (startYear < 0 || endYear < 0) {
                     document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuelaessig (Jahr)";
                 } else {
-                    document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Jahr)";
+                    document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist spaeter als der Endtermin! (Jahr)";
                 }
                 if (startYear.length != 2 && startYear.length != 4 || endYear.length != 2 && endYear.length != 4) {
                     document.getElementById("statusBox").innerHTML = "Das Jahr ist vom Format XX oder XXXX (Jahr)";
@@ -237,7 +237,7 @@ function saveModule() {
                         if (startMonth > 12 || startMonth < 1 || endMonth > 12 || endMonth < 1) {
                             document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuelaessig (Monat)";
                         } else {
-                            document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Monat)";
+                            document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist spaeter als der Endtermin! (Monat)";
                         }
                         return;
                     } else {
@@ -246,7 +246,7 @@ function saveModule() {
                                 if (startDay > 31 || startDay < 1 || endDay > 31 || endDay < 1) {
                                     document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuelaessig (Tag)";
                                 } else {
-                                    document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist später als der Endtermin! (Tag)";
+                                    document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist spaeter als der Endtermin! (Tag)";
                                 }
                                 return;
                             }
@@ -351,7 +351,6 @@ function callbackShowUserDescription() {
             var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
             var message = xmlobject.getElementsByTagName("message")[0].childNodes[0].nodeValue;
-
             if (message != " ") {
                 document.getElementById("statusBox").innerHTML = message;
             }
@@ -769,17 +768,17 @@ function checkDate() {
 
     if (startYear != "") {
         if (startDay < 1 || startDay > 31) {
-            document.getElementById("statusDate").innerHTML = "Ungültiger Tag beim Startdatum!";
+            document.getElementById("statusDate").innerHTML = "Ungueltiger Tag beim Startdatum!";
             return;
         }
 
         if (startMonth < 1 || startMonth > 12) {
-            document.getElementById("statusDate").innerHTML = "Ungültiger Monat beim Startdatum!";
+            document.getElementById("statusDate").innerHTML = "Ungueltiger Monat beim Startdatum!";
             return;
         }
 
         if (startYear < 2010 || startYear > 9999) {
-            document.getElementById("statusDate").innerHTML = "Ungültiges Jahr beim Startdatum!";
+            document.getElementById("statusDate").innerHTML = "Ungueltiges Jahr beim Startdatum!";
             return;
         }
 
@@ -787,15 +786,15 @@ function checkDate() {
     
     if (endYear != "") {
         if (endDay < 1 || endDay > 31) {
-            document.getElementById("statusDate").innerHTML = "Ungültiger Tag beim Enddatum!";
+            document.getElementById("statusDate").innerHTML = "Ungueltiger Tag beim Enddatum!";
             return;
         }
         if (endMonth < 1 || endMonth > 12) {
-            document.getElementById("statusDate").innerHTML = "Ungültiger Monat beim Enddatum!";
+            document.getElementById("statusDate").innerHTML = "Ungueltiger Monat beim Enddatum!";
             return;
         }
         if (endYear < 2010 || endYear > 9999) {
-            document.getElementById("statusDate").innerHTML = "Ungültiges Jahr beim Enddatum!";
+            document.getElementById("statusDate").innerHTML = "Ungueltiges Jahr beim Enddatum!";
             return;
         }
     }
@@ -932,7 +931,7 @@ function callbackPasswordForget() {
 }
 
 function deleteAccount() {
-    bestaetigt = window.confirm ("Wollen Sie wirklich Ihren Account löschen?");
+    bestaetigt = window.confirm ("Wollen Sie wirklich Ihren Account loeeschen?");
     if (bestaetigt == true) {
         createXMLHttpRequest();
         xmlHttp.open('POST',"/Projektmanager/DeleteAccount", true);

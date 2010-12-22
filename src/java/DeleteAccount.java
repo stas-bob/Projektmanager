@@ -64,10 +64,10 @@ public class DeleteAccount extends HttpServlet {
 
                 c.commit();
 
-                request.logout();
+                request.getSession().invalidate();
                 out.write("<html>");
                 out.write("<head>");
-                out.write("<title>Account löschen</title>");
+                out.write("<title>Account loeschen</title>");
                 out.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\" />");
                 out.write("</head>");
                 out.write("<body>");
