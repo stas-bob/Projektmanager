@@ -274,7 +274,6 @@ public String getUserDescription(String email, Connection c) {
 
     private String setStatus(String status, String email) {
         String MEM = "<option onclick=\"changeStatus('MEM','" + email + "')\">MEM</option>";
-        String CPL = "<option onclick=\"changeStatus('CPL','" + email + "')\">CPL</option>";
         String PL  = "<option onclick=\"changeStatus('PL','" + email + "')\">PL</option>";
 
         String select = "<select name=\"statusSelect\" size=\"1\">";
