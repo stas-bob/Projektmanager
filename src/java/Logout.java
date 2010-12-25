@@ -30,6 +30,10 @@ public class Logout extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
+            if (request.getCookies() == null) {
+                out.write("Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.");
+                return;
+            }
             request.getSession().invalidate();
             out.write("<html>");
             out.write("<head>");

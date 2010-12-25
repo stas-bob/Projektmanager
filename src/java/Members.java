@@ -40,6 +40,10 @@ public class Members extends HttpServlet {
         try {
             response.setContentType("application/xml");
             PrintWriter out = response.getWriter();
+            if (request.getCookies() == null) {
+                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><membersCount>0</membersCount></root>");
+                return;
+            }
             HttpSession seas = request.getSession();
             Connection c = DBConnector.getConnection();
             if (request.getParameter("deleteEmail") != null) {

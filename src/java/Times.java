@@ -41,6 +41,10 @@ public class Times extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/xml");
         PrintWriter out = response.getWriter();
+        if (request.getCookies() == null) {
+                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><status></status></root>");
+                return;
+            }
         HttpSession seas = request.getSession();
         Connection c = null;
 

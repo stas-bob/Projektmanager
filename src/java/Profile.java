@@ -32,6 +32,10 @@ public class Profile extends HttpServlet {
         HttpSession seas = request.getSession();
         
         try {
+            if (request.getCookies() == null) {
+                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite></root>");
+                return;
+            }
             StringBuilder htmlOutput = new StringBuilder(300);
             htmlOutput.append("<div id=profile>")
                 .append("<table cellspacing=\"5\">")

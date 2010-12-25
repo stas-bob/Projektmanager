@@ -38,6 +38,10 @@ public class Overview extends HttpServlet {
         response.setContentType("application/xml");
         PrintWriter out = response.getWriter();
         try {
+            if (request.getCookies() == null) {
+                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite></root>");
+                return;
+            }
             Connection c = DBConnector.getConnection();
             int modulesCount = getModulesCount(c, request.getSession().getAttribute("projectname").toString());
             int doneCount = getModulesDoneCount(c, request.getSession().getAttribute("projectname").toString());

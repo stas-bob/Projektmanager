@@ -40,6 +40,10 @@ public class Modules extends HttpServlet {
         try {
             response.setContentType("application/xml");
             PrintWriter out = response.getWriter();
+            if (request.getCookies() == null) {
+                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><modulesCount>0</modulesCount><error>0</error><errorMsg> </errorMsg></root>");
+                return;
+            }
             Connection c = DBConnector.getConnection();
             int error = 0;
             String errorMsg = " ";
