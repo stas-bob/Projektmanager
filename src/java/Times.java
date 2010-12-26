@@ -125,7 +125,7 @@ public class Times extends HttpServlet {
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<td>Beschreibung:</td>")
-                        .append("<td><textarea id=\"description\" name=\"description\" cols=\"50\" rows=\"5\" maxlength=\"150\" ></textarea></td>")
+                        .append("<td><textarea id=\"description\" name=\"description\" cols=\"50\" rows=\"5\" maxlength=\"120\" onkeypress=\"ismaxlength(this)\"></textarea></td>")
                         .append("</tr>")
                         .append("<tr align=\"left\">")
                         .append("<td><input type=\"button\" value=\"Speichern\" onclick=\"saveTimes()\">")
@@ -365,8 +365,8 @@ public class Times extends HttpServlet {
                         .append("<td>").append(start).append("</td>")
                         .append("<td>").append(end).append("</td>")
                         .append("<td>").append(duration).append("</td>")
-                        .append("<td>").append(rs.getString("modulname")).append("</td>")
-                        .append("<td align=\"left\">").append(rs.getString("description")).append("</td>")
+                        .append("<td>").append(Modules.format(rs.getString("modulname"), 10)).append("</td>")
+                        .append("<td align=\"left\">").append(Modules.format(rs.getString("description"), 17)).append("</td>")
                         .append("<td><input type=\"button\" value=\"X\" onclick=\"deleteTime('").append(user_id).append("','").append(rs.getDate("date")).append("','").append(start).append("')\"></td></tr>");
             }
             sb.append("<tr><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td></tr>")
