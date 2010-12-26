@@ -271,7 +271,7 @@ public String getUserDescription(String email, Connection c) {
             }
         } else {
             //TODO was passiert bei CPL ???
-            return "Sie haben<br> keine Berechtigung<br> das zu tun!";
+            return "Sie haben keine Berechtigung das zu tun!";
         }
         return "Fehler!";
     }

@@ -76,11 +76,11 @@ public class Times extends HttpServlet {
                 if (end == null && status.equals("")) {
                     status = "Fehler bei der Endzeit. Bitte verwenden Sie folgende Schreibweise: hh:mm";
                 }
-                if (end != null && start != null && status.equals("")) {
-                    if (end.getTime() < start.getTime()) {
-                        status = "Endzeit muss spaeter sein als die Startzeit";
-                    }
-                }
+                //if (end != null && start != null && status.equals("")) {
+                //    if (end.getTime() < start.getTime()) {
+                //        status = "Endzeit muss spaeter sein als die Startzeit";
+                //    }
+                //}
                 String description = request.getParameter("description").toString();
                 if (status.equals("")) {
                     if (insertTime(c, user_id, modulname, date, start, end, description)) {
@@ -355,7 +355,7 @@ public class Times extends HttpServlet {
             while (rs.next()) {
                 start = rs.getTime("start");
                 end = rs.getTime("end");
-                hour = end.getHours() - start.getHours();
+                hour = Math.abs(end.getHours() - start.getHours());
                 minute = end.getMinutes() - start.getMinutes();
                 totalHour = totalHour + hour;
                 totalMinute = totalMinute + minute;

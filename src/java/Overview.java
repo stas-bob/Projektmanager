@@ -201,7 +201,7 @@ public class Overview extends HttpServlet {
                 while (rs2.next()) {
                     Time start = rs2.getTime(1);
                     Time end = rs2.getTime(2);
-                    timeSpent += end.getTime() - start.getTime();
+                    timeSpent += Math.abs(end.getTime() - start.getTime());
 
                 }
 
