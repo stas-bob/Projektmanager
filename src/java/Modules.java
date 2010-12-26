@@ -122,7 +122,9 @@ public class Modules extends HttpServlet {
             getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids, c);
             String htmlOutput = "<table border=\"0\" style=\"border-collapse:collapse; position:absolute;\" >" + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
             for (int i = 0; i < names.size(); i++) {
-                htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\">" + names.get(i) + "</td>" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), ids.get(i)) + "</td>";
+                htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" +
+                                "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\"><font size=\"1\">" + format(names.get(i), 10) + "</font></td>" +
+                                "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), ids.get(i)) + "</td>";
                 if (!((ArrayList<Integer>) request.getSession().getAttribute("modules")).contains(ids.get(i))) {
                     if (status.get(i).equals("open")) {
                         htmlOutput += "<td><input type=\"button\" value=\"Teilnehmen\" onclick=\"addMeToModule(" + ids.get(i) + ")\"/></td>";
@@ -248,13 +250,13 @@ public class Modules extends HttpServlet {
 
 
                 String htmlOutput = "<table border=\"1\" style=\"border-collapse:collapse\">"
-                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Name: </td><td>" + name +"</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Name: </td><td>" + format(name, 24) +"</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Prio: </td><td>" + prio + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Start: </td><td>" + start + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Ende: </td><td>" + end + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitgliederzahl: </td><td>" + memberCount + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitglieder: </td><td>" + members + "</td></tr>"
-                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Beschreibung: </td><td>" + description + "</td></tr>";
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Beschreibung: </td><td>" + format(description, 25) + "</td></tr>";
                         if (status.equals("PL")) {
                             htmlOutput += "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\"><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
                         }
@@ -265,7 +267,7 @@ public class Modules extends HttpServlet {
                     if (email.get(i).equals(myEmail)) {
                         htmlOutput += "<button style=\"margin-left:295px\" onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></tr>";
                     }
-                    htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px; overflow: auto;\">" + messages.get(i) + "</div></tr>"
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px; overflow: auto;\">" + format(messages.get(i), 30) + "</div></tr>"
                     + "<tr><td height=\"10\"></td></tr>";
                 }
                 htmlOutput += "<tr style=\"border: 1px solid;\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></tr>"
@@ -554,5 +556,21 @@ public class Modules extends HttpServlet {
             }
         }
         return null;
+    }
+
+    public static String format(String string, int number) {
+        int br = 0, i = 1;
+        while (i < string.length() - br) {
+            if (i % number == 0) {
+                if (string.charAt(i + br) != ' ') {
+                    string = string.substring(0, i + br) + "=" + string.substring(i + br);
+                    br++;
+                }
+                string = string.substring(0, i + br) + "<br>" + string.substring(i + br);
+                br += 4;
+            }
+            i++;
+        }
+        return string;
     }
 }

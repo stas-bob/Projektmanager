@@ -49,13 +49,6 @@ function removeMeFromModule(id) {
 function saveMessage(id) {
     document.getElementById("statusBox").innerHTML = "Bitte warten ...";
     var message = document.getElementById("messageArea").value;
-    var i = 1;
-    while (i < message.length) {
-        if (i % 40 == 0) {
-            message = message.substring(0, i) + "<br>" + message.substr(i);
-        }
-        i++;
-    }
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?saveMessage="+message+"&id="+id, true);
     xmlHttp.onreadystatechange = callbackShowModuleDescription;
@@ -198,13 +191,7 @@ function saveModule() {
     var endYear = document.getElementById("endYear").value;
     var prio =  document.getElementById("prio").options[document.getElementById("prio").selectedIndex].value;
     var membersToAdd = document.getElementById("membersInModuleBox").innerHTML;
-    var i = 1;
-    while (i < description.length) {
-        if (i % 40 == 0) {
-            description = description.substring(0, i) + "<br>" + description.substr(i);
-        }
-        i++;
-    }
+
     if (name.length != 0 
         && description.length != 0
         && startDay.length != 0

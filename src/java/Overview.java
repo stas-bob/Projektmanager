@@ -80,7 +80,7 @@ public class Overview extends HttpServlet {
                               + "</div>"
                               + "<br>"
                               + "<table border=\"0\">"
-                                + "<tr><td>"
+                                + "<tr><td valign=\"top\">"
                                     + "<table cellpadding=\"10\" border=\"1\" style=\"border-collapse:collapse;\">"
                                       + "<tr>"
                                         + "<td align=\"center\" colspan=\"3\">&Uuml;berblick der Arbeitszeiten</td>"
@@ -98,7 +98,7 @@ public class Overview extends HttpServlet {
                                                 + "<tr><td align=\"center\">Offene Aufgaben</td></tr>";
                                                 for (int i = 0; i < moduleNames.size(); i++) {
                                                     if (status.get(i).equals("open")) {
-                                                        htmlOutput += "<tr><td>" + moduleNames.get(i) + "</td></tr>";
+                                                        htmlOutput += "<tr><td>" + Modules.format(moduleNames.get(i), 32) + "</td></tr>";
                                                     }
                                                 }
 
