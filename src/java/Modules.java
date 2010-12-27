@@ -120,7 +120,7 @@ public class Modules extends HttpServlet {
             status = new ArrayList<String>();
             ArrayList<Integer> ids = new ArrayList<Integer>();
             getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids, c);
-            String htmlOutput = "<table border=\"0\" style=\"border-collapse:collapse; position:absolute;\" >" + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
+            String htmlOutput = "<table><tr><td valign=\"top\"><table border=\"0\" style=\"border-collapse:collapse;\" >" + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
             for (int i = 0; i < names.size(); i++) {
                 htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" +
                                 "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\"><font size=\"1\">" + format(names.get(i), 10) + "</font></td>" +
@@ -137,8 +137,8 @@ public class Modules extends HttpServlet {
             if (request.getSession().getAttribute("status").equals("PL")) {
                 htmlOutput += "<tr><td colspan=\"2\"><input type=\"button\" value=\"Neue Aufgabe anlegen\" onclick=\"addModule()\"/></td></tr>";
             }
-            htmlOutput += "</table>";
-            htmlOutput += "<div id=\"addModule\"></div>";
+            htmlOutput += "</table></td><td>";
+            htmlOutput += "<div id=\"addModule\"></div></td></tr></table>";
             String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>" + error + "</error><errorMsg>" + errorMsg + "</errorMsg></root>";
             out.write(xmlResponse);
             out.close();
@@ -237,7 +237,7 @@ public class Modules extends HttpServlet {
                 ArrayList<String> username = new ArrayList<String>();
                 ArrayList<String> email = new ArrayList<String>();
                 ArrayList<Integer> messageIds = new ArrayList<Integer>();
-                ps = c.prepareStatement("SELECT message, username, email, messageid FROM rel_module_message WHERE modulid = ?");
+                ps = c.prepareStatement("SELECT message, username, email, messageid FROM rel_module_message WHERE modulid = ? ORDER BY messageid");
                 ps.setString(1, id);
                 rs = ps.executeQuery();
                 while (rs.next()) {
@@ -498,19 +498,15 @@ public class Modules extends HttpServlet {
 
     private int getFreeMessageID(String modulid, Connection c) {
         try {
-            ArrayList<Integer> ids = new ArrayList<Integer>();
-            PreparedStatement ps = c.prepareStatement("SELECT messageid FROM rel_module_message WHERE modulid = ?");
+            int maxid = 0;
+            PreparedStatement ps = c.prepareStatement("SELECT MAX(messageid) FROM rel_module_message WHERE modulid = ?");
             ps.setString(1, modulid);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ids.add(rs.getInt(1));
+            if (rs.next()) {
+                maxid = rs.getInt(1);
             }
             ps.close();
-            for (int i = 1;; i++) {
-                if (!ids.contains(i)) {
-                    return i;
-                }
-            }
+            return maxid+1;
         } catch (SQLException ex) {
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
         }
