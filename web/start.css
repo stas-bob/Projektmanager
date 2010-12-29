@@ -18,6 +18,15 @@ table {
     position:absolute;
 }
 
+#selected_tab{
+    background-image: url("grafik/selected_tab.png");
+    background-repeat: no-repeat;
+    height: 28px;
+    margin-top: 64px;
+    position: absolute;
+    width: 131px;
+}
+
 #addModule {
     height:400px;
     position:relative;

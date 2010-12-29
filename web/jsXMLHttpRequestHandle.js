@@ -24,6 +24,7 @@ function deleteModule(id) {
 }
 
 function showModules() {
+    document.getElementById("selected_tab").style.marginLeft = "134px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules", true);
     xmlHttp.onreadystatechange = callbackModules;
@@ -83,6 +84,7 @@ function callbackModules() {
 }
 
 function showMembers() {
+    document.getElementById("selected_tab").style.marginLeft = "545px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Members", true);
     xmlHttp.onreadystatechange = callbackMembers;
@@ -580,6 +582,7 @@ function ismaxlength(obj){
 }
 
 function showOverview() {
+    document.getElementById("selected_tab").style.marginLeft = "0px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Overview", true);
     xmlHttp.onreadystatechange = callbackOverview;
@@ -601,6 +604,7 @@ function callbackOverview() {
 }
 
 function showProfile() {
+    document.getElementById("selected_tab").style.marginLeft = "407px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Profile", true);
     xmlHttp.onreadystatechange = callbackProfile;
@@ -622,6 +626,7 @@ function callbackProfile() {
 }
 
 function showTimes() {
+    document.getElementById("selected_tab").style.marginLeft = "270px";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Times", true);
     xmlHttp.onreadystatechange = callbackTimes;

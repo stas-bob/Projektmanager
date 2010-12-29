@@ -124,6 +124,8 @@ public class MainServlet extends HttpServlet {
         sb.append("</head>");
         sb.append("<body onLoad=\"showOverview()\">");
         sb.append("<div id=\"frame\">");
+        sb.append("<div id=\"selected_tab\">");
+        sb.append("</div>");
         sb.append("<div id=\"title\">");
         sb.append(projectName);
         sb.append("</div>");
