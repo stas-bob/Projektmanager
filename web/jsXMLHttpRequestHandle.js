@@ -98,10 +98,10 @@ function addUser() {
     + "<td>Vorname:<input type=\"text\" id=\"firstname\" maxlength=\"40\"/></td>"
     + "</tr>"
     + "<tr>"
-    + "<td>Email: <input type=\"text\" onkeyup=\"if (event.keyCode != 37 && event.keyCode != 39 ) {printWait('statusEmail');validateEmailServlet()}\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
+    + "<td>Email: <input type=\"text\" onkeyup=\"if (event.keyCode != 37 && event.keyCode != 39 ) {printWait('statusEmail');validateEmailServletMembers()}\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
     + "</tr>"
     + "<tr>"
-    + "<td><input id=\"button\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
+    + "<td><input id=\"submitData\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
     + "</tr>"
     + "</body></html>";
     document.getElementById("addUserField").innerHTML = html;
@@ -418,6 +418,30 @@ function validateEmailServlet()
     }
 }
 
+function validateEmailServletMembers()
+{
+    if (document.getElementById("email").value != "") {
+        var email = document.getElementById("email").value;
+        var emailRegxp =/^.+@.+\..{2,5}$/;
+        if(!email.match(emailRegxp)) {
+            document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+            document.getElementById("statusEmail").innerHTML = "Keine regul&auml;re E-Mail eingegeben!";
+            checkInputsMembers();
+            return;
+        }
+
+        var servlet = "/Projektmanager/ValidateEmailServlet";
+        servlet += "?email=" + email;
+        createXMLHttpRequest();
+        xmlHttp.open('POST',servlet, true);
+        xmlHttp.onreadystatechange = callbackValidateEmailMembers;
+        xmlHttp.send(null);
+    } else {
+        document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+        document.getElementById("statusEmail").innerHTML = "Bitte E-Mail eingeben!"
+    }
+}
+
 function callbackValidateEmail() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
@@ -430,6 +454,27 @@ function callbackValidateEmail() {
                 document.getElementById("statusEmail").innerHTML = "E-Mail schon vergeben!";
             }
             checkInputs();
+        } else {
+            if (xmlHttp.status == 401) {    //nicht authorisiert
+                window.location.href = "Login.html";
+            } else {
+                document.getElementById("statusEmail").innerHTML = "Fehler bei der Valiedierung der E-Mail Adresse";
+            }
+        }
+    }
+}
+function callbackValidateEmailMembers() {
+    if (xmlHttp.readyState == 4) {
+        if (xmlHttp.status == 200) {
+            var status = xmlHttp.responseText;
+            if (status == "0") {
+                document.getElementById("imgEmail").innerHTML = "<img src=grafik/ok.gif />";
+                document.getElementById("statusEmail").innerHTML = "E-Mail noch nicht vergeben!";
+            } else {
+                document.getElementById("imgEmail").innerHTML = "<img src=grafik/error.gif />";
+                document.getElementById("statusEmail").innerHTML = "E-Mail schon vergeben!";
+            }
+            checkInputsMembers();
         } else {
             if (xmlHttp.status == 401) {    //nicht authorisiert
                 window.location.href = "Login.html";
@@ -823,6 +868,15 @@ function checkInputs() {
         document.getElementById("submitData").disabled = true;
     }
 }
+
+function checkInputsMembers() {
+    if (document.getElementById("statusEmail").innerHTML == "E-Mail noch nicht vergeben!") {
+        document.getElementById("submitData").disabled = false;
+    } else {
+        document.getElementById("submitData").disabled = true;
+    }
+}
+
 
 function deleteTime(user_id, date, start) {
     document.getElementById("statusBox").innerHTML = "Bitte warten...";
