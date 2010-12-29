@@ -98,7 +98,7 @@ function addUser() {
     + "<td>Vorname:<input type=\"text\" id=\"firstname\" maxlength=\"40\"/></td>"
     + "</tr>"
     + "<tr>"
-    + "<td>Email: <input type=\"text\" onblur=\"printWait('statusEmail');validateEmailServlet()\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
+    + "<td>Email: <input type=\"text\" onkeyup=\"if (event.keyCode != 37 && event.keyCode != 39 ) {printWait('statusEmail');validateEmailServlet()}\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
     + "</tr>"
     + "<tr>"
     + "<td><input id=\"button\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
@@ -369,6 +369,7 @@ function validateProjectServlet()
         document.getElementById("imgProjectname").innerHTML = "<img src=grafik/error.gif />";
         document.getElementById("statusProjectname").innerHTML = "Bitte Projektname eingeben!";
     }
+    
 }
 
 function callbackValidateProject() {
