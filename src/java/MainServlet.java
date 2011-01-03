@@ -154,7 +154,7 @@ public class MainServlet extends HttpServlet {
             sb.append("Ihr Kennwort wurde erfolgreich ge&auml;ndert.");
         }
         sb.append("</div>");
-        sb.append("<div id=\"statusBox\" style=\"text-align: center; border: 1px solid; margin-left: 0px; width: 820px; position: relative; height: 25px;\"></div>");
+        sb.append("<div id=\"statusBox\" style=\"text-align: center; border: 1px solid; margin-left: 0px; width: 825px; position: relative; height: 25px;\"></div>");
         sb.append("</div>");
         sb.append("</body>");
         sb.append("</html>");
