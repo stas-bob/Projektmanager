@@ -224,7 +224,7 @@ public class Times extends HttpServlet {
             }
             temp = temp.substring(temp.indexOf(".") + 1);
             month = Integer.parseInt(temp.substring(0, temp.indexOf("."))) - 1;
-            if (month > 12 || month < 1) {
+            if (month > 11 || month < 0) {
                 return null;
             }
             temp = temp.substring(temp.indexOf(".") + 1);
