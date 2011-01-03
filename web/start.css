@@ -8,6 +8,29 @@ table {
     font-weight: normal;
 }
 
+#registrierung {
+    margin-left: 33%;
+    height: 513px;
+}
+#registrierungBody {
+    background-image:url("grafik/register_body.png");
+    background-repeat: repeat-y;
+    margin-left: -2px;
+}
+
+#registrierungHead {
+    height: 78px;
+    background-image:url("grafik/register_head.png");
+    background-repeat: no-repeat;
+}
+
+#registrierungFoot {
+    background-image:url("grafik/register_foot.png");
+    height: 76px;
+    background-repeat: no-repeat;
+    margin-left: 1px;
+}
+
 #frame{
     background-image:url("grafik/bg-main.png");
     background-repeat:no-repeat;

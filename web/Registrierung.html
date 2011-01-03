@@ -8,47 +8,57 @@
     </head>
     <body>
         <div id="registrierung">
-            <table>
-                <tr>
-                    <th align="left">Projektname:</th>
-                    <th><input id="projectname" onkeyup="if (event.keyCode != 37 && event.keyCode != 39 ) {printWait('statusProjectname');validateProjectServlet()}" name="projectname" type="text" size="30" maxlength="20"/></th>
-                    <th><div id="imgProjectname" /></th>
-                    <th align="left"><div id="statusProjectname" /></th>
-                </tr>
-                <tr>
-                    <th align="left">Startdatum:</th>
-                    <th><input id="startProject" onblur="checkDate()" name="startProject" type="text" size="30" maxlength="20"/></th>
-                    <th>(dd.mm.yyyy)</th>
-                    <th align="left"><input type="button" onclick="today('startProject')" value="Heute"></th>
-                </tr>
-                <tr>
-                    <th align="left">Enddatum:</th>
-                    <th><input id="endProject" onblur="checkDate()" name="endProject" type="text" size="30" maxlength="20"/></th>
-                    <th>(dd.mm.yyyy)</th>
-                    <th align="left"><div id="statusDate" /></th>
-                </tr>
-                <tr>
-                    <th align="left">Name:</th>
-                    <th><input name="name" type="text" size="30" maxlength="20"/></th>
-                </tr>
-                <tr>
-                    <th align="left">Vorname:</th>
-                    <th><input name="firstname" type="text" size="30" maxlength="20"/></th>
-                </tr>
-                <tr>
-                    <th align="left">E-Mail:</th>
-                    <th><input id="email" onkeyup="if (event.keyCode != 37 && event.keyCode != 39 ) {printWait('statusEmail');validateEmailServlet()}" name="email" type="text" size="30" maxlength="30"/></th>
-                    <th><div id="imgEmail" /></th>
-                    <th align="left"><div id="statusEmail" /></th>
-                </tr>
-                <tr>
-                    <th><input type="submit" id="submitData" value="Senden" disabled="true" onclick="printWait('statusSubmit');buildQuery('/Projektmanager/Registrieren')" /></th>
-                    <th><div id="statusSubmit"/></th>
-                </tr>
-                <tr>
-                    <th><input type="button" value="Zur&uuml;ck" onclick="window.location.replace('Login.html')" /></th>
-                </tr>
-            </table>
+            <div id="registrierungHead"></div>
+            <div id="registrierungBody">
+                <table style="margin-left: 54px;">
+                    <colgroup>
+                        <col width="80">
+                        <col width="0">
+                        <col width="171">
+                        <col width="320">
+                    </colgroup>
+                    <tr>
+                        <th align="left">Projektname:</th>
+                        <th align="left"><input id="projectname" onkeyup="if (event.keyCode != 37 && event.keyCode != 39 ) {printWait('statusProjectname');validateProjectServlet()}" name="projectname" type="text" size="15" maxlength="20"/></th>
+                        <th align="left"><div id="imgProjectname" /></th>
+                        <th align="left"><div id="statusProjectname" /></th>
+                    </tr>
+                    <tr>
+                        <th align="left">Startdatum:</th>
+                        <th align="left"><input id="startProject" onblur="checkDate()" name="startProject" type="text" size="15" maxlength="20"/></th>
+                        <th align="left">(dd.mm.yyyy)</th>
+                        <th align="left"><input type="button" onclick="today('startProject')" value="Heute"></th>
+                    </tr>
+                    <tr>
+                        <th align="left">Enddatum:</th>
+                        <th align="left"><input id="endProject" onblur="checkDate()" name="endProject" type="text" size="15" maxlength="20"/></th>
+                        <th align="left">(dd.mm.yyyy)</th>
+                        <th align="left" rowspan="2"><div id="statusDate" /></th>
+                    </tr>
+                    <tr>
+                        <th align="left">Name:</th>
+                        <th align="left"><input name="name" type="text" size="15" maxlength="20"/></th>
+                    </tr>
+                    <tr>
+                        <th align="left">Vorname:</th>
+                        <th align="left"><input name="firstname" type="text" size="15" maxlength="20"/></th>
+                    </tr>
+                    <tr>
+                        <th align="left">E-Mail:</th>
+                        <th align="left"><input id="email" onkeyup="if (event.keyCode != 37 && event.keyCode != 39 ) {printWait('statusEmail');validateEmailServlet()}" name="email" type="text" size="15" maxlength="30"/></th>
+                        <th align="left"><div id="imgEmail" /></th>
+                        <th align="left"><div id="statusEmail" /></th>
+                    </tr>
+                    <tr>
+                        <th align="left"><input type="submit" id="submitData" value="Senden" disabled="true" onclick="printWait('statusSubmit');buildQuery('/Projektmanager/Registrieren')" /></th>
+                        <th align="left"><div id="statusSubmit"/></th>
+                    </tr>
+                    <tr>
+                        <th align="left"><input type="button" value="Zur&uuml;ck" onclick="window.location.replace('Login.html')" /></th>
+                    </tr>
+                </table>
+            </div>
+            <div id="registrierungFoot"></div>
         </div>
     </body>
 </html>
