@@ -42,6 +42,7 @@ public class MainServlet extends HttpServlet {
             HttpSession seas = request.getSession();
             seas.setAttribute("user", request.getParameter("user"));
             seas.setAttribute("user_id", getUserId(request.getParameter("user"), connection));
+            System.out.println(request.getParameter("password"));
             seas.setAttribute("password", request.getParameter("password"));
             seas.setAttribute("startProject", getStartProject(Integer.parseInt(seas.getAttribute("user_id").toString()), connection));
             seas.setAttribute("endProject", getEndProject(Integer.parseInt(seas.getAttribute("user_id").toString()), connection));
@@ -75,6 +76,10 @@ public class MainServlet extends HttpServlet {
         }
     }
 
+
+    public boolean equals(String str1, String str2) {
+        return str1.replace("0", "").equals(str2.replace("0", ""));
+    }
     private boolean checkLogin(Connection c, String user, String password) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE LOWER(email)=?");
@@ -82,7 +87,9 @@ public class MainServlet extends HttpServlet {
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                if (rs.getString(1).equals(password)) {
+                System.out.println(rs.getString(1));
+                System.out.println(password);
+                if (equals(rs.getString(1), password)) {
                     ps.close();
                     return true;
                 }

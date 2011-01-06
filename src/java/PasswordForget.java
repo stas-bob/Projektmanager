@@ -45,15 +45,15 @@ public class PasswordForget extends HttpServlet {
         String email = request.getParameter("email").toString();
         try {
             c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT name, firstname, password FROM user WHERE email = ?");
+            PreparedStatement ps = c.prepareStatement("SELECT name, firstname, clearpw FROM user WHERE email = ?");
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             rs.next();
             String name = rs.getString("name");
             String firstname = rs.getString("firstname");
-            String pw = rs.getString("password");
+            String pw = rs.getString("clearpw");
             String text = createText(firstname, name, pw);
-            //Registrieren.sendMail(email, "Ihr vergessenes Passwort", text);
+            Registrieren.sendMail(email, "Ihr vergessenes Passwort", text);
 
             out.write("<html>");
             out.write("<head>");

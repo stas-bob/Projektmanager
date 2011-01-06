@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -69,6 +71,7 @@ public class Registrieren extends HttpServlet {
             
             String subject = "Anmeldung fuer das Projekt " + projectName;
             String genPW = (int) (Math.random() * 10000000) + "";
+            String hashedPW = md5(genPW);
             String text = createText(firstname,
             name,
             projectName,
@@ -90,14 +93,15 @@ public class Registrieren extends HttpServlet {
                     status = "PL";
                 }
 
-                ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, status)"
-                        + " VALUES (?,?,?,?,?,?)");
+                ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, clearpw, status)"
+                        + " VALUES (?,?,?,?,?,?,?)");
                 ps.setString(1, name);
                 ps.setString(2, firstname);
                 ps.setString(3, toEmail);
                 ps.setString(4, projectName);
-                ps.setString(5, genPW);
-                ps.setString(6, status);
+                ps.setString(5, hashedPW);
+                ps.setString(6, genPW);
+                ps.setString(7, status);
                 ps.executeUpdate();
                 ps.close();
                 c.commit();
@@ -208,6 +212,25 @@ public class Registrieren extends HttpServlet {
             System.out.println(date.toString());
 
         return date;
+    }
+    
+    public static String md5(String rawString) {
+        StringBuilder hexString = new StringBuilder();
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.reset();
+            md5.update(rawString.getBytes());
+            byte[] result = md5.digest();
+            /* Ausgabe */
+            
+            for (int i = 0; i < result.length; i++) {
+                hexString.append(Integer.toHexString(0xFF & result[i]));
+            }
+            
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Registrieren.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return hexString.toString();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

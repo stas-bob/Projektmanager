@@ -70,16 +70,17 @@ public class FirstLogin extends HttpServlet {
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                if (rs.getString(1).equals(oldPassword)) {
+                if (rs.getString(1).equals(Registrieren.md5(oldPassword))) {
                     if (newPassword.equals(validatePassword)) {
                         ps.close();
                         String sql = "";
                         try {
                             c.setAutoCommit(false);
-                            sql = "UPDATE user SET password = ?, firstlogin = 1 WHERE email = ?";
+                            sql = "UPDATE user SET password = ?, clearpw = ?, firstlogin = 1  WHERE email = ?";
                             ps = c.prepareStatement(sql);
-                            ps.setString(1, newPassword);
-                            ps.setString(2, user);
+                            ps.setString(1, Registrieren.md5(newPassword));
+                            ps.setString(2, newPassword);
+                            ps.setString(3, user);
                             ps.executeUpdate();
                             ps.close();
                             c.commit();
