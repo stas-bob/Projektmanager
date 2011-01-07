@@ -12,12 +12,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,15 +39,25 @@ public class PasswordForget extends HttpServlet {
         Connection c = null;
         String email = request.getParameter("email").toString();
         try {
+            String genPW = (int) (Math.random() * 10000000) + "";
+            String hashedPW = Registrieren.md5(genPW);
+            System.out.println("new clear pw: " + genPW);
+            System.out.println("new hashed pw: " + hashedPW);
             c = DBConnector.getConnection();
-            PreparedStatement ps = c.prepareStatement("SELECT name, firstname, clearpw FROM user WHERE email = ?");
+            PreparedStatement ps = c.prepareStatement("UPDATE user SET password = ?, firstlogin = 0  WHERE email = ?");
+            ps.setString(1, hashedPW);
+            ps.setString(2, email);
+            ps.executeUpdate();
+            ps = c.prepareStatement("SELECT name, firstname FROM user WHERE email = ?");
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            String name = rs.getString("name");
-            String firstname = rs.getString("firstname");
-            String pw = rs.getString("clearpw");
-            String text = createText(firstname, name, pw);
+            String name = "";
+            String firstname = "";
+            if (rs.next()) {
+                name = rs.getString(1);
+                firstname = rs.getString(2);
+            }
+            String text = createText(firstname, name, genPW);
             Registrieren.sendMail(email, "Ihr vergessenes Passwort", text);
 
             out.write("<html>");
@@ -81,8 +85,9 @@ public class PasswordForget extends HttpServlet {
     private String createText(String firstname, String name, String pw) {
         StringBuilder sb = new StringBuilder(200);
         sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n")
-                .append("Ihr Passwort ist:\n")
-                .append(pw).append("\n\n")
+                .append("Ihr neues Passwort ist:\n-")
+                .append(pw).append("-\n\n")
+                .append("http://stud-i-pr2.htw-saarland.de:8080/Projektmanager/\n\n")
                 .append("Ihr Entwickler Team");
         return sb.toString();
     }

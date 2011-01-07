@@ -79,6 +79,7 @@ public class MainServlet extends HttpServlet {
 
 
     public boolean equals(String str1, String str2) {
+        System.out.println(str1.replace("0", "") + " -- " + str2.replace("0", ""));
         return str1.replace("0", "").equals(str2.replace("0", ""));
     }
     private boolean checkLogin(Connection c, String user, String password) {
@@ -129,6 +130,17 @@ public class MainServlet extends HttpServlet {
         sb.append("<title>Untitled Document</title>");
         sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>");
         sb.append("<script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script>");
+        sb.append("<script language=\"javascript\" src=\"md5.js\"></script>");
+        sb.append("<script language=\"javascript\">");
+        sb.append("function transformPassword() {");
+        sb.append("str = document.getElementById(\"newPasswordClear\").value;");
+        sb.append("document.getElementById(\"newPassword\").value = MD5(str);");
+        sb.append("str = document.getElementById(\"oldPasswordClear\").value;");
+        sb.append("document.getElementById(\"oldPassword\").value = MD5(str);");
+        sb.append("str = document.getElementById(\"validatePasswordClear\").value;");
+        sb.append("document.getElementById(\"validatePassword\").value = MD5(str);");
+        sb.append("}");
+        sb.append("</script>");
         sb.append("</head>");
         sb.append("<body onLoad=\"showOverview()\">");
         sb.append("<div id=\"frame\">");
@@ -176,6 +188,17 @@ public class MainServlet extends HttpServlet {
         sb.append("<head>");
         sb.append("<title>First Login</title>");
         sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\"></meta>");
+        sb.append("<script language=\"javascript\" src=\"md5.js\"></script>");
+        sb.append("<script language=\"javascript\">");
+        sb.append("function transformPassword() {");
+        sb.append("str = document.chpw.newPasswordClear.value;");
+        sb.append("document.chpw.newPassword.value = MD5(str);");
+        sb.append("str = document.chpw.oldPasswordClear.value;");
+        sb.append("document.chpw.oldPassword.value = MD5(str);");
+        sb.append("str = document.chpw.validatePasswordClear.value;");
+        sb.append("document.chpw.validatePassword.value = MD5(str);");
+        sb.append("}");
+        sb.append("</script>");
         sb.append("<title>Untitled Document</title>");
         sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>");
         sb.append("</head>");
@@ -192,9 +215,9 @@ public class MainServlet extends HttpServlet {
             sb.append("Fehler bei der &Auml;nderung ihres Passwortes.");
         }
         sb.append("<br/>");
-        sb.append("<form action=\"/Projektmanager/FirstLogin\" method=\"post\" >");
+        sb.append("<form action=\"/Projektmanager/FirstLogin\" method=\"post\" name=\"chpw\">");
         sb.append(changePasswordArea());
-        sb.append("<input type=\"submit\" value=\"Speichern\" />");
+        sb.append("<input type=\"submit\" value=\"Speichern\" onclick=\"transformPassword()\"/>");
         sb.append("</form>");
         sb.append("</body>");
         sb.append("</html>");
@@ -209,7 +232,8 @@ public class MainServlet extends HttpServlet {
         sb.append("Altes Passwort:");
         sb.append("</td>");
         sb.append("<td>");
-        sb.append("<input id=\"oldPassword\" name=\"oldPassword\" type=\"password\" />");
+        sb.append("<input id=\"oldPasswordClear\" name=\"oldPasswordClear\" type=\"password\" />");
+        sb.append("<input id=\"oldPassword\" name=\"oldPassword\" type=\"hidden\"/>");
         sb.append("</td>");
         sb.append("</tr>");
         sb.append("<tr>");
@@ -217,7 +241,8 @@ public class MainServlet extends HttpServlet {
         sb.append("Neues Passwort:");
         sb.append("</td>");
         sb.append("<td>");
-        sb.append("<input id=\"newPassword\" name=\"newPassword\" type=\"password\"/>");
+        sb.append("<input id=\"newPasswordClear\" name=\"newPasswordClear\" type=\"password\"/>");
+        sb.append("<input id=\"newPassword\" name=\"newPassword\" type=\"hidden\"/>");
         sb.append("<br></br>");
         sb.append("</td>");
         sb.append("</tr>");
@@ -226,7 +251,8 @@ public class MainServlet extends HttpServlet {
         sb.append("Neues Passwort best&auml;tigen:");
         sb.append("</td>");
         sb.append("<td>");
-        sb.append("<input id=\"validatePassword\" name=\"validatePassword\" type=\"password\"/>");
+        sb.append("<input id=\"validatePasswordClear\" name=\"validatePasswordClear\" type=\"password\"/>");
+        sb.append("<input id=\"validatePassword\" name=\"validatePassword\" type=\"hidden\"/>");
         sb.append("<br/>");
         sb.append("</td>");
         sb.append("</tr>");

@@ -94,15 +94,14 @@ public class Registrieren extends HttpServlet {
                     status = "PL";
                 }
 
-                ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, clearpw, status)"
-                        + " VALUES (?,?,?,?,?,?,?)");
+                ps = c.prepareStatement("INSERT INTO user (name, firstname, email, projectname, password, status)"
+                        + " VALUES (?,?,?,?,?,?)");
                 ps.setString(1, name);
                 ps.setString(2, firstname);
                 ps.setString(3, toEmail);
                 ps.setString(4, projectName);
                 ps.setString(5, hashedPW);
-                ps.setString(6, genPW);
-                ps.setString(7, status);
+                ps.setString(6, status);
                 ps.executeUpdate();
                 ps.close();
                 c.commit();
@@ -163,6 +162,7 @@ public class Registrieren extends HttpServlet {
                 .append("die Anmeldung fuer das Projekt ").append(projectname).append(" war erfolgreich.\n\n")
                 .append("Benutzername: ").append(email).append("\n")
                 .append("Passwort: ").append(pw).append("\n\n")
+                .append("http://stud-i-pr2.htw-saarland.de:8080/Projektmanager/\n\n")
                 .append("Ihr Entwickler Team");
         return sb.toString();
     }

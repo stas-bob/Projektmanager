@@ -65,23 +65,29 @@ public class FirstLogin extends HttpServlet {
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String validatePassword = request.getParameter("validatePassword");
+        System.out.println("a -- " + oldPassword + " - " + newPassword + " - " + validatePassword);
         try {
             c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE email = ?");
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                if (rs.getString(1).equals(Registrieren.md5(oldPassword))) {
+                System.out.println("rs.getString(1) ");
+                System.out.println(rs.getString(1));
+                System.out.println( oldPassword);
+                String currentPw = rs.getString(1);
+                currentPw = currentPw.replace("0", "");
+                oldPassword = oldPassword.replace("0", "");
+                if (currentPw.equals(oldPassword)) {
                     if (newPassword.equals(validatePassword)) {
                         ps.close();
                         String sql = "";
                         try {
                             c.setAutoCommit(false);
-                            sql = "UPDATE user SET password = ?, clearpw = ?, firstlogin = 1  WHERE email = ?";
+                            sql = "UPDATE user SET password = ?, firstlogin = 1  WHERE email = ?";
                             ps = c.prepareStatement(sql);
-                            ps.setString(1, Registrieren.md5(newPassword));
-                            ps.setString(2, newPassword);
-                            ps.setString(3, user);
+                            ps.setString(1, newPassword);
+                            ps.setString(2, user);
                             ps.executeUpdate();
                             ps.close();
                             c.commit();
