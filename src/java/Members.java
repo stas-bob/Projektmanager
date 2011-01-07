@@ -38,7 +38,8 @@ public class Members extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         try {
-            response.setContentType("application/xml");
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("application/xml;charset=UTF-8");
             PrintWriter out = response.getWriter();
             if (request.getCookies() == null) {
                 out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><membersCount>0</membersCount></root>");
@@ -267,7 +268,7 @@ public String getUserDescription(String email, Connection c) {
                     e.printStackTrace();
                 }
             } else {
-                return "Sie duerfen sich nicht selbst &auml;ndern";
+                return "Sie d&uuml;rfen sich nicht selbst &auml;ndern";
             }
         } else {
             //TODO was passiert bei CPL ???
@@ -277,10 +278,10 @@ public String getUserDescription(String email, Connection c) {
     }
 
     private String setStatus(String status, String email) {
-        String MEM = "<option onclick=\"changeStatus('MEM','" + email + "')\">MEM</option>";
-        String PL  = "<option onclick=\"changeStatus('PL','" + email + "')\">PL</option>";
+        String MEM = "<option>MEM</option>";
+        String PL  = "<option>PL</option>";
 
-        String select = "<select name=\"statusSelect\" size=\"1\">";
+        String select = "<select name=\"statusSelect\" size=\"1\" onchange=\"changeStatus(this.options[this.selectedIndex].value,'" + email + "')\">";
         if (status.equals("MEM")) {
             select += MEM + PL;
         } else {

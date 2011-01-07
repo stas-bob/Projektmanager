@@ -34,7 +34,8 @@ public class DeleteAccount extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/xml");
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
         Connection c = null;
         HttpSession seas = request.getSession();
@@ -104,7 +105,7 @@ public class DeleteAccount extends HttpServlet {
                // c.commit();
 
                 request.getSession().invalidate();
-                out.write("<root><htmlSeite><![CDATA[<html><head><title>Account loeschen</title><link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\" /></head>"
+                out.write("<root><htmlSeite><![CDATA[<html><head><title>Account l&ouml;schen</title><link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\" /></head>"
                         + "<body><div id=\"textPasswordForget\" />Ihr Account wurde gel&ouml;scht!</div></body></html>]]></htmlSeite><message> </message></root>");
             } catch (SQLException e) {
                 e.printStackTrace();

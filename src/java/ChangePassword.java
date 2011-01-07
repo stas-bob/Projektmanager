@@ -26,6 +26,7 @@ public class ChangePassword extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
@@ -37,7 +38,7 @@ public class ChangePassword extends HttpServlet {
                     out.write("Ihr Passwort wurde erfolgreich ge&auml;ndert.");
                     break;
                 case 1:
-                    out.write("Die neu eingebenen Passw&ouml;rter stimmen nicht ueberein!");
+                    out.write("Die neu eingebenen Passw&ouml;rter stimmen nicht &uuml;berein!");
                     break;
                 case 2:
                     out.write("Das eingegebene bisherige Passwort ist falsch!");

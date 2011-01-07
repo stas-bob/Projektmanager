@@ -35,6 +35,7 @@ public class MainServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, MySQLException {
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
@@ -124,7 +125,7 @@ public class MainServlet extends HttpServlet {
         sb.append("<html>");
         sb.append("<head>");
         sb.append("<title>Projektmanager</title>");
-        sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
+        sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\"/>");
         sb.append("<title>Untitled Document</title>");
         sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>");
         sb.append("<script src=\"jsXMLHttpRequestHandle.js\" type=\"text/javascript\"></script>");
@@ -174,23 +175,23 @@ public class MainServlet extends HttpServlet {
         sb.append("<html>");
         sb.append("<head>");
         sb.append("<title>First Login</title>");
-        sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\">");
+        sb.append("<meta http-equiv=\"Content - Type\" content=\"text / html;charset = iso - 8859 - 1\"></meta>");
         sb.append("<title>Untitled Document</title>");
-        sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\">");
+        sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"start.css\"></link>");
         sb.append("</head>");
         sb.append("<body>");
         if (falsePassword == 0) {
             sb.append("Herzlich Wilkommen,");
-            sb.append("<br>");
-            sb.append("da das Ihr erster Login ist, aendern Sie bitte ihr Passwort.");
+            sb.append("<br/>");
+            sb.append("da das Ihr erster Login ist, &auml;ndern Sie bitte ihr Passwort.");
         } else if (falsePassword == 1) {
-            sb.append("Die neu eingebenen Passw&ouml;rter stimmen nicht ueberein!");
+            sb.append("Die neu eingebenen Passwoerter stimmen nicht ueberein!");
         } else if (falsePassword == 2) {
             sb.append("Das eingegebene bisherige Passwort ist falsch!");
         } else {
             sb.append("Fehler bei der &Auml;nderung ihres Passwortes.");
         }
-        sb.append("<br>");
+        sb.append("<br/>");
         sb.append("<form action=\"/Projektmanager/FirstLogin\" method=\"post\" >");
         sb.append(changePasswordArea());
         sb.append("<input type=\"submit\" value=\"Speichern\" />");
@@ -216,8 +217,8 @@ public class MainServlet extends HttpServlet {
         sb.append("Neues Passwort:");
         sb.append("</td>");
         sb.append("<td>");
-        sb.append("<input id=\"newPassword\" name=\"newPassword\" type=\"password\">");
-        sb.append("<br>");
+        sb.append("<input id=\"newPassword\" name=\"newPassword\" type=\"password\"/>");
+        sb.append("<br></br>");
         sb.append("</td>");
         sb.append("</tr>");
         sb.append("<tr>");
@@ -225,8 +226,8 @@ public class MainServlet extends HttpServlet {
         sb.append("Neues Passwort best&auml;tigen:");
         sb.append("</td>");
         sb.append("<td>");
-        sb.append("<input id=\"validatePassword\" name=\"validatePassword\" type=\"password\">");
-        sb.append("<br>");
+        sb.append("<input id=\"validatePassword\" name=\"validatePassword\" type=\"password\"/>");
+        sb.append("<br/>");
         sb.append("</td>");
         sb.append("</tr>");
         sb.append("</table>");

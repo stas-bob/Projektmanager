@@ -38,7 +38,8 @@ public class Modules extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         try {
-            response.setContentType("application/xml");
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("application/xml;charset=UTF-8");
             PrintWriter out = response.getWriter();
             if (request.getCookies() == null) {
                 out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><modulesCount>0</modulesCount><error>0</error><errorMsg> </errorMsg></root>");
@@ -64,7 +65,15 @@ public class Modules extends HttpServlet {
                 }
             } else {
                 if (request.getParameter("addModule") != null) {
-                    String htmlOutput = "<table border=\"0\">" + "<tbody><tr><td>Name:</td><td><input id=\"name\" size=\"40\" maxlength=\"40\" type=\"text\"></td></tr>" + "<tr><td valign=\"top\">Beschreibung:</td><td><textarea id=\"description\" cols=\"30\" rows=\"6\" maxlength=\"400\" onkeypress=\"ismaxlength(this)\"></textarea></td></tr>" + "<tr><td>Prioritaet:</td><td><select size=\"1\" id=\"prio\"><option>1</option><option>2</option><option>3</option></select><div style=\"background-image:url(grafik/question_mark.png); background-repeat:no-repeat; width:25px; height:22px; position:absolute; margin-left: 40px; margin-top: -22px;\" onclick=\"showHint(this, '1 is die hoechste prio')\"></div></td></tr>" + "<tr><td>Start:</td><td>Tag: <input id=\"startDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"startMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"startYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" + "<tr><td>Ende:</td><td>Tag: <input id=\"endDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"endMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"endYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" + "<tr><td>Mitglied zuweisen:</td><td><select id=\"selectMember\">" + getAllMembers(request.getSession().getAttribute("projectname").toString(), c) + "</select><input value=\"einfuegen\" type=\"button\" onclick=\"addMemberToModuleBox()\"/><input value=\"loeschen\" type=\"button\" onclick=\"removeMemberFromModuleBox()\"/><button onclick=\"saveModule()\" style=\"font: 12px Arial; padding-top:1px; padding-left:0px; padding-right:0px; position: absolute; margin-top: 0px;\">speichern</button></td></tr>" + "</tbody>" + "</table>" + "<div id=\"membersInModuleBox\" style=\"position:absolute; border: 1px dashed; margin-left: 50px; width: 300px; height: 120px; display:none\"></div>";
+                    String htmlOutput = "<table border=\"0\">" + "<tbody><tr><td>Name:</td><td><input id=\"name\" size=\"40\" maxlength=\"40\" type=\"text\"></td></tr>" + 
+                            "<tr><td valign=\"top\">Beschreibung:</td><td><textarea id=\"description\" cols=\"30\" rows=\"6\" maxlength=\"400\" onkeypress=\"ismaxlength(this)\"></textarea></td></tr>" +
+                            "<tr><td>Priorit&auml;t:</td><td><select size=\"1\" id=\"prio\"><option>1</option><option>2</option><option>3</option></select><div style=\"background-image:url(grafik/question_mark.png); background-repeat:no-repeat; width:25px; height:22px; position:absolute; margin-left: 40px; margin-top: -22px;\" onclick=\"showHint(this, '1 is die h&ouml;chste prio')\"></div></td></tr>" +
+                            "<tr><td>Start:</td><td>Tag: <input id=\"startDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"startMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"startYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" +
+                            "<tr><td>Ende:</td><td>Tag: <input id=\"endDay\" typ=\"text\" size=\"1\" maxlength=\"2\">Monat: <input id=\"endMonth\" typ=\"text\" size=\"1\" maxlength=\"2\">Jahr: <input id=\"endYear\" typ=\"text\" size=\"4\" maxlength=\"4\"></td></tr>" +
+                            "<tr><td>Mitglied zuweisen:</td><td><select id=\"selectMember\">" + getAllMembers(request.getSession().getAttribute("projectname").toString(), c) + "</select><input value=\"zuweisen\" type=\"button\" onclick=\"addMemberToModuleBox()\"/><input value=\"entfernen\" type=\"button\" onclick=\"removeMemberFromModuleBox()\"/><input type=\"button\" value=\"speichern\" onclick=\"saveModule()\"/></td></tr>" +
+                            "</tbody>" +
+                            "</table>" +
+                            "<div id=\"membersInModuleBox\" style=\"position:absolute; border: 1px dashed; margin-left: 50px; width: 300px; height: 120px; display:none\"></div>";
                     out.write(htmlOutput);
                     c.close();
                     return;
@@ -81,11 +90,8 @@ public class Modules extends HttpServlet {
                             if (request.getParameter("changeStatus") != null) {
                                 error = setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c);
                                 if (error == 1) throw new NullPointerException("db error");
-                                errorMsg = "Aenderung gespeichert.";
+                                errorMsg = "&Auml;nderung gespeichert.";
                                 error = -1;
-                                //out.write("<root><htmlSeite>Aenderung gespeichert.</htmlSeite><modulesCount>0</modulesCount><error>" + error + "</error><errorMsg>" + errorMsg + "</errorMsg></root>");
-                                //c.close();
-                                //return;
                             } else {
                                 if (request.getParameter("deleteModule") != null) {
                                     deleteModule(request.getParameter("deleteModule"), c);
@@ -216,6 +222,7 @@ public class Modules extends HttpServlet {
             if (rs.next()) {
                 String description = rs.getString(3);
                 String name = rs.getString(1);
+                System.out.println("ddd" + name);
                 String prio = rs.getString(2);
                 Date start = rs.getDate(4);
                 Date end = rs.getDate(5);
@@ -258,21 +265,21 @@ public class Modules extends HttpServlet {
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitglieder: </td><td>" + members + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Beschreibung: </td><td>" + format(description, 25) + "</td></tr>";
                         if (status.equals("PL")) {
-                            htmlOutput += "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\"><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"loeschen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
+                            htmlOutput += "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\"><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"l&ouml;schen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
                         }
                 htmlOutput += "</table>"
                             + "<table border=\"0\" style=\"border-collapse: collapse; margin-top: 10px; width: 480px;\">";
                 for (int i = 0; i < messages.size(); i++) {
-                    htmlOutput += "<tr style=\"border: 1px solid;\"><td><b>" + username.get(i) + "</b> schrieb ";
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><td><b>" + username.get(i) + "</b> schrieb </td>";
                     if (email.get(i).equals(myEmail)) {
-                        htmlOutput += "<button style=\"margin-left:295px\" onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></tr>";
+                        htmlOutput += "<td align=\"right\"><button onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></td></tr>";
                     }
-                    htmlOutput += "<tr style=\"border: 1px solid;\"><div style=\"height: 100px; overflow: auto;\">" + format(messages.get(i), 30) + "</div></tr>"
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><div style=\"height: 100px; overflow: auto;\">" + format(messages.get(i), 30) + "</div></td></tr>"
                     + "<tr><td height=\"10\"></td></tr>";
                 }
-                htmlOutput += "<tr style=\"border: 1px solid;\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></tr>"
-                            + "<tr style=\"border: 1px solid;\"><textarea id=\"messageArea\" cols=\"56\" rows=\"5\" maxlength=\"210\" onkeypress=\"ismaxlength(this)\"></textarea></tr>"
-                            + "<tr align=\"right\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></tr>"
+                htmlOutput += "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></td></tr>"
+                            + "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><textarea id=\"messageArea\" cols=\"56\" rows=\"5\" maxlength=\"210\" onkeypress=\"ismaxlength(this)\"></textarea></td></tr>"
+                            + "<tr align=\"right\"><td colspan=\"2\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></td></tr>"
                             + "</table>";
                 return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error><errorMsg> </errorMsg></root>";
             }
@@ -341,6 +348,7 @@ public class Modules extends HttpServlet {
                 return 1;
             }
             PreparedStatement ps = c.prepareStatement("INSERT INTO module (name,start,end,prio,status,description,projectname) VALUES (?,?,?,?,'open',?,?)");
+            System.out.println("name save " + name);
             ps.setString(1, name);
             ps.setString(2, start);
             ps.setString(3, end);
@@ -555,6 +563,7 @@ public class Modules extends HttpServlet {
     }
 
     public static String format(String string, int number) {
+        System.out.println(string);
         int br = 0, i = 1;
         while (i < string.length() - br) {
             if (i % number == 0) {

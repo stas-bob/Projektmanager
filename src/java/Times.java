@@ -39,7 +39,8 @@ public class Times extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/xml");
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
         if (request.getCookies() == null) {
                 out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><status></status></root>");
@@ -58,7 +59,7 @@ public class Times extends HttpServlet {
             if (request.getParameter("modul") != null) {
                 String modulname = "";
                 if (request.getParameter("modul").toString().equals("")) {
-                    status = "Sie muessen ein Modul angeben";
+                    status = "Sie m&uuml;ssen ein Modul angeben";
                     input = getInput(request);
                 } else {
                     modulname = request.getParameter("modul").toString();
@@ -76,11 +77,6 @@ public class Times extends HttpServlet {
                 if (end == null && status.equals("")) {
                     status = "Fehler bei der Endzeit. Bitte verwenden Sie folgende Schreibweise: hh:mm";
                 }
-                //if (end != null && start != null && status.equals("")) {
-                //    if (end.getTime() < start.getTime()) {
-                //        status = "Endzeit muss spaeter sein als die Startzeit";
-                //    }
-                //}
                 String description = request.getParameter("description").toString();
                 if (status.equals("")) {
                     if (insertTime(c, user_id, modulname, date, start, end, description)) {
