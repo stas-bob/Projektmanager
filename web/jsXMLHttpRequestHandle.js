@@ -771,11 +771,12 @@ function pressedMenueButton(element) {
 
 function saveTimes() {
     document.getElementById("statusBox").innerHTML = "Bitte warten...";
-    var modul = document.getElementById("modul").value;
+    var modul = document.getElementById("modul").options[document.getElementById("modul").selectedIndex].value;
     var date = document.getElementById("date").value;
     var start = document.getElementById("start").value;
     var end = document.getElementById("end").value;
     var description = document.getElementById("description").value;
+
     modul = modul.replace(/ü/g, "%C3%BC");
     modul = modul.replace(/Ü/g, "%C3%9C");
     modul = modul.replace(/ö/g, "%C3%B6");
@@ -792,7 +793,6 @@ function saveTimes() {
     description = description.replace(/Ä/g, "%C3%84");
     description = description.replace(/ß/g, "%C3%9F");
 
-    
     var servlet = "/Projektmanager/Times?modul=" + modul + "&date=" + date + "&start=" + start + "&end=" + end + "&description=" + description;
     xmlHttp.open('POST',servlet, true);
     xmlHttp.onreadystatechange = callbackSaveTimes;

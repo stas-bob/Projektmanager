@@ -42,7 +42,7 @@ public class Modules extends HttpServlet {
             response.setContentType("application/xml;charset=UTF-8");
             PrintWriter out = response.getWriter();
             if (request.getCookies() == null) {
-                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><modulesCount>0</modulesCount><error>0</error><errorMsg> </errorMsg></root>");
+                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><modulesCount><![CDATA[0]]></modulesCount><error>0</error><errorMsg> </errorMsg></root>");
                 return;
             }
             Connection c = DBConnector.getConnection();
@@ -58,7 +58,7 @@ public class Modules extends HttpServlet {
                         ((ArrayList<Integer>) request.getSession().getAttribute("modules")).add(modulid);
                     }
                 } else {
-                    String xmlResponse = "<root><htmlSeite><![CDATA[...]]></htmlSeite><modulesCount>0</modulesCount><error>1</error><errorMsg>Der Name " + request.getParameter("name").toString() + " ist in diesem Projekt bereits vorhanden</errorMsg></root>";
+                    String xmlResponse = "<root><htmlSeite><![CDATA[...]]></htmlSeite><modulesCount><![CDATA[0]]></modulesCount><error><![CDATA[1]]></error><errorMsg><![CDATA[Der Name " + request.getParameter("name").toString() + " ist in diesem Projekt bereits vorhanden]]></errorMsg></root>";
                     out.write(xmlResponse);
                     c.close();
                     return;
@@ -90,7 +90,7 @@ public class Modules extends HttpServlet {
                             if (request.getParameter("changeStatus") != null) {
                                 error = setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c);
                                 if (error == 1) throw new NullPointerException("db error");
-                                errorMsg = "<![CDATA[&Auml;nderung gespeichert.]]>";
+                                errorMsg = "&Auml;nderung gespeichert.";
                                 error = -1;
                             } else {
                                 if (request.getParameter("deleteModule") != null) {
@@ -145,7 +145,7 @@ public class Modules extends HttpServlet {
             }
             htmlOutput += "</table></td><td>";
             htmlOutput += "<div id=\"addModule\"></div></td></tr></table>";
-            String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + names.size() + "</modulesCount><error>" + error + "</error><errorMsg>" + errorMsg + "</errorMsg></root>";
+            String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount><![CDATA[" + names.size() + "]]></modulesCount><error><![CDATA[" + error + "]]></error><errorMsg><![CDATA[" + errorMsg + "]]></errorMsg></root>";
             out.write(xmlResponse);
             out.close();
             c.close();
@@ -281,7 +281,7 @@ public class Modules extends HttpServlet {
                             + "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><textarea id=\"messageArea\" cols=\"56\" rows=\"5\" maxlength=\"210\" onkeypress=\"ismaxlength(this)\"></textarea></td></tr>"
                             + "<tr align=\"right\"><td colspan=\"2\"><button onclick=\"saveMessage(" + id + ")\">absenden</button></td></tr>"
                             + "</table>";
-                return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount>" + messages.size() + "</modulesCount><error>0</error><errorMsg> </errorMsg></root>";
+                return "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><modulesCount><![CDATA[" + messages.size() + "]]></modulesCount><error><![CDATA[0]]></error><errorMsg><![CDATA[ ]]></errorMsg></root>";
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

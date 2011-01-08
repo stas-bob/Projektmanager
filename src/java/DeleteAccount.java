@@ -73,7 +73,7 @@ public class DeleteAccount extends HttpServlet {
                         }
                         if (!secondPLFound) {
                             System.out.println("here");
-                            out.write("<root><htmlSeite><![CDATA[]]></htmlSeite><message>Ernenen sie erst einen anderen zum Projektleiter</message></root>");
+                            out.write("<root><htmlSeite><![CDATA[]]></htmlSeite><message><![CDATA[Ernenen sie erst einen anderen zum Projektleiter]]></message></root>");
                             return;
                         }
 

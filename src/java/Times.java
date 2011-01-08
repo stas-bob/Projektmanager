@@ -100,8 +100,7 @@ public class Times extends HttpServlet {
                         .append("<colgroup width=\"200\" />")
                         .append("<tr align=\"left\">")
                         .append("<td>Modul:</td>")
-                        .append("<td><select id=\"modul\"size=1>")
-                        .append("<option></option>");
+                        .append("<td><select id=\"modul\"size=1>");
                 for (String modul : moduls) {
                     htmlOutput.append("<option>").append(modul).append("</option>");
                 }
@@ -130,7 +129,7 @@ public class Times extends HttpServlet {
                         .append("<br>");
                 htmlOutput.append(getTimes(c, user_id));
                 String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput.toString() + "]]></htmlSeite>"
-                        + "<status>" + status +  "</status>";
+                        + "<status><![CDATA[" + status +  "]]></status>";
                 if (!input.equals("")) {
                     xmlResponse = xmlResponse + input;
                 }
@@ -184,11 +183,11 @@ public class Times extends HttpServlet {
     }// </editor-fold>
 
     private static String getInput(HttpServletRequest request) {
-        return "<modul>" + request.getParameter("modul").toString() + "</modul>"
-                        + "<date>" + request.getParameter("date").toString() + "</date>"
-                        + "<start>" + request.getParameter("start").toString() + "</start>"
-                        + "<end>" + request.getParameter("end").toString() + "</end>"
-                        + "<description>" + request.getParameter("description").toString() + "</description>";
+        return "<modul><![CDATA[" + request.getParameter("modul").toString() + "]]></modul>"
+                        + "<date><![CDATA[" + request.getParameter("date").toString() + "]]></date>"
+                        + "<start><![CDATA[" + request.getParameter("start").toString() + "]]></start>"
+                        + "<end><![CDATA[" + request.getParameter("end").toString() + "]]></end>"
+                        + "<description><![CDATA[" + request.getParameter("description").toString() + "]]></description>";
     }
 
     private static ArrayList<String> getModules(Connection c, String user) {

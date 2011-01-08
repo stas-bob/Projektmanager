@@ -42,7 +42,7 @@ public class Members extends HttpServlet {
             response.setContentType("application/xml;charset=UTF-8");
             PrintWriter out = response.getWriter();
             if (request.getCookies() == null) {
-                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><membersCount>0</membersCount></root>");
+                out.write("<root><htmlSeite><![CDATA[Aktivieren Sie bitte <b>Cookies</b> in ihrem Webbrowser.]]></htmlSeite><membersCount><![CDATA[0]]></membersCount></root>");
                 return;
             }
             HttpSession seas = request.getSession();
@@ -63,7 +63,7 @@ public class Members extends HttpServlet {
                 } else {
                     if (request.getParameter("userDescription") != null) {
                         String htmlOutput = getUserDescription(request.getParameter("userDescription"), c);
-                        String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><message> </message></root>";
+                        String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><message><![CDATA[ ]]></message></root>";
                         out.write(xmlResponse);
                         c.close();
                         return;
@@ -99,7 +99,7 @@ public class Members extends HttpServlet {
             if (request.getSession().getAttribute("status").equals("PL")) {
                 htmlOutput += "<div><input type=\"button\" value=\"Neuen Benutzer anlegen\" onclick=\"addUser()\"/></div>";
             }
-            String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><membersCount>" + names.size() + "</membersCount></root>";
+            String xmlResponse = "<root><htmlSeite><![CDATA[" + htmlOutput + "]]></htmlSeite><membersCount><![CDATA[" + names.size() + "]]></membersCount></root>";
             out.write(xmlResponse);
             out.close();
             c.close();
