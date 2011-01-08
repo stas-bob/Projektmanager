@@ -362,7 +362,7 @@ public class Times extends HttpServlet {
                         .append("<td>").append(end).append("</td>")
                         .append("<td>").append(duration).append("</td>")
                         .append("<td>").append(Modules.format(rs.getString("modulname"), 10)).append("</td>")
-                        .append("<td align=\"left\">").append(Modules.format(rs.getString("description"), 17)).append("</td>")
+                        .append("<td align=\"left\">").append(Modules.format(rs.getString("description"), 25)).append("</td>")
                         .append("<td><input type=\"button\" value=\"X\" onclick=\"deleteTime('").append(user_id).append("','").append(rs.getDate("date")).append("','").append(start).append("')\"></td></tr>");
             }
             sb.append("<tr><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td><td>&#160;</td></tr>")

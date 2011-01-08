@@ -90,7 +90,7 @@ public class Modules extends HttpServlet {
                             if (request.getParameter("changeStatus") != null) {
                                 error = setModuleStatusOnDB(request.getParameter("changeStatus"), request.getParameter("id"), c);
                                 if (error == 1) throw new NullPointerException("db error");
-                                errorMsg = "&Auml;nderung gespeichert.";
+                                errorMsg = "<![CDATA[&Auml;nderung gespeichert.]]>";
                                 error = -1;
                             } else {
                                 if (request.getParameter("deleteModule") != null) {
@@ -257,13 +257,13 @@ public class Modules extends HttpServlet {
 
 
                 String htmlOutput = "<table border=\"1\" style=\"border-collapse:collapse\">"
-                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Name: </td><td>" + format(name, 24) +"</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Name: </td><td>" + format(name, 30) +"</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Prio: </td><td>" + prio + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Start: </td><td>" + start + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Ende: </td><td>" + end + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitgliederzahl: </td><td>" + memberCount + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitglieder: </td><td>" + members + "</td></tr>"
-                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Beschreibung: </td><td>" + format(description, 25) + "</td></tr>";
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Beschreibung: </td><td>" + format(description, 30) + "</td></tr>";
                         if (status.equals("PL")) {
                             htmlOutput += "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\"><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"l&ouml;schen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
                         }
@@ -274,7 +274,7 @@ public class Modules extends HttpServlet {
                     if (email.get(i).equals(myEmail)) {
                         htmlOutput += "<td align=\"right\"><button onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></td></tr>";
                     }
-                    htmlOutput += "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><div style=\"height: 100px; overflow: auto;\">" + format(messages.get(i), 30) + "</div></td></tr>"
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><div style=\"height: 100px; overflow: auto;\">" + format(messages.get(i), 35) + "</div></td></tr>"
                     + "<tr><td height=\"10\"></td></tr>";
                 }
                 htmlOutput += "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></td></tr>"
@@ -403,10 +403,10 @@ public class Modules extends HttpServlet {
     }
 
     private String setStatus(String status, int id) {
-        String open = "<option onclick=\"changeModuleStatus('open','" + id + "')\">open</option>";
-        String closed = "<option onclick=\"changeModuleStatus('closed','" + id + "')\">closed</option>";
+        String open = "<option>open</option>";
+        String closed = "<option>closed</option>";
 
-        String select = "<select name=\"statusSelect\" size=\"1\">";
+        String select = "<select name=\"statusSelect\" size=\"1\" onchange=\"changeModuleStatus(this.options[this.selectedIndex].value,'" + id + "')\">";
         select += status.equals("open") ? open + closed : closed + open;
         return select + "</select>";
     }
@@ -568,7 +568,7 @@ public class Modules extends HttpServlet {
         while (i < string.length() - br) {
             if (i % number == 0) {
                 if (string.charAt(i + br) != ' ') {
-                    string = string.substring(0, i + br) + "=" + string.substring(i + br);
+                    string = string.substring(0, i + br) + "-" + string.substring(i + br);
                     br++;
                 }
                 string = string.substring(0, i + br) + "<br>" + string.substring(i + br);

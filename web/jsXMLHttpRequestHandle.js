@@ -1,12 +1,18 @@
 var xmlHttp;
 
 function createXMLHttpRequest() {
-    if (window.ActiveXObject) {
-        xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    else if(window.XMLHttpRequest) {
-        xmlHttp = new XMLHttpRequest();
-    }
+    try {
+        if( window.XMLHttpRequest ) {
+          xmlHttp = new XMLHttpRequest();
+        } else if( window.ActiveXObject ) {
+          xmlHttp = new ActiveXObject( "Microsoft.XMLHTTP" );
+        } else {
+          alert( "Ihr Webbrowser unterstuetzt leider kein Ajax!" );
+        }
+        
+      } catch( e ) {
+        alert( "Fehler: " + e );
+      }
 }
 
 function deleteUser(email) {
@@ -59,10 +65,11 @@ function saveMessage(id) {
 function callbackModules() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
             var modulesCount = xmlobject.getElementsByTagName("modulesCount")[0].childNodes[0].nodeValue;
             var error = xmlobject.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+
             var errorMsg = xmlobject.getElementsByTagName("errorMsg")[0].childNodes[0].nodeValue;
             if (error > 0) {
                 document.getElementById("statusBox").innerHTML = errorMsg;
@@ -194,30 +201,6 @@ function saveModule() {
     var prio =  document.getElementById("prio").options[document.getElementById("prio").selectedIndex].value;
     var membersToAdd = document.getElementById("membersInModuleBox").innerHTML;
 
-    name = name.replace(/ü/g, "%C3%BC");
-    name = name.replace(/Ü/g, "%C3%9C");
-    name = name.replace(/ö/g, "%C3%B6");
-    name = name.replace(/Ö/g, "%C3%96");
-    name = name.replace(/ä/g, "%C3%A4");
-    name = name.replace(/Ä/g, "%C3%84");
-    name = name.replace(/ß/g, "%C3%9F");
-
-    description = description.replace(/ü/g, "%C3%BC");
-    description = description.replace(/Ü/g, "%C3%9C");
-    description = description.replace(/ö/g, "%C3%B6");
-    description = description.replace(/Ö/g, "%C3%96");
-    description = description.replace(/ä/g, "%C3%A4");
-    description = description.replace(/Ä/g, "%C3%84");
-    description = description.replace(/ß/g, "%C3%9F");
-
-    membersToAdd = membersToAdd.replace(/ü/g, "%C3%BC");
-    membersToAdd = membersToAdd.replace(/Ü/g, "%C3%9C");
-    membersToAdd = membersToAdd.replace(/ö/g, "%C3%B6");
-    membersToAdd = membersToAdd.replace(/Ö/g, "%C3%96");
-    membersToAdd = membersToAdd.replace(/ä/g, "%C3%A4");
-    membersToAdd = membersToAdd.replace(/Ä/g, "%C3%84");
-    membersToAdd = membersToAdd.replace(/ß/g, "%C3%9F");
-
 
     if (name.length != 0 
         && description.length != 0
@@ -293,29 +276,6 @@ function saveUser() {
     var firstname = document.getElementById("firstname").value;
     var email = document.getElementById("email").value;
 
-    name = name.replace(/ü/g, "%C3%BC");
-    name = name.replace(/Ü/g, "%C3%9C");
-    name = name.replace(/ö/g, "%C3%B6");
-    name = name.replace(/Ö/g, "%C3%96");
-    name = name.replace(/ä/g, "%C3%A4");
-    name = name.replace(/Ä/g, "%C3%84");
-    name = name.replace(/ß/g, "%C3%9F");
-
-    firstname = firstname.replace(/ü/g, "%C3%BC");
-    firstname = firstname.replace(/Ü/g, "%C3%9C");
-    firstname = firstname.replace(/ö/g, "%C3%B6");
-    firstname = firstname.replace(/Ö/g, "%C3%96");
-    firstname = firstname.replace(/ä/g, "%C3%A4");
-    firstname = firstname.replace(/Ä/g, "%C3%84");
-    firstname = firstname.replace(/ß/g, "%C3%9F");
-
-    email = email.replace(/ü/g, "%C3%BC");
-    email = email.replace(/Ü/g, "%C3%9C");
-    email = email.replace(/ö/g, "%C3%B6");
-    email = email.replace(/Ö/g, "%C3%96");
-    email = email.replace(/ä/g, "%C3%A4");
-    email = email.replace(/Ä/g, "%C3%84");
-    email = email.replace(/ß/g, "%C3%9F");
     if (name.length != 0 && firstname.length != 0 && email.length != 0) {
         xmlHttp.open('POST',"/Projektmanager/Members?addName=" + name + "&addFirstname=" + firstname + "&addEmail=" + email, true);
         xmlHttp.onreadystatechange = showMembers;
@@ -340,6 +300,7 @@ function showModuleDescription(id) {
 
 function changeModuleStatus(status, id) {
     document.getElementById("addModule").innerHTML = "";
+    document.getElementById("statusBox").innerHTML = "Bitte warten ...";
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Modules?changeStatus=" + status + "&id=" + id, true);
     xmlHttp.onreadystatechange = callbackModules;
@@ -351,13 +312,6 @@ function changeModuleStatus(status, id) {
 function changeStatus(status, email) {
     document.getElementById("userDescription").innerHTML = "";
     createXMLHttpRequest();
-    email = email.replace(/ü/g, "%C3%BC");
-    email = email.replace(/Ü/g, "%C3%9C");
-    email = email.replace(/ö/g, "%C3%B6");
-    email = email.replace(/Ö/g, "%C3%96");
-    email = email.replace(/ä/g, "%C3%A4");
-    email = email.replace(/Ä/g, "%C3%84");
-    email = email.replace(/ß/g, "%C3%9F");
     xmlHttp.open('POST',"/Projektmanager/Members?changeStatus=" + status + "&email=" + email, true);
     xmlHttp.onreadystatechange = callbackShowUserDescription;
     xmlHttp.send();
@@ -585,7 +539,7 @@ function callback()
 function callbackMembers() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
             var membersCount = xmlobject.getElementsByTagName("membersCount")[0].childNodes[0].nodeValue;
             if (membersCount > 10) {
@@ -648,7 +602,7 @@ function showOverview() {
 function callbackOverview() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
         } else {
@@ -670,7 +624,7 @@ function showProfile() {
 function callbackProfile() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
         } else {
@@ -692,7 +646,7 @@ function showTimes() {
 function callbackTimes() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
         } else {
@@ -720,29 +674,6 @@ function changePassword() {
     var newPassword = document.getElementById("newPassword").value;
     var validatePassword = document.getElementById("validatePassword").value;
 
-    oldPassword = oldPassword.replace(/ü/g, "%C3%BC");
-    oldPassword = oldPassword.replace(/Ü/g, "%C3%9C");
-    oldPassword = oldPassword.replace(/ö/g, "%C3%B6");
-    oldPassword = oldPassword.replace(/Ö/g, "%C3%96");
-    oldPassword = oldPassword.replace(/ä/g, "%C3%A4");
-    oldPassword = oldPassword.replace(/Ä/g, "%C3%84");
-    oldPassword = oldPassword.replace(/ß/g, "%C3%9F");
-
-    newPassword = newPassword.replace(/ü/g, "%C3%BC");
-    newPassword = newPassword.replace(/Ü/g, "%C3%9C");
-    newPassword = newPassword.replace(/ö/g, "%C3%B6");
-    newPassword = newPassword.replace(/Ö/g, "%C3%96");
-    newPassword = newPassword.replace(/ä/g, "%C3%A4");
-    newPassword = newPassword.replace(/Ä/g, "%C3%84");
-    newPassword = newPassword.replace(/ß/g, "%C3%9F");
-
-    validatePassword = validatePassword.replace(/ü/g, "%C3%BC");
-    validatePassword = validatePassword.replace(/Ü/g, "%C3%9C");
-    validatePassword = validatePassword.replace(/ö/g, "%C3%B6");
-    validatePassword = validatePassword.replace(/Ö/g, "%C3%96");
-    validatePassword = validatePassword.replace(/ä/g, "%C3%A4");
-    validatePassword = validatePassword.replace(/Ä/g, "%C3%84");
-    validatePassword = validatePassword.replace(/ß/g, "%C3%9F");
     createXMLHttpRequest();
     var servlet = "/Projektmanager/ChangePassword?oldPassword=" + oldPassword + "&newPassword=" + newPassword + "&validatePassword=" + validatePassword;
     xmlHttp.open('POST',servlet, true);
@@ -774,21 +705,6 @@ function saveTimes() {
     var end = document.getElementById("end").value;
     var description = document.getElementById("description").value;
 
-    modul = modul.replace(/ü/g, "%C3%BC");
-    modul = modul.replace(/Ü/g, "%C3%9C");
-    modul = modul.replace(/ö/g, "%C3%B6");
-    modul = modul.replace(/Ö/g, "%C3%96");
-    modul = modul.replace(/ä/g, "%C3%A4");
-    modul = modul.replace(/Ä/g, "%C3%84");
-    modul = modul.replace(/ß/g, "%C3%9F");
-
-    description = description.replace(/ü/g, "%C3%BC");
-    description = description.replace(/Ü/g, "%C3%9C");
-    description = description.replace(/ö/g, "%C3%B6");
-    description = description.replace(/Ö/g, "%C3%96");
-    description = description.replace(/ä/g, "%C3%A4");
-    description = description.replace(/Ä/g, "%C3%84");
-    description = description.replace(/ß/g, "%C3%9F");
     
     var servlet = "/Projektmanager/Times?modul=" + modul + "&date=" + date + "&start=" + start + "&end=" + end + "&description=" + description;
     xmlHttp.open('POST',servlet, true);
@@ -799,7 +715,7 @@ function saveTimes() {
 function callbackSaveTimes() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
             
@@ -997,7 +913,7 @@ function deleteTime(user_id, date, start) {
 function callbackDeleteTimes() {
     if (xmlHttp.readyState == 4) {
         if (xmlHttp.status == 200) {
-            var xmlobject = (new DOMParser()).parseFromString(xmlHttp.responseText, "application/xml");
+            var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
             document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
 
@@ -1080,7 +996,7 @@ function callbackPasswordForget() {
 }
 
 function deleteAccount() {
-    bestaetigt = window.confirm ("Wollen Sie wirklich Ihren Account l&ouml;eschen?");
+    bestaetigt = window.confirm ("Wollen Sie wirklich Ihren Account löschen?");
     if (bestaetigt == true) {
         createXMLHttpRequest();
         xmlHttp.open('POST',"/Projektmanager/DeleteAccount", true);

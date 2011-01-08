@@ -46,7 +46,7 @@ public class Overview extends HttpServlet {
             Connection c = DBConnector.getConnection();
             int modulesCount = getModulesCount(c, request.getSession().getAttribute("projectname").toString());
             int doneCount = getModulesDoneCount(c, request.getSession().getAttribute("projectname").toString());
-            int divWidth = 795;
+            int divWidth = 785;
             int progress = 0;
             if (modulesCount > 0) {
                 progress = (divWidth*doneCount)/modulesCount;
@@ -103,7 +103,7 @@ public class Overview extends HttpServlet {
                                                 + "<tr><td align=\"center\">Offene Aufgaben</td></tr>";
                                                 for (int i = 0; i < moduleNames.size(); i++) {
                                                     if (status.get(i).equals("open")) {
-                                                        htmlOutput += "<tr><td>" + Modules.format(moduleNames.get(i), 32) + "</td></tr>";
+                                                        htmlOutput += "<tr><td>" + Modules.format(moduleNames.get(i), 38) + "</td></tr>";
                                                     }
                                                 }
 
@@ -187,7 +187,7 @@ public class Overview extends HttpServlet {
     public static String getProgressBar(int height, int width, long progress, String text) {
         return "<div style=\"border:1px dashed; width:" + width + "px; height:" + height + "px; position:relative; background-color: ##EEEEFF; margin-top:0px\">"
                   + "<div style=\"border:1px solid blue; width:" + progress + "px; height:100%; margin-top: -1px; margin-left: -1px; color:white; background-color: LightSteelBlue;\">"
-                    + "<div style=\"margin-left:30%; margin-top:" + (height/2 - 10) + "px; position:absolute; text-shadow: 2px 2px 0 #AAAAAA; color:black\">" + text + (int)((float)progress*100/width) + "%</div>"
+                    + "<div style=\"margin-left:40%; margin-top:" + (height/2 - 10) + "px; position:absolute; text-shadow: 2px 2px 0 #AAAAAA; color:black\">" + text + (int)((float)progress*100/width) + "%</div>"
                   + "</div>"
               + "</div>";
     }
