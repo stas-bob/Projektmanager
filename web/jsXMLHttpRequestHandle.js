@@ -30,11 +30,15 @@ function deleteModule(id) {
 }
 
 function showModules() {
-    document.getElementById("selected_tab").style.marginLeft = "134px";
-    createXMLHttpRequest();
-    xmlHttp.open('POST',"/Projektmanager/Modules", true);
-    xmlHttp.onreadystatechange = callbackModules;
-    xmlHttp.send();
+    try {
+        document.getElementById("selected_tab").style.marginLeft = "134px";
+        createXMLHttpRequest();
+        xmlHttp.open('POST',"/Projektmanager/Modules", true);
+        xmlHttp.onreadystatechange = callbackModules;
+        xmlHttp.send();
+    } catch( e ) {
+        alert( "Fehler: showModules() " + e );
+    }
 }
 
 function addMeToModule(id) {
@@ -63,31 +67,35 @@ function saveMessage(id) {
 }
 
 function callbackModules() {
-    if (xmlHttp.readyState == 4) {
-        if (xmlHttp.status == 200) {
-            var xmlobject = xmlHttp.responseXML;
-            var html = xmlobject.getElementsByTagName("htmlSeite");
-            var modulesCount = xmlobject.getElementsByTagName("modulesCount")[0].childNodes[0].nodeValue;
-            var error = xmlobject.getElementsByTagName("error")[0].childNodes[0].nodeValue;
-
-            var errorMsg = xmlobject.getElementsByTagName("errorMsg")[0].childNodes[0].nodeValue;
-            if (error > 0) {
-                document.getElementById("statusBox").innerHTML = errorMsg;
-            } else {
-                if (error == -1) {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) {
+                var xmlobject = xmlHttp.responseXML;
+                var html = xmlobject.getElementsByTagName("htmlSeite");
+                var modulesCount = xmlobject.getElementsByTagName("modulesCount")[0].childNodes[0].nodeValue;
+                var error = xmlobject.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+                try {
+                    var errorMsg = xmlobject.getElementsByTagName("errorMsg")[0].childNodes[0].nodeValue;
+                } catch( e ) { //IE error...
+                       alert("callbackModules :" + e);
+                }
+                if (error > 0) {
                     document.getElementById("statusBox").innerHTML = errorMsg;
+                } else {
+                    if (error == -1) {
+                        document.getElementById("statusBox").innerHTML = errorMsg;
+                    }
+                    if (modulesCount > 10) {
+                    //    document.getElementById("content").style.height = modulesCount*40 + "px";
+                    }
+                    document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
                 }
-                if (modulesCount > 10) {
-                //    document.getElementById("content").style.height = modulesCount*40 + "px";
+            } else {
+                if (xmlHttp.status == 401) {    //nicht authorisiert
+                    window.location.href = "Login.html";
                 }
-                document.getElementById("content").innerHTML = html[0].childNodes[0].nodeValue;
-            }
-        } else {
-            if (xmlHttp.status == 401) {    //nicht authorisiert
-                window.location.href = "Login.html";
             }
         }
-    }
+    
 }
 
 function showMembers() {
@@ -201,7 +209,7 @@ function saveModule() {
     var prio =  document.getElementById("prio").options[document.getElementById("prio").selectedIndex].value;
     var membersToAdd = document.getElementById("membersInModuleBox").innerHTML;
 
-
+    name = name.replace(/ü/g, "%C3%BC");    name = name.replace(/Ü/g, "%C3%9C");    name = name.replace(/ö/g, "%C3%B6");    name = name.replace(/Ö/g, "%C3%96");    name = name.replace(/ä/g, "%C3%A4");    name = name.replace(/Ä/g, "%C3%84");    name = name.replace(/ß/g, "%C3%9F");    description = description.replace(/ü/g, "%C3%BC");    description = description.replace(/Ü/g, "%C3%9C");    description = description.replace(/ö/g, "%C3%B6");    description = description.replace(/Ö/g, "%C3%96");    description = description.replace(/ä/g, "%C3%A4");    description = description.replace(/Ä/g, "%C3%84");    description = description.replace(/ß/g, "%C3%9F");    membersToAdd = membersToAdd.replace(/ü/g, "%C3%BC");    membersToAdd = membersToAdd.replace(/Ü/g, "%C3%9C");    membersToAdd = membersToAdd.replace(/ö/g, "%C3%B6");    membersToAdd = membersToAdd.replace(/Ö/g, "%C3%96");    membersToAdd = membersToAdd.replace(/ä/g, "%C3%A4");    membersToAdd = membersToAdd.replace(/Ä/g, "%C3%84");    membersToAdd = membersToAdd.replace(/ß/g, "%C3%9F");
     if (name.length != 0 
         && description.length != 0
         && startDay.length != 0
@@ -275,6 +283,29 @@ function saveUser() {
     var name = document.getElementById("name").value;
     var firstname = document.getElementById("firstname").value;
     var email = document.getElementById("email").value;
+name = name.replace(/ü/g, "%C3%BC");
+    name = name.replace(/Ü/g, "%C3%9C");
+    name = name.replace(/ö/g, "%C3%B6");
+    name = name.replace(/Ö/g, "%C3%96");
+    name = name.replace(/ä/g, "%C3%A4");
+    name = name.replace(/Ä/g, "%C3%84");
+    name = name.replace(/ß/g, "%C3%9F");
+
+    firstname = firstname.replace(/ü/g, "%C3%BC");
+    firstname = firstname.replace(/Ü/g, "%C3%9C");
+    firstname = firstname.replace(/ö/g, "%C3%B6");
+    firstname = firstname.replace(/Ö/g, "%C3%96");
+    firstname = firstname.replace(/ä/g, "%C3%A4");
+    firstname = firstname.replace(/Ä/g, "%C3%84");
+    firstname = firstname.replace(/ß/g, "%C3%9F");
+
+    email = email.replace(/ü/g, "%C3%BC");
+    email = email.replace(/Ü/g, "%C3%9C");
+    email = email.replace(/ö/g, "%C3%B6");
+    email = email.replace(/Ö/g, "%C3%96");
+    email = email.replace(/ä/g, "%C3%A4");
+    email = email.replace(/Ä/g, "%C3%84");
+    email = email.replace(/ß/g, "%C3%9F");
 
     if (name.length != 0 && firstname.length != 0 && email.length != 0) {
         xmlHttp.open('POST',"/Projektmanager/Members?addName=" + name + "&addFirstname=" + firstname + "&addEmail=" + email, true);
@@ -311,6 +342,14 @@ function changeModuleStatus(status, id) {
 
 function changeStatus(status, email) {
     document.getElementById("userDescription").innerHTML = "";
+    email = email.replace(/ü/g, "%C3%BC");
+    email = email.replace(/Ü/g, "%C3%9C");
+    email = email.replace(/ö/g, "%C3%B6");
+    email = email.replace(/Ö/g, "%C3%96");
+    email = email.replace(/ä/g, "%C3%A4");
+    email = email.replace(/Ä/g, "%C3%84");
+    email = email.replace(/ß/g, "%C3%9F");
+
     createXMLHttpRequest();
     xmlHttp.open('POST',"/Projektmanager/Members?changeStatus=" + status + "&email=" + email, true);
     xmlHttp.onreadystatechange = callbackShowUserDescription;
@@ -349,7 +388,11 @@ function callbackShowUserDescription() {
         if (xmlHttp.status == 200) {
             var xmlobject = xmlHttp.responseXML;
             var html = xmlobject.getElementsByTagName("htmlSeite");
-            var message = xmlobject.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+            try {
+                var message = xmlobject.getElementsByTagName("message")[0].childNodes[0].nodeValue;
+            } catch( e ) { //IE error...
+                alert("callbackshowuserdescription: " + e);
+            }
             if (message != " ") {
                 document.getElementById("statusBox").innerHTML = message;
             }
@@ -636,11 +679,15 @@ function callbackProfile() {
 }
 
 function showTimes() {
-    document.getElementById("selected_tab").style.marginLeft = "270px";
-    createXMLHttpRequest();
-    xmlHttp.open('POST',"/Projektmanager/Times", true);
-    xmlHttp.onreadystatechange = callbackTimes;
-    xmlHttp.send();
+    try {
+        document.getElementById("selected_tab").style.marginLeft = "270px";
+        createXMLHttpRequest();
+        xmlHttp.open('POST',"/Projektmanager/Times", true);
+        xmlHttp.onreadystatechange = callbackTimes;
+        xmlHttp.send();
+    } catch (e) {
+        alert ("Fehler " + e);
+    }
 }
 
 function callbackTimes() {
@@ -674,6 +721,31 @@ function changePassword() {
     var newPassword = document.getElementById("newPassword").value;
     var validatePassword = document.getElementById("validatePassword").value;
 
+    oldPassword = oldPassword.replace(/ü/g, "%C3%BC");
+    oldPassword = oldPassword.replace(/Ü/g, "%C3%9C");
+    oldPassword = oldPassword.replace(/ö/g, "%C3%B6");
+    oldPassword = oldPassword.replace(/Ö/g, "%C3%96");
+    oldPassword = oldPassword.replace(/ä/g, "%C3%A4");
+    oldPassword = oldPassword.replace(/Ä/g, "%C3%84");
+    oldPassword = oldPassword.replace(/ß/g, "%C3%9F");
+
+    newPassword = newPassword.replace(/ü/g, "%C3%BC");
+    newPassword = newPassword.replace(/Ü/g, "%C3%9C");
+    newPassword = newPassword.replace(/ö/g, "%C3%B6");
+    newPassword = newPassword.replace(/Ö/g, "%C3%96");
+    newPassword = newPassword.replace(/ä/g, "%C3%A4");
+    newPassword = newPassword.replace(/Ä/g, "%C3%84");
+    newPassword = newPassword.replace(/ß/g, "%C3%9F");
+
+    validatePassword = validatePassword.replace(/ü/g, "%C3%BC");
+    validatePassword = validatePassword.replace(/Ü/g, "%C3%9C");
+    validatePassword = validatePassword.replace(/ö/g, "%C3%B6");
+    validatePassword = validatePassword.replace(/Ö/g, "%C3%96");
+    validatePassword = validatePassword.replace(/ä/g, "%C3%A4");
+    validatePassword = validatePassword.replace(/Ä/g, "%C3%84");
+    validatePassword = validatePassword.replace(/ß/g, "%C3%9F");
+
+
     createXMLHttpRequest();
     var servlet = "/Projektmanager/ChangePassword?oldPassword=" + oldPassword + "&newPassword=" + newPassword + "&validatePassword=" + validatePassword;
     xmlHttp.open('POST',servlet, true);
@@ -704,6 +776,21 @@ function saveTimes() {
     var start = document.getElementById("start").value;
     var end = document.getElementById("end").value;
     var description = document.getElementById("description").value;
+    modul = modul.replace(/ü/g, "%C3%BC");
+    modul = modul.replace(/Ü/g, "%C3%9C");
+    modul = modul.replace(/ö/g, "%C3%B6");
+    modul = modul.replace(/Ö/g, "%C3%96");
+    modul = modul.replace(/ä/g, "%C3%A4");
+    modul = modul.replace(/Ä/g, "%C3%84");
+    modul = modul.replace(/ß/g, "%C3%9F");
+
+    description = description.replace(/ü/g, "%C3%BC");
+    description = description.replace(/Ü/g, "%C3%9C");
+    description = description.replace(/ö/g, "%C3%B6");
+    description = description.replace(/Ö/g, "%C3%96");
+    description = description.replace(/ä/g, "%C3%A4");
+    description = description.replace(/Ä/g, "%C3%84");
+    description = description.replace(/ß/g, "%C3%9F");
 
     
     var servlet = "/Projektmanager/Times?modul=" + modul + "&date=" + date + "&start=" + start + "&end=" + end + "&description=" + description;
