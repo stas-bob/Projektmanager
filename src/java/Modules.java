@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -24,7 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author bline
+ *
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class Modules extends HttpServlet {
    
@@ -222,7 +217,6 @@ public class Modules extends HttpServlet {
             if (rs.next()) {
                 String description = rs.getString(3);
                 String name = rs.getString(1);
-                System.out.println("ddd" + name);
                 String prio = rs.getString(2);
                 Date start = rs.getDate(4);
                 Date end = rs.getDate(5);
@@ -348,7 +342,6 @@ public class Modules extends HttpServlet {
                 return 1;
             }
             PreparedStatement ps = c.prepareStatement("INSERT INTO module (name,start,end,prio,status,description,projectname) VALUES (?,?,?,?,'open',?,?)");
-            System.out.println("name save " + name);
             ps.setString(1, name);
             ps.setString(2, start);
             ps.setString(3, end);
@@ -554,7 +547,6 @@ public class Modules extends HttpServlet {
                                (month == 10 && day < 32) ||
                                (month == 11 && day < 31) ||
                                (month == 12 && day < 32)) {
-                    System.out.println("tag:" + day + "monat:" + month + "jahr:" + year);
                     return new GregorianCalendar(year, month, day);
                 }
             }
@@ -563,7 +555,6 @@ public class Modules extends HttpServlet {
     }
 
     public static String format(String string, int number) {
-        System.out.println(string);
         int br = 0, i = 1;
         while (i < string.length() - br) {
             if (i % number == 0) {

@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -20,11 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.omg.PortableServer.REQUEST_PROCESSING_POLICY_ID;
 
 /**
  *
- * @author bline
+ *
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class Members extends HttpServlet {
    
@@ -179,7 +173,6 @@ public class Members extends HttpServlet {
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     int id = rs.getInt(1);
-                    System.out.println(id);
                     ps.close();
                     sql = "DELETE FROM time WHERE user_id = ?";
                     ps = c.prepareStatement(sql);
@@ -271,7 +264,6 @@ public String getUserDescription(String email, Connection c) {
                 return "Sie d&uuml;rfen sich nicht selbst &auml;ndern";
             }
         } else {
-            //TODO was passiert bei CPL ???
             return "Sie haben keine Berechtigung das zu tun!";
         }
         return "Fehler!";

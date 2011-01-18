@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -20,8 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * Loescht einen Benutzer Account
  *
- * @author tA88
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class DeleteAccount extends HttpServlet {
 
@@ -72,7 +68,6 @@ public class DeleteAccount extends HttpServlet {
                             }
                         }
                         if (!secondPLFound) {
-                            System.out.println("here");
                             out.write("<root><htmlSeite><![CDATA[]]></htmlSeite><message><![CDATA[Ernenen sie erst einen anderen zum Projektleiter]]></message></root>");
                             return;
                         }
@@ -124,6 +119,13 @@ public class DeleteAccount extends HttpServlet {
 
     }
 
+    /*
+     * Loescht ein Projekt
+     *
+     * @param user_id User-ID des Benutzers
+     * @param projectName Projektname des Projektes
+     * @param c DB Connection
+     */
     public static void deleteProject(int user_id, String projectName, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("DELETE FROM project WHERE name = ?");

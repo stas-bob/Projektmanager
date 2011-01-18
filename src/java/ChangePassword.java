@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -12,8 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Hilfsservlet zum Aendern eines Passwortes
  *
- * @author tA88
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class ChangePassword extends HttpServlet {
    

@@ -1,4 +1,3 @@
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.BufferedWriter;
@@ -21,15 +20,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
- /**
-  * Servlet Class
-  *
-  * @web.servlet name="downloadServlet" display-name="Simple DownloadServlet"
-  *           description="Simple Servlet for Streaming Files to the Clients
-  *           Browser"
-  * @web.servlet-mapping url-pattern="/download"
-  */
- public class DownloadServlet extends HttpServlet {
+/**
+ *
+ *
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
+ */
+public class DownloadServlet extends HttpServlet {
+
     static final int BUFFER_SIZE = 16384;
 
     protected void doGet(HttpServletRequest request,
@@ -73,12 +70,7 @@ import javax.servlet.http.HttpServletResponse;
                 totalHour = totalHour + hour;
                 totalMinute = totalMinute + minute;
                 duration = new Time(hour, minute, 0);
-                sb.append(rs.getDate("date")).append(";")
-                        .append(start).append(";")
-                        .append(end).append(";")
-                        .append(duration).append(";")
-                        .append(rs.getString("modulname")).append(";")
-                        .append(rs.getString("description")).append(";\n");
+                sb.append(rs.getDate("date")).append(";").append(start).append(";").append(end).append(";").append(duration).append(";").append(rs.getString("modulname")).append(";").append(rs.getString("description")).append(";\n");
             }
             sb.append("\nGesamt:;;").append(new Time(totalHour, totalMinute, 0)).append(";");
         } catch (SQLException ex) {
@@ -99,10 +91,10 @@ import javax.servlet.http.HttpServletResponse;
             System.out.println("Aufruf mit: java SchreibeDatei name");
             System.out.println("erzeugt eine Datei name.html");
         } catch (IOException ioe) {
-            System.out.println("Habe gefangen: "+ioe);
+            System.out.println("Fehler: " + ioe);
         }
     }
-        
+
     private File getFileToDownload(String file) {
         return new File(file);
     }
@@ -127,4 +119,4 @@ import javax.servlet.http.HttpServletResponse;
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", type.toString());
     }
- }
+}

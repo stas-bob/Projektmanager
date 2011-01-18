@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.BufferedReader;
@@ -33,8 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ *  Servlet zum Registieren eines neuen Projektes
  *
- * @author tA88
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class Registrieren extends HttpServlet {
 
@@ -67,6 +63,11 @@ public class Registrieren extends HttpServlet {
         out.close();
     }
 
+    /*
+     *
+     *
+     * @param
+     */
     public void activate(String name, String firstname, String toEmail, Date startProject, Date endProject, String projectName, boolean member) {
         try {
             
@@ -120,6 +121,13 @@ public class Registrieren extends HttpServlet {
         }
     }
 
+    /*
+     * Sendet eine E-Mail an den Benutzer mit seinen Zugangsdaten
+     *
+     * @param recipientsAddress E-Mail Adresse des Benutzers
+     * @param subject Betreff der E-Mail
+     * qparam text Text der E-Mail
+     */
     public static void sendMail(String recipientsAddress, String subject, String text) {
         String smtpHost = "mail.gmx.net";
         String username = "htw-projektmanager@gmx.de";
@@ -156,6 +164,16 @@ public class Registrieren extends HttpServlet {
         }
     }
 
+    /*
+     * Erstellt den Text für die E-Mail
+     *
+     * @param firstname Vorname des benutzers
+     * @param name Nachname des Benutzers
+     * @param projectname Projektname des Projektes
+     * @param email E-Mail des Benutzers
+     * @param pw Passwort des Benutzers
+     * @return String mit dem Text für die E-Mail
+     */
     private String createText(String firstname, String name, String projectname, String email, String pw) {
         StringBuilder sb = new StringBuilder(200);
         sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n")
@@ -167,6 +185,14 @@ public class Registrieren extends HttpServlet {
         return sb.toString();
     }
 
+    /*
+     * Überprüft den Projektnamen und die E-Mail auf schon vorhanden sein
+     *
+     * @param projectName Eingegebener Projektname
+     * @param email E-Mail des Benutzers
+     * @return  true -> Wenn Projektname und E-Mail noch nicht vorhanden
+     *          false-> Wenn Projektname oder E-Mail schon vorhanden
+     */
     private boolean validateProject(String projectName, String email) {
         try {
             if (projectName.trim().isEmpty() || email.trim().isEmpty()) {
@@ -193,28 +219,37 @@ public class Registrieren extends HttpServlet {
         return true;
     }
 
+    /*
+     * Foramtiert das Datum in das DB Format
+     *
+     * @param temp Datum das eingegeben wurde
+     * @return java.sql.Date Datum
+     */
     private static Date getDate(String temp) {
         int day = -1;
         int month = -1;
         int year = -1;
         Date date = null;
 
-            System.out.println("HALLO1");
-            day = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
-            temp = temp.substring(temp.indexOf(".") + 1);
-            month = Integer.parseInt(temp.substring(0, temp.indexOf("."))) - 1;
-            temp = temp.substring(temp.indexOf(".") + 1);
-            year = Integer.parseInt(temp);
-            if (year >= 2000) {
-                year -= 1900;
-            }
-            System.out.println("HALLO2");
-            date = new Date(year, month, day);
-            System.out.println(date.toString());
+        day = Integer.parseInt(temp.substring(0, temp.indexOf(".")));
+        temp = temp.substring(temp.indexOf(".") + 1);
+        month = Integer.parseInt(temp.substring(0, temp.indexOf("."))) - 1;
+        temp = temp.substring(temp.indexOf(".") + 1);
+        year = Integer.parseInt(temp);
+        if (year >= 2000) {
+            year -= 1900;
+        }
+        date = new Date(year, month, day);
 
         return date;
     }
-    
+
+    /*
+     * Verschlüsselt das Password mit md5
+     *
+     * @param rawString
+     * @return 
+     */
     public static String md5(String rawString) {
         StringBuilder hexString = new StringBuilder();
         try {
@@ -271,23 +306,24 @@ public class Registrieren extends HttpServlet {
     }// </editor-fold>
 }
 
+/*
+ * MailAuthenticator
+ */
 class MailAuthenticator extends Authenticator {
 
     /**
      * Ein String, der den Usernamen nach der Erzeugung eines
-     * Objektes<br>
-     * dieser Klasse enthalten wird.
+     * Objektes dieser Klasse enthalten wird.
      */
     private final String user;
     /**
      * Ein String, der das Passwort nach der Erzeugung eines
-     * Objektes<br>
-     * dieser Klasse enthalten wird.
+     * Objektes dieser Klasse enthalten wird.
      */
     private final String password;
 
     /**
-     * Der Konstruktor erzeugt ein MailAuthenticator Objekt<br>
+     * Der Konstruktor erzeugt ein MailAuthenticator Objekt
      * aus den beiden Parametern user und passwort.
      *
      * @param user

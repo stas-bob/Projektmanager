@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import db.DBConnector;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,14 +5,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Überprüft ob die eingegeben E-Mail Addresse noch frei ist
  *
- * @author bline
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class ValidateEmailServlet extends HttpServlet {
    
@@ -40,6 +34,12 @@ public class ValidateEmailServlet extends HttpServlet {
         out.close();
     } 
 
+    /*
+     * Überprüft die E-Mail Addresse
+     *
+     * @param emailName E-Mail die eingegebn wurde
+     * @return Wenn Status = 0, dann E-Mail noch nicht vergeben, ansonsten schon vorhanden
+     */
     public String validateEmail(String emailName) {
         String status = "0";
         try {

@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -13,8 +7,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * Servlet für den Profil Tab. Zeigt Benutzinformationen und man kann das Passwort aendern
  *
- * @author tA88
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class Profile extends HttpServlet {
    

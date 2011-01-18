@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -19,11 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.swing.JFrame;
 
 /**
  *
- * @author bline
+ *
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class MainServlet extends HttpServlet {
 
@@ -43,7 +38,6 @@ public class MainServlet extends HttpServlet {
             HttpSession seas = request.getSession();
             seas.setAttribute("user", request.getParameter("user"));
             seas.setAttribute("user_id", getUserId(request.getParameter("user"), connection));
-            System.out.println(request.getParameter("password"));
             seas.setAttribute("password", request.getParameter("password"));
             seas.setAttribute("startProject", getStartProject(Integer.parseInt(seas.getAttribute("user_id").toString()), connection));
             seas.setAttribute("endProject", getEndProject(Integer.parseInt(seas.getAttribute("user_id").toString()), connection));
@@ -79,7 +73,6 @@ public class MainServlet extends HttpServlet {
 
 
     public boolean equals(String str1, String str2) {
-        System.out.println(str1.replace("0", "") + " -- " + str2.replace("0", ""));
         return str1.replace("0", "").equals(str2.replace("0", ""));
     }
     private boolean checkLogin(Connection c, String user, String password) {
@@ -89,8 +82,6 @@ public class MainServlet extends HttpServlet {
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                System.out.println(rs.getString(1));
-                System.out.println(password);
                 if (equals(rs.getString(1), password)) {
                     ps.close();
                     return true;

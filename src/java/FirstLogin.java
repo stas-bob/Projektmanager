@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -18,8 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * Servlet bei 1. Anmeldung am System. Benutzer wird aufgefordert das generierte Passwort zu aendern.
  *
- * @author tA88
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class FirstLogin extends HttpServlet {
 
@@ -59,22 +55,27 @@ public class FirstLogin extends HttpServlet {
         }
     }
 
+    /*
+     * Aenderung das Passwort
+     *
+     * @param request HttpServletRequest
+     * @return -1-> Systemfehler!
+     *          0-> Passwort wurde geaender
+     *          1-> Fehler. Die neue eingegebenen Passwörter stimmen nicht überein
+     *          2-> Fehler. Das eingegeben bisherige Passwort ist falsch.
+     */
     public static int changePassword(HttpServletRequest request) {
         Connection c = null;
         String user = request.getSession().getAttribute("user").toString();
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String validatePassword = request.getParameter("validatePassword");
-        System.out.println("a -- " + oldPassword + " - " + newPassword + " - " + validatePassword);
         try {
             c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE email = ?");
             ps.setString(1, user);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                System.out.println("rs.getString(1) ");
-                System.out.println(rs.getString(1));
-                System.out.println( oldPassword);
                 String currentPw = rs.getString(1);
                 currentPw = currentPw.replace("0", "");
                 oldPassword = oldPassword.replace("0", "");

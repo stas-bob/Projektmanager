@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import db.DBConnector;
 import java.sql.*;
 import exceptions.MySQLException;
@@ -21,8 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Servlet fpr Tab Überblick. Zeigt dem Benutzer wichtige Infos übers Projekt. Wie Zeit bis Projektende, Arbeitszeit usw.
  *
- * @author tA88
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class Overview extends HttpServlet {
    
@@ -52,7 +47,6 @@ public class Overview extends HttpServlet {
                 progress = (divWidth*doneCount)/modulesCount;
             }
             GregorianCalendar projectEndDate = Modules.getDateFromString(request.getSession().getAttribute("endProject").toString());
-            System.out.println(projectEndDate.getTime().toString());
             projectEndDate.set(GregorianCalendar.MONTH, (projectEndDate.get(GregorianCalendar.MONTH) - 1));
            // projectEndDate.set(GregorianCalendar.YEAR, (projectEndDate.get(GregorianCalendar.YEAR) - 1));
 

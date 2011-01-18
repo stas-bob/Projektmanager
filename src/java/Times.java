@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import db.DBConnector;
 import exceptions.MySQLException;
@@ -25,8 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * Servlet für den Zeiten Tab. Benutzer kann neue Arbeitszeit eintragen, vorhandene Zeiten ansehen und loeschen
  *
- * @author tA88
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class Times extends HttpServlet {
    
@@ -182,6 +177,13 @@ public class Times extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /*
+     * Bei fehlerhafter Eingabe für eine neue Zeit wird hier die Eingabe gespeichert, um bei einem Fehler dem Benutzer zu ersparen
+     *  das er alles wieder neu eingeben muss.
+     *
+     * @param rquest Request des Servlet
+     * @return String wird in die xmlResponse angefügt
+     */
     private static String getInput(HttpServletRequest request) {
         return "<modul><![CDATA[" + request.getParameter("modul").toString() + "]]></modul>"
                         + "<date><![CDATA[" + request.getParameter("date").toString() + "]]></date>"
@@ -190,6 +192,13 @@ public class Times extends HttpServlet {
                         + "<description><![CDATA[" + request.getParameter("description").toString() + "]]></description>";
     }
 
+    /*
+     * Erstellt eine Liste mit alles Modulen, für die ein Benutzer Zeiten anlegen kann.
+     *
+     * @param c DB Connection
+     * @param user Username des angemeldeten Benutzer
+     * @return Liste mit Modulen
+     */
     private static ArrayList<String> getModules(Connection c, String user) {
         ArrayList<String> result = new ArrayList<String>();
         try {
@@ -206,6 +215,13 @@ public class Times extends HttpServlet {
         return result;
     }
 
+    /*
+     * Foramtiert das Datum der Eingabe in das DB Format für Date und überprüft die Sinnhaftigkeit des Datums
+     *
+     * @param temp Datum das vom Benutzer eingegeben wurde
+     * @param Session vom Benutzer
+     * @return java.sql.Date Datum das eingegeben wurde
+     */
     private static Date getDate(String temp, HttpSession seas) {
         int day = -1;
         int month = -1;
@@ -268,6 +284,12 @@ public class Times extends HttpServlet {
         return null;
     }
 
+    /*
+     * Formatiert die eingegeben zeit des Benutzers in das DB Format und überprüft sie gleichzeitig
+     *
+     * @param temp Zeit die vom Benutzer eingegeben wurde
+     * @return java.sql.Time Zeit die eingegeben wurde
+     */
     public static Time getTime(String temp) {
         int hour = -1;
         int minute = -1;
@@ -290,6 +312,19 @@ public class Times extends HttpServlet {
         return time;
     }
 
+    /*
+     * Fügt eine neue Zeit für den Benutzer ein
+     *
+     * @param c DB Connection
+     * @param user_id User-ID des Benutzers
+     * @param modulname Name des Modules
+     * @param date Datum
+     * @param start Startzeit
+     * @param end Endzeit
+     * @param description Beschreibungstext
+     * @return  true -> Wenn insert erfolgreich
+     *          false -> Wenn insert nicht erfolgreich
+     */
     private static boolean insertTime(Connection c, int user_id, String modulname, Date date, Time start, Time end, String description) {
         try {
             try {
@@ -315,6 +350,13 @@ public class Times extends HttpServlet {
         return false;
     }
 
+    /*
+     * Gibt die bisherigen Zeiten des Benutzer zurück
+     *
+     * @param c DB Connection
+     * @param user_id User-ID des Benutzers
+     * @return String mit der Tabelle der bisherigen Zeiten
+     */
     private static String getTimes(Connection c, int user_id) {
         try {
             StringBuilder sb = new StringBuilder(1000);
@@ -379,7 +421,15 @@ public class Times extends HttpServlet {
         }
         return "";
     }
-    
+
+    /*
+     * Löscht eine vorhande Zeit aus der Datenbank
+     *
+     * @param c DB Connection
+     * @param user_id User-ID des Benutzers
+     * @param date Datum
+     * @param start Startzeit
+     */
     private static void deleteTime(Connection c, String user_id, String date, String start) {
         try {
             try {

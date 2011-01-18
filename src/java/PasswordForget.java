@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -18,8 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Servlet PasswordForget. Bentzer bekommt neues Passwort generiert und zugeschickt.
  *
- * @author tA88
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class PasswordForget extends HttpServlet {
    
@@ -41,8 +36,6 @@ public class PasswordForget extends HttpServlet {
         try {
             String genPW = (int) (Math.random() * 10000000) + "";
             String hashedPW = Registrieren.md5(genPW);
-            System.out.println("new clear pw: " + genPW);
-            System.out.println("new hashed pw: " + hashedPW);
             c = DBConnector.getConnection();
             PreparedStatement ps = c.prepareStatement("UPDATE user SET password = ?, firstlogin = 0  WHERE email = ?");
             ps.setString(1, hashedPW);
@@ -82,6 +75,14 @@ public class PasswordForget extends HttpServlet {
         }
     }
 
+    /*
+     * Erstellt den Text für die E-Mail
+     *
+     * @param firstname Vorname des Benutzers
+     * @param name Nachname des Benutzers
+     * @param pw Neu generiertes Password
+     * @return String, mit dem Text für die Email
+     */
     private String createText(String firstname, String name, String pw) {
         StringBuilder sb = new StringBuilder(200);
         sb.append("Hallo ").append(firstname).append(" ").append(name).append(",\n\n")

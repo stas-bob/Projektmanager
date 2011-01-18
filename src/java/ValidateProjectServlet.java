@@ -1,9 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 import db.DBConnector;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,8 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Überprüft ob der eingegeben Projektname schon vorhanden ist
  *
- * @author bline
+ * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class ValidateProjectServlet extends HttpServlet {
 
