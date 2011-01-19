@@ -1,3 +1,5 @@
+package util;
+
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import main.MainServlet;
 
 /**
  * Servlet bei 1. Anmeldung am System. Benutzer wird aufgefordert das generierte Passwort zu aendern.

@@ -2,23 +2,23 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <servlet>
         <servlet-name>MainServlet</servlet-name>
-        <servlet-class>MainServlet</servlet-class>
+        <servlet-class>main.MainServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ChangePassword</servlet-name>
-        <servlet-class>ChangePassword</servlet-class>
+        <servlet-class>util.ChangePassword</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DownloadServlet</servlet-name>
-        <servlet-class>DownloadServlet</servlet-class>
+        <servlet-class>util.DownloadServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PasswordForget</servlet-name>
-        <servlet-class>PasswordForget</servlet-class>
+        <servlet-class>util.PasswordForget</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DeleteAccount</servlet-name>
-        <servlet-class>DeleteAccount</servlet-class>
+        <servlet-class>util.DeleteAccount</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
@@ -26,7 +26,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>ValidateProjectServlet</servlet-name>
-        <servlet-class>ValidateProjectServlet</servlet-class>
+        <servlet-class>util.ValidateProjectServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ValidateProjectServlet</servlet-name>
@@ -34,7 +34,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>ValidateEmailServlet</servlet-name>
-        <servlet-class>ValidateEmailServlet</servlet-class>
+        <servlet-class>util.ValidateEmailServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ValidateEmailServlet</servlet-name>
@@ -42,7 +42,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Members</servlet-name>
-        <servlet-class>Members</servlet-class>
+        <servlet-class>servlet.Members</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Members</servlet-name>
@@ -50,7 +50,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>FirstLogin</servlet-name>
-        <servlet-class>FirstLogin</servlet-class>
+        <servlet-class>util.FirstLogin</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FirstLogin</servlet-name>
@@ -58,7 +58,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Modules</servlet-name>
-        <servlet-class>Modules</servlet-class>
+        <servlet-class>servlet.Modules</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Modules</servlet-name>
@@ -66,7 +66,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Profile</servlet-name>
-        <servlet-class>Profile</servlet-class>
+        <servlet-class>servlet.Profile</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Profile</servlet-name>
@@ -74,7 +74,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Times</servlet-name>
-        <servlet-class>Times</servlet-class>
+        <servlet-class>servlet.Times</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Times</servlet-name>
@@ -82,7 +82,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Registrieren</servlet-name>
-        <servlet-class>Registrieren</servlet-class>
+        <servlet-class>servlet.Registrieren</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Registrieren</servlet-name>
@@ -90,7 +90,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Logout</servlet-name>
-        <servlet-class>Logout</servlet-class>
+        <servlet-class>servlet.Logout</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Logout</servlet-name>
@@ -98,7 +98,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Overview</servlet-name>
-        <servlet-class>Overview</servlet-class>
+        <servlet-class>servlet.Overview</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Overview</servlet-name>

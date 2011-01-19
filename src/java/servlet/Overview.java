@@ -1,3 +1,5 @@
+package servlet;
+
 import db.DBConnector;
 import java.sql.*;
 import exceptions.MySQLException;

@@ -1,16 +1,22 @@
+package util;
+
+import db.DBConnector;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Hilfsservlet zum Aendern eines Passwortes
+ * Überprüft ob die eingegeben E-Mail Addresse noch frei ist
  *
  * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
-public class ChangePassword extends HttpServlet {
+public class ValidateEmailServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -24,28 +30,36 @@ public class ChangePassword extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        try {
-            switch (FirstLogin.changePassword(request)) {
-                case -1:
-                    out.write("Fehler bei der &Auml;nderung ihres Passwortes.");
-                    break;
-                case 0:
-                    out.write("Ihr Passwort wurde erfolgreich ge&auml;ndert.");
-                    break;
-                case 1:
-                    out.write("Die neu eingebenen Passw&ouml;rter stimmen nicht &uuml;berein!");
-                    break;
-                case 2:
-                    out.write("Das eingegebene bisherige Passwort ist falsch!");
-                    break;
-                default:
-                    break;
-            }
-        } finally { 
-            out.close();
-        }
+        String emailName = request.getParameter("email");
+        String status = validateEmail(emailName);
+        out.write(status);
+        out.close();
     } 
 
+    /*
+     * Überprüft die E-Mail Addresse
+     *
+     * @param emailName E-Mail die eingegebn wurde
+     * @return Wenn Status = 0, dann E-Mail noch nicht vergeben, ansonsten schon vorhanden
+     */
+    public String validateEmail(String emailName) {
+        String status = "0";
+        try {
+            Connection c = DBConnector.getConnection();
+            PreparedStatement ps = c.prepareStatement("SELECT * FROM user WHERE email = ?");
+            ps.setString(1, emailName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                status = "1";
+            }
+            ps.close();
+            c.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return status;
+    }
+        
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -81,5 +95,4 @@ public class ChangePassword extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

@@ -1,3 +1,5 @@
+package servlet;
+
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import db.DBConnector;
 import exceptions.MySQLException;

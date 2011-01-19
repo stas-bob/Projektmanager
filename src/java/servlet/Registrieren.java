@@ -1,3 +1,5 @@
+package servlet;
+
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.BufferedReader;

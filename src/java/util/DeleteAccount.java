@@ -1,3 +1,5 @@
+package util;
+
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -13,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import servlet.Modules;
+import servlet.Times;
 
 /**
  * Loescht einen Benutzer Account

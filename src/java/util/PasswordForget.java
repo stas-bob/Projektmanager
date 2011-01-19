@@ -1,3 +1,5 @@
+package util;
+
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import servlet.Registrieren;
 
 /**
  * Servlet PasswordForget. Bentzer bekommt neues Passwort generiert und zugeschickt.

@@ -1,3 +1,6 @@
+package servlet;
+
+import util.ValidateEmailServlet;
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;

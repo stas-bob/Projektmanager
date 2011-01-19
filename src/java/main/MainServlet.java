@@ -1,3 +1,5 @@
+package main;
+
 import db.DBConnector;
 import exceptions.MySQLException;
 import java.io.IOException;
