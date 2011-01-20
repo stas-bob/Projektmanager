@@ -45,13 +45,15 @@ public class DeleteAccount extends HttpServlet {
         String email = seas.getAttribute("user").toString();
         String projectName = seas.getAttribute("projectname").toString();
         String status = seas.getAttribute("status").toString();
+        System.out.println("status: " + status + " projectname" + projectName + " email: " + email);
         try {
             c = DBConnector.getConnection();
             try {
               //  c.setAutoCommit(false);
 
                 PreparedStatement ps = null;
-                ps = c.prepareStatement("SELECT COUNT(*) FROM user");
+                ps = c.prepareStatement("SELECT COUNT(*) FROM user WHERE projectname=?");
+                ps.setString(1, projectName);
                 ResultSet rs = ps.executeQuery();
                 int anzahl = 0;
                 if (rs.next()) {
@@ -95,7 +97,7 @@ public class DeleteAccount extends HttpServlet {
                 ps.executeUpdate();
                 ps.close();
                 anzahl--;
-
+                System.out.println("anzahl: " + anzahl);
                 if (anzahl == 0) {
                     deleteProject(user_id, projectName, c);
                 }

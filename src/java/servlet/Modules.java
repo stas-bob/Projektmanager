@@ -126,7 +126,7 @@ public class Modules extends HttpServlet {
             String htmlOutput = "<table><tr><td valign=\"top\"><table border=\"0\" style=\"border-collapse:collapse;\" >" + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
             for (int i = 0; i < names.size(); i++) {
                 htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" +
-                                "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\"><font size=\"1\">" + format(names.get(i), 10) + "</font></td>" +
+                                "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px; cursor:pointer;\" onclick=\"showModuleDescription(" + ids.get(i) + ")\"><font size=\"1\">" + format(names.get(i), 15) + "</font></td>" +
                                 "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), ids.get(i)) + "</td>";
                 if (!((ArrayList<Integer>) request.getSession().getAttribute("modules")).contains(ids.get(i))) {
                     if (status.get(i).equals("open")) {
@@ -253,13 +253,13 @@ public class Modules extends HttpServlet {
 
 
                 String htmlOutput = "<table border=\"1\" style=\"border-collapse:collapse\">"
-                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Name: </td><td>" + format(name, 30) +"</td></tr>"
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Name: </td><td>" + format(name, 40) +"</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Prio: </td><td>" + prio + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Start: </td><td>" + start + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Ende: </td><td>" + end + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitgliederzahl: </td><td>" + memberCount + "</td></tr>"
                         + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Mitglieder: </td><td>" + members + "</td></tr>"
-                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Beschreibung: </td><td>" + format(description, 30) + "</td></tr>";
+                        + "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#c8c20a')\"><td>Beschreibung: </td><td>" + format(description, 60) + "</td></tr>";
                         if (status.equals("PL")) {
                             htmlOutput += "<tr onmouseover=\"fillColor(this, '#fbf52d')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\"><td colspan=\"2\" align=\"center\"><input type=\"button\" value=\"l&ouml;schen\" onclick=\"deleteModule(" + id + ")\"/></td></tr>";
                         }
@@ -270,7 +270,7 @@ public class Modules extends HttpServlet {
                     if (email.get(i).equals(myEmail)) {
                         htmlOutput += "<td align=\"right\"><button onclick=\"deleteMessage('" + id + "','" + messageIds.get(i) + "')\">l&ouml;schen</button></td></tr>";
                     }
-                    htmlOutput += "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><div style=\"height: 100px; overflow: auto;\">" + format(messages.get(i), 35) + "</div></td></tr>"
+                    htmlOutput += "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><div style=\"height: 100px; overflow: auto;\">" + format(messages.get(i), 60) + "</div></td></tr>"
                     + "<tr><td height=\"10\"></td></tr>";
                 }
                 htmlOutput += "<tr style=\"border: 1px solid;\"><td colspan=\"2\"><font style=\"color:blue\">Schreiben Sie einen Kommentar</font></td></tr>"
@@ -340,7 +340,11 @@ public class Modules extends HttpServlet {
             if (moduleStartDate == null || moduleEndDate == null || projectStartDate == null || projectEndDate == null) {
                 return 1;
             }
+
             if (moduleStartDate.before(projectStartDate) || moduleEndDate.after(projectEndDate)) {
+                return 1;
+            }
+            if (moduleEndDate.before(moduleStartDate)) {
                 return 1;
             }
             PreparedStatement ps = c.prepareStatement("INSERT INTO module (name,start,end,prio,status,description,projectname) VALUES (?,?,?,?,'open',?,?)");
@@ -363,6 +367,7 @@ public class Modules extends HttpServlet {
             ps.close();
             return 0;
         } catch (SQLException ex) {
+            ex.printStackTrace();
             return 1;
         }
     }
@@ -556,18 +561,32 @@ public class Modules extends HttpServlet {
         return null;
     }
 
+    /**
+     *
+     * @param string der zu bearbeitende String
+     * @param number die Zahl der zuläßigen Zeichen pro Zeile
+     * @return einen String, der nicht länger ist als number. Wörter, die nicht in die Zeile passen, werden in die nächste Zeile genommen.
+     */
     public static String format(String string, int number) {
-        int br = 0, i = 1;
-        while (i < string.length() - br) {
+    	for (int i = 1; i < string.length(); i++) {
             if (i % number == 0) {
-                if (string.charAt(i + br) != ' ') {
-                    string = string.substring(0, i + br) + "-" + string.substring(i + br);
-                    br++;
-                }
-                string = string.substring(0, i + br) + "<br>" + string.substring(i + br);
-                br += 4;
+               for (int j = i; j >= 0; j--) {
+            	   if (j >= 3 && string.substring(j-3, j+1).equals("<br>")) break;
+            	   if (j == 0) {
+            		   for (j = 0; j < string.length(); j++) {
+            			   if (string.charAt(j) == ' ') {
+            				   string = string.substring(0, j) + "<br>" + string.substring(j + 1);
+            				   break;
+            			   }
+            		   }
+            		   break;
+            	   }
+                   if (string.charAt(j) == ' ') {
+                       string = string.substring(0, j) + "<br>" + string.substring(j + 1);
+                       break;
+                   }
+               }
             }
-            i++;
         }
         return string;
     }

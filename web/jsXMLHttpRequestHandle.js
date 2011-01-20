@@ -118,7 +118,7 @@ function addUser() {
     + "<td>Email: <input type=\"text\" onkeyup=\"if (event.keyCode != 37 && event.keyCode != 39 ) {printWait('statusEmail');validateEmailServletMembers()}\" id=\"email\"/ maxlength=\"40\"></td><td><div id=\"imgEmail\"></div></td><td><div id=\"statusEmail\"></div></td>"
     + "</tr>"
     + "<tr>"
-    + "<td><input id=\"submitData\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
+    + "<td><input id=\"submitData\" disabled=\"true\" type=\"button\" value=\"Speichern\" onclick=\"saveUser()\"/></td><td><input type=\"button\" value=\"Abbrechen\" onclick=\"hideAddUser()\"/></td>"
     + "</tr>"
     + "</body></html>";
     document.getElementById("addUserField").innerHTML = html;
@@ -209,7 +209,27 @@ function saveModule() {
     var prio =  document.getElementById("prio").options[document.getElementById("prio").selectedIndex].value;
     var membersToAdd = document.getElementById("membersInModuleBox").innerHTML;
 
-    name = name.replace(/ü/g, "%C3%BC");    name = name.replace(/Ü/g, "%C3%9C");    name = name.replace(/ö/g, "%C3%B6");    name = name.replace(/Ö/g, "%C3%96");    name = name.replace(/ä/g, "%C3%A4");    name = name.replace(/Ä/g, "%C3%84");    name = name.replace(/ß/g, "%C3%9F");    description = description.replace(/ü/g, "%C3%BC");    description = description.replace(/Ü/g, "%C3%9C");    description = description.replace(/ö/g, "%C3%B6");    description = description.replace(/Ö/g, "%C3%96");    description = description.replace(/ä/g, "%C3%A4");    description = description.replace(/Ä/g, "%C3%84");    description = description.replace(/ß/g, "%C3%9F");    membersToAdd = membersToAdd.replace(/ü/g, "%C3%BC");    membersToAdd = membersToAdd.replace(/Ü/g, "%C3%9C");    membersToAdd = membersToAdd.replace(/ö/g, "%C3%B6");    membersToAdd = membersToAdd.replace(/Ö/g, "%C3%96");    membersToAdd = membersToAdd.replace(/ä/g, "%C3%A4");    membersToAdd = membersToAdd.replace(/Ä/g, "%C3%84");    membersToAdd = membersToAdd.replace(/ß/g, "%C3%9F");
+    name = name.replace(/ü/g, "%C3%BC");
+    name = name.replace(/Ü/g, "%C3%9C");
+    name = name.replace(/ö/g, "%C3%B6");
+    name = name.replace(/Ö/g, "%C3%96");
+    name = name.replace(/ä/g, "%C3%A4");
+    name = name.replace(/Ä/g, "%C3%84");
+    name = name.replace(/ß/g, "%C3%9F");
+    description = description.replace(/ü/g, "%C3%BC");
+    description = description.replace(/Ü/g, "%C3%9C");
+    description = description.replace(/ö/g, "%C3%B6");
+    description = description.replace(/Ö/g, "%C3%96");
+    description = description.replace(/ä/g, "%C3%A4");
+    description = description.replace(/Ä/g, "%C3%84");
+    description = description.replace(/ß/g, "%C3%9F");
+    membersToAdd = membersToAdd.replace(/ü/g, "%C3%BC");
+    membersToAdd = membersToAdd.replace(/Ü/g, "%C3%9C");
+    membersToAdd = membersToAdd.replace(/ö/g, "%C3%B6");
+    membersToAdd = membersToAdd.replace(/Ö/g, "%C3%96");
+    membersToAdd = membersToAdd.replace(/ä/g, "%C3%A4");
+    membersToAdd = membersToAdd.replace(/Ä/g, "%C3%84");
+    membersToAdd = membersToAdd.replace(/ß/g, "%C3%9F");
     if (name.length != 0 
         && description.length != 0
         && startDay.length != 0
@@ -218,16 +238,16 @@ function saveModule() {
         && endDay.length != 0
         && endMonth.length != 0
         && endYear.length != 0) {
-        if (parseInt(startDay)==startDay-0
-            && parseInt(startMonth)==startMonth-0   //zahlenwerte ?
-            && parseInt(startYear)==startYear-0
-            && parseInt(endDay)==endDay-0
-            && parseInt(endMonth)==endMonth-0
-            && parseInt(endYear)==endYear-0) {
+        if (!isNaN(parseInt(startDay))
+            && !isNaN(parseInt(startMonth))   //zahlenwerte ?
+            && !isNaN(parseInt(startYear))
+            && !isNaN(parseInt(endDay))
+            && !isNaN(parseInt(endMonth))
+            && !isNaN(parseInt(endYear))) {
 
 
-            if (startYear > endYear || startYear < 0 || endYear < 0 || startYear.length != 2 && startYear.length != 4 || endYear.length != 2 && endYear.length != 4) {
-                if (startYear < 0 || endYear < 0) {
+            if (parseInt(startYear) > parseInt(endYear) || parseInt(startYear) < 0 || parseInt(endYear < 0) || startYear.length != 2 && startYear.length != 4 || endYear.length != 2 && endYear.length != 4) {
+                if (parseInt(startYear) < 0 || parseInt(endYear < 0)) {
                     document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuel&auml;ssig (Jahr)";
                 } else {
                     document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist sp&auml;ter als der Endtermin! (Jahr)";
@@ -237,18 +257,18 @@ function saveModule() {
                 }
                 return;
             } else {
-                if (startYear == endYear) {
-                    if (startMonth > endMonth || startMonth > 12 || startMonth < 1 || endMonth > 12 || endMonth < 1) {
-                        if (startMonth > 12 || startMonth < 1 || endMonth > 12 || endMonth < 1) {
+                if (parseInt(startYear) == parseInt(endYear)) {
+                    if (parseInt(startMonth) > parseInt(endMonth) || parseInt(startMonth) > 12 || parseInt(startMonth) < 1 || parseInt(endMonth) > 12 || parseInt(endMonth) < 1) {
+                        if (parseInt(startMonth) > 12 || parseInt(startMonth) < 1 || parseInt(endMonth) > 12 || parseInt(endMonth) < 1) {
                             document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuel&auml;ssig (Monat)";
                         } else {
                             document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist sp&auml;ter als der Endtermin! (Monat)";
                         }
                         return;
                     } else {
-                        if (startMonth == endMonth) {
-                            if (startDay > endDay || startDay > 31 || startDay < 1 || endDay > 31 || endDay < 1) {
-                                if (startDay > 31 || startDay < 1 || endDay > 31 || endDay < 1) {
+                        if (parseInt(startMonth) == parseInt(endMonth)) {
+                            if (parseInt(startDay) > parseInt(endDay) || parseInt(startDay > 31) || parseInt(startDay < 1) || parseInt(endDay > 31) || parseInt(endDay) < 1) {
+                                if (parseInt(startDay > 31) || parseInt(startDay < 1) || parseInt(endDay > 31) || parseInt(endDay < 1)) {
                                     document.getElementById("statusBox").innerHTML = "Ihr Termin ist nicht zuel&auml;ssig (Tag)";
                                 } else {
                                     document.getElementById("statusBox").innerHTML = "Ihr Starttermin ist sp&auml;ter als der Endtermin! (Tag)";
@@ -283,7 +303,8 @@ function saveUser() {
     var name = document.getElementById("name").value;
     var firstname = document.getElementById("firstname").value;
     var email = document.getElementById("email").value;
-name = name.replace(/ü/g, "%C3%BC");
+
+    name = name.replace(/ü/g, "%C3%BC");
     name = name.replace(/Ü/g, "%C3%9C");
     name = name.replace(/ö/g, "%C3%B6");
     name = name.replace(/Ö/g, "%C3%96");

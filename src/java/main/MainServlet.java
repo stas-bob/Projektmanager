@@ -137,7 +137,7 @@ public class MainServlet extends HttpServlet {
     }
 
     /*
-     * Servlet, das die Benutzoberfläsche des mit den verschieden Tabs zeichnet
+     * Servlet, das die Benutzoberfläsche des mit den verschieden Tabs erzeugt
      *
      * @param projectName Projektname des Projektes
      * @param passwordChange true -> wird kurz angezeigt das Aenderung des Passsowrtes erfolgreich
