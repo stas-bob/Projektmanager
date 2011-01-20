@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
+ * Servlet, das die Benutzeroberfläsche bei erfolgreichem Login anlegt
  *
  * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
@@ -59,10 +59,10 @@ public class MainServlet extends HttpServlet {
                 ResultSet rs = ps.executeQuery();
                 rs.next();
                 int firstLogin = rs.getInt(1);
-                if (firstLogin == 0) {
-                    out.write(changePasswordView(0));
+                if (firstLogin == 0) { //Prüfung ob der benutzer sich zum ersten Mal einloggt
+                    out.write(changePasswordView(0)); //Wenn ja dann muss er das Passwort aendern
                 } else {
-                    out.write(mainView(projectName, false));
+                    out.write(mainView(projectName, false)); //Wenn nicht wird direkt zum Overview weitergeleitet
                 }
             } else {
                 out.write("<a href='Login.html'>Falscher Benutzername oder falsches Passwort eingegeben!</a>");
@@ -73,10 +73,26 @@ public class MainServlet extends HttpServlet {
         }
     }
 
-
+    /*
+     *
+     *
+     * @param str1
+     * @param str2
+     * @return
+     */
     public boolean equals(String str1, String str2) {
         return str1.replace("0", "").equals(str2.replace("0", ""));
     }
+
+    /*
+     * Überprüt die Login Daten
+     *
+     * @param c DB Connection
+     * @param user Bentuzername(E-Mail) des Benutzer
+     * @param password Password das vom User eingegeben wurde
+     * @return  true -> wenn Login erfolgreich
+     *          false-> wenn Login fehlgeschlagen
+     */
     private boolean checkLogin(Connection c, String user, String password) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT password FROM user WHERE LOWER(email)=?");
@@ -96,6 +112,13 @@ public class MainServlet extends HttpServlet {
         return false;
     }
 
+    /*
+     * Gibt den Projektnamen zurück für das Projekt des Benutzers
+     *
+     * @param c DB Connection
+     * @param user Bentuzername(E-Mail) des Benutzer
+     * @return Projektname des Projektes
+     */
     private String getProjectName(Connection c, String user) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT projectname FROM user WHERE email = ?");
@@ -113,6 +136,14 @@ public class MainServlet extends HttpServlet {
         return null;
     }
 
+    /*
+     * Servlet, das die Benutzoberfläsche des mit den verschieden Tabs zeichnet
+     *
+     * @param projectName Projektname des Projektes
+     * @param passwordChange true -> wird kurz angezeigt das Aenderung des Passsowrtes erfolgreich
+     *                       false-> wird direkt zum Overview weitergeleitet
+     * @return HTML Text für das Servlet
+     */
     public static String mainView(String projectName, boolean passwordChange) {
         StringBuilder sb = new StringBuilder(500);
         sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
@@ -174,6 +205,12 @@ public class MainServlet extends HttpServlet {
         return sb.toString();
     }
 
+    /*
+     * Servlet, in dem der Benutzer sein Passwort aendern muss bei erster Anmeldung
+     *
+     * @param falsePassword Meldung die ausgegeben wird, entweder Fehler oder Willkommensmeldung
+     * @return HTML Text für das Servlet
+     */
     public static String changePasswordView(int falsePassword) {
         StringBuilder sb = new StringBuilder(500);
         sb.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
@@ -217,6 +254,11 @@ public class MainServlet extends HttpServlet {
         return sb.toString();
     }
 
+    /*
+     * Erezugt HTML Text für die Aenderung des Passwortes
+     *
+     * @return HTML Text für das Servlet
+     */
     public static String changePasswordArea() {
         StringBuilder sb = new StringBuilder(200);
         sb.append("<table>");
@@ -301,6 +343,13 @@ public class MainServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /*
+     * Gibt den Status den Benutzers entweder PL(Projektleiter) oder MEM(Mitglied)
+     *
+     * @param email E-Mail des Benutzers
+     * @param c DB Connection
+     * @return String, mit dem Status
+     */
     private String getMyStatus(String email, Connection c) {
         String status = "";
         try {
@@ -317,6 +366,13 @@ public class MainServlet extends HttpServlet {
         return status;
     }
 
+    /*
+     * Gibt die Module für die der Benutzer angemeldet ist
+     *
+     * @param email E-Mail des Benutzers
+     * @param c DB Connection
+     * @return Liste, mit den Modulen
+     */
     private ArrayList<Integer> getMyModules(String email, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT modulid FROM rel_module_user WHERE email = ?");
@@ -334,6 +390,13 @@ public class MainServlet extends HttpServlet {
         return null;
     }
 
+    /*
+     * Gibt den Namen des Benutzers
+     *
+     * @param email E-Mail des Benutzers
+     * @param c DB Connection
+     * @return String, mit dem Namen
+     */
     private String getName(String email, Connection c) {
         String name = "";
         try {
@@ -350,6 +413,13 @@ public class MainServlet extends HttpServlet {
         return name;
     }
 
+    /*
+     * Gibt den Vornamen des Benutzers
+     *
+     * @param email E-Mail des Benutzers
+     * @param c DB Connection
+     * @return String, mit dem Vornamen
+     */
     private String getFirstname(String email, Connection c) {
         String firstname = "";
         try {
@@ -366,6 +436,13 @@ public class MainServlet extends HttpServlet {
         return firstname;
     }
 
+    /*
+     * Gibt die Benutzer-ID des Benutzers
+     *
+     * @param c DB Connection
+     * @param email E-Mail des Benutzers
+     * @return Integer, mit der User-ID
+     */
     private int getUserId(String email, Connection c) {
         int user_id = -1;
         try {
@@ -382,6 +459,13 @@ public class MainServlet extends HttpServlet {
         return user_id;
     }
 
+    /*
+     * Gibt das Startdatum des Projektes
+     *
+     * @param c DB Connection
+     * @param user_id Benutzer-ID des Benutzer
+     * @return String, mit Datum
+     */
     private static String getStartProject(int user_id, Connection c) {
         String date = "";
         try {
@@ -398,6 +482,13 @@ public class MainServlet extends HttpServlet {
         return date;
     }
 
+    /*
+     * Gibt das Enddatum des Projektes
+     *
+     * @param c DB Connection
+     * @param user_id Benutzer-ID des Benutzer
+     * @return String, mit Datum
+     */
     private static String getEndProject(int user_id, Connection c) {
         String date = "";
         try {
