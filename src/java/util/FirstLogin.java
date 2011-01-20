@@ -63,7 +63,7 @@ public class FirstLogin extends HttpServlet {
      *
      * @param request HttpServletRequest
      * @return -1-> Systemfehler!
-     *          0-> Passwort wurde geaender
+     *          0-> Passwort wurde geaendert
      *          1-> Fehler. Die neue eingegebenen Passwörter stimmen nicht überein
      *          2-> Fehler. Das eingegeben bisherige Passwort ist falsch.
      */
