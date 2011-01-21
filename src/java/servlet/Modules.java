@@ -45,6 +45,9 @@ public class Modules extends HttpServlet {
             Connection c = DBConnector.getConnection();
             int error = 0;
             String errorMsg = " ";
+             /*
+             * Abfragen des query strings
+             */
             if (request.getParameter("description") != null) {
                 ArrayList<String> members = getMembers(request.getParameter("membersToAdd"), request.getSession().getAttribute("projectname").toString(), c);
                 if (validateModuleName(request.getParameter("name").toString(), request.getSession().getAttribute("projectname").toString(), c)) {
@@ -61,6 +64,9 @@ public class Modules extends HttpServlet {
                     return;
                 }
             } else {
+                /*
+                 * "Neue Aufgabe hinzufügen" wird hier erzeugt
+                 */
                 if (request.getParameter("addModule") != null) {
                     String htmlOutput = "<table border=\"0\">" + "<tbody><tr><td>Name:</td><td><input id=\"name\" size=\"40\" maxlength=\"40\" type=\"text\"></td></tr>" + 
                             "<tr><td valign=\"top\">Beschreibung:</td><td><textarea id=\"description\" cols=\"30\" rows=\"6\" maxlength=\"400\" onkeypress=\"ismaxlength(this)\"></textarea></td></tr>" +
@@ -122,7 +128,10 @@ public class Modules extends HttpServlet {
             names = new ArrayList<String>();
             status = new ArrayList<String>();
             ArrayList<Integer> ids = new ArrayList<Integer>();
-            getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids, c);
+            getModules(request.getSession().getAttribute("projectname").toString(), names, status, ids, c); //ArrayListen(s. o.) füllen
+            /*
+             * Aufgabenliste erzeugen
+             */
             String htmlOutput = "<table><tr><td valign=\"top\"><table border=\"0\" style=\"border-collapse:collapse;\" >" + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
             for (int i = 0; i < names.size(); i++) {
                 htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" +
@@ -211,6 +220,9 @@ public class Modules extends HttpServlet {
         }
     }
 
+    /*
+     * Gibt die Beschreibung einer Aufgabe, wenn man auf sie in der Liste klickt.
+     */
     private String getModuleDescription(String id, String status, String myEmail, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT name, prio, description, start, end FROM module WHERE id = ?");
@@ -285,6 +297,9 @@ public class Modules extends HttpServlet {
         return null;
     }
 
+    /*
+     * Alle mitglieder, die in einem Projekt sind erfragen
+     */
     private String getAllMembers(String projectName, Connection c) {
         try {
             String result = "";
@@ -302,6 +317,9 @@ public class Modules extends HttpServlet {
         return null;
     }
 
+    /*
+     * Alle mitglieder, die in eine Aufgabe aufgenommen wurden (Bei der Erstellung einer Aufgabe) erfragen
+     */
     private ArrayList<String> getMembers(String membersString, String projectName, Connection c) {
         ArrayList<String> members = new ArrayList<String>();
         try {
@@ -330,6 +348,9 @@ public class Modules extends HttpServlet {
         return members;
     }
 
+    /*
+     * Aufgabe abspeichern
+     */
     private int saveMouleToDB(ArrayList<String> members, String name, String description, String start, String end, String prio, String projectName, String projectStart, String projectEnd, Connection c) {
         try {
             GregorianCalendar moduleStartDate = getDateFromString(start);
@@ -372,6 +393,9 @@ public class Modules extends HttpServlet {
         }
     }
 
+    /*
+     * Gibt es diese Aufgabe schon ? Wenn ja, dann ist liefert diese Methode false
+     */
     private boolean validateModuleName(String name, String projectName, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT * FROM module WHERE name = ? AND projectname = ?");
@@ -390,6 +414,9 @@ public class Modules extends HttpServlet {
         return false;
     }
 
+    /*
+     * Der aktuelle Benutzer wird für eine Aufgabe eingetragen
+     */
     private void addMeToModule(String email, String modulid, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("INSERT INTO rel_module_user (modulid, email) VALUES (?,?)");
@@ -402,6 +429,9 @@ public class Modules extends HttpServlet {
         }
     }
 
+    /*
+     * Den passenden Statustext für eine Aufgabe liefern
+     */
     private String setStatus(String status, int id) {
         String open = "<option>open</option>";
         String closed = "<option>closed</option>";
@@ -411,6 +441,9 @@ public class Modules extends HttpServlet {
         return select + "</select>";
     }
 
+    /*
+     * Status abspeichern
+     */
     public int setModuleStatusOnDB(String status, String id, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("UPDATE module SET status = ? WHERE id = ?");
@@ -425,6 +458,10 @@ public class Modules extends HttpServlet {
         return 1;
     }
 
+    /*
+     *
+     * Aufgabe löschen
+     */
     public static void deleteModule(String id, Connection c) {
         try {
             String sql = "";
@@ -476,6 +513,9 @@ public class Modules extends HttpServlet {
         return 0;
     }
 
+    /*
+     * Einen Benutzer von einer Aufgabe entfernen
+     */
     private void removeMeFromModule(String email, int modulid, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("DELETE FROM rel_module_user WHERE modulid = ? AND email = ?");
@@ -488,6 +528,9 @@ public class Modules extends HttpServlet {
         }
     }
 
+    /*
+     * Ein Aufgabenkommentar speichern
+     */
     private void saveMessageToDB(String message, String id, String username, String myEmail, Connection c) {
         try {
             int freeID = getFreeMessageID(id, c);
@@ -504,6 +547,9 @@ public class Modules extends HttpServlet {
         }
     }
 
+    /*
+     * Freie Id zum speichern auf der DB suchen
+     */
     private int getFreeMessageID(String modulid, Connection c) {
         try {
             int maxid = 0;
@@ -514,13 +560,17 @@ public class Modules extends HttpServlet {
                 maxid = rs.getInt(1);
             }
             ps.close();
-            return maxid+1;
+            return maxid+1; //freie id
         } catch (SQLException ex) {
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
         }
         return -1;
     }
 
+    /*
+     *
+     * Eine Nachticht löschen
+     */
     private void deleteMessage(String messageid, String modulid, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("DELETE FROM rel_module_message WHERE modulid = ? AND messageid = ?");
@@ -533,6 +583,9 @@ public class Modules extends HttpServlet {
         }
     }
 
+    /*
+     * Ein GregorianCalendar Object auf Datum string parsen yy-mm-dd
+     */
     public static GregorianCalendar getDateFromString(String str) {
         int year = Integer.parseInt(str.substring(0, str.indexOf("-")));
         str = str.substring(str.indexOf("-") + 1);

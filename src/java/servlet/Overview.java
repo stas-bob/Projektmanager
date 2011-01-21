@@ -66,7 +66,10 @@ public class Overview extends HttpServlet {
             status = new ArrayList<String>();
             ArrayList<Integer> ids = new ArrayList<Integer>();
             Modules.getModules(request.getSession().getAttribute("projectname").toString(), moduleNames, status, ids, c);
-            
+
+            /*
+             * Erzeugnung des Contents
+             */
             String htmlOutput = "<div style=\"margin-top:20px;\">" + getProgressBar(100, divWidth, progress, "Fortschritt ")
                               + "</div>"
                               + "<br>"
@@ -152,6 +155,9 @@ public class Overview extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /*
+     * Anzahl der Aufgaben im Projekt auslesen
+     */
     private int getModulesCount(Connection c, String projectName) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM module WHERE projectname=?");
@@ -166,6 +172,9 @@ public class Overview extends HttpServlet {
         return 0;
     }
 
+    /*
+     * Anzahl abgeschlossener Aufgaben erfragen
+     */
     private int getModulesDoneCount(Connection c, String projectName) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM module WHERE projectname=? AND status='closed'");
@@ -180,6 +189,13 @@ public class Overview extends HttpServlet {
         return 0;
     }
 
+    /**
+     * Eine HTML-Progress-Bar erzeugen
+     * @param height: höhe (px)
+     * @param width : breite (px)
+     * @param progress : Fortschritt (%)
+     * @param text : ein text der vor der Prozentangabe steht
+     */
     public static String getProgressBar(int height, int width, long progress, String text) {
         return "<div style=\"border:1px dashed; width:" + width + "px; height:" + height + "px; position:relative; background-color: ##EEEEFF; margin-top:0px\">"
                   + "<div style=\"border:1px solid blue; width:" + progress + "px; height:100%; margin-top: -1px; margin-left: -1px; color:white; background-color: LightSteelBlue;\">"
@@ -188,6 +204,9 @@ public class Overview extends HttpServlet {
               + "</div>";
     }
 
+    /*
+     * Information der Benutzer eines Projektes erfragen in Hinblick auf geleistete Arbeitszeit
+     */
     private void fillTimeSpent(ArrayList<Time> hours, ArrayList<String> names, ArrayList<Long> progress, int width, String projectName, Connection c) {
         try {
             PreparedStatement ps = c.prepareStatement("SELECT name, id FROM `user` WHERE projectname=?");

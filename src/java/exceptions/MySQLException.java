@@ -2,7 +2,7 @@ package exceptions;
 
 /**
  * Es trat ein Fehler mit dem My SQL Server auf.
- * @author Tim Bartsch
+ * @author Stanislaw Tartakowski, Thomas Altmeyer
  *
  */
 public class MySQLException extends Exception {

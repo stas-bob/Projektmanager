@@ -1,3 +1,11 @@
+/*
+ * Author: Stanislaw Tartakowski, Thomas Altmeyer
+ *
+ * Diese Datei enthält alle Funktionen und Schnittstellen, die das serverseitige Programm benötigt.
+ *
+ */
+
+
 var xmlHttp;
 
 function createXMLHttpRequest() {
@@ -124,6 +132,9 @@ function addUser() {
     document.getElementById("addUserField").innerHTML = html;
 }
 
+/*
+ * Diese Funktion fügt im Tab Aufgaben Namen als Text in die Textbox ein
+ */
 function addMemberToModuleBox() {
     var selectElement = document.getElementById("selectMember");
     var membersInModuleBox = document.getElementById("membersInModuleBox");
@@ -149,6 +160,9 @@ function addMemberToModuleBox() {
     membersInModuleBox.style.display="block";
 }
 
+/*
+ * Diese Funktion löscht im Tab Aufgaben Namen aus der Textbox ein
+ */
 function removeMemberFromModuleBox() {
     var selectElement = document.getElementById("selectMember");
     var currentMember = selectElement.options[selectElement.selectedIndex].value;
@@ -195,6 +209,9 @@ function callbackAddModule() {
     }
 }
 
+/*
+ * Diese Funktion analysiert die Benutzereingaben, wenn man eine neue Aufgabe anlegen will
+ */
 function saveModule() {
     document.getElementById("statusBox").innerHTML = "Bitte warten ...";
     createXMLHttpRequest();
@@ -209,6 +226,9 @@ function saveModule() {
     var prio =  document.getElementById("prio").options[document.getElementById("prio").selectedIndex].value;
     var membersToAdd = document.getElementById("membersInModuleBox").innerHTML;
 
+    /*
+     * Unicodeanteile
+     */
     name = name.replace(/ü/g, "%C3%BC");
     name = name.replace(/Ü/g, "%C3%9C");
     name = name.replace(/ö/g, "%C3%B6");
@@ -230,6 +250,7 @@ function saveModule() {
     membersToAdd = membersToAdd.replace(/ä/g, "%C3%A4");
     membersToAdd = membersToAdd.replace(/Ä/g, "%C3%84");
     membersToAdd = membersToAdd.replace(/ß/g, "%C3%9F");
+
     if (name.length != 0 
         && description.length != 0
         && startDay.length != 0
@@ -570,6 +591,9 @@ function startAsync(servlet)
     xmlHttp.send(null);
 }
 
+/*
+ * Baut eine Query aus input feldern auf
+ */
 function buildQuery(servlet) {
     elements = document.getElementsByTagName("input");
     string = servlet + "?";
@@ -648,7 +672,9 @@ function callbackLogout()
     }
 }
 
-
+/*
+ * funktion zur eingrenzung der eingabelaenge fuer z.b eine textarea
+ */
 function ismaxlength(obj){
     var mlength=obj.getAttribute? parseInt(obj.getAttribute("maxlength")) : ""
     if (obj.getAttribute && obj.value.length>mlength)
@@ -725,6 +751,9 @@ function callbackTimes() {
     }
 }
 
+/*
+ * Sorgt für an/aus der Tip-Popup, wenn man eine neue Aufgabe anlegt und auf das Fragezeichen drückt
+ */
 var a = 0;
 function showHint(element, text) {
     if (a == 0) {
@@ -856,6 +885,10 @@ function today(id) {
     document.getElementById(id).value = (day.length == 1 ? "0" + day : day) + "." + (month.length == 1 ? "0" + month : month) + "." + year;
 }
 
+
+/*
+ * Überprüfung der Benutzereingabe im Zeiten Tab
+ */
 function checkDate() {
     var index;
 

@@ -25,7 +25,7 @@ import servlet.Times;
 
 /**
  *
- *
+ * Bietet den Download der Zeitentabelle an
  * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class DownloadServlet extends HttpServlet {
@@ -50,6 +50,9 @@ public class DownloadServlet extends HttpServlet {
 
     }
 
+    /*
+     * erfragen der Benutzerzeiten, erstellen eines formatierten Strings und speichern einer .csv Datei
+     */
     private static void downloadTimes(int user_id, Connection c) {
         StringBuilder sb = new StringBuilder(1000);
         try {
@@ -102,6 +105,9 @@ public class DownloadServlet extends HttpServlet {
         return new File(file);
     }
 
+    /*
+     * Datei schicken
+     */
     private void streamFileTo(HttpServletResponse response, File file)
             throws IOException, FileNotFoundException {
         OutputStream os = response.getOutputStream();

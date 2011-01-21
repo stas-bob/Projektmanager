@@ -20,7 +20,8 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- *
+ * Dieses Servlet erzeugt den Content des Mitglieder Tab
+ * Eine Antwort an den Client ist meistens ein xml string
  * @author Thomas Altmeyer, Stanislaw Tartakowski
  */
 public class Members extends HttpServlet {
@@ -44,6 +45,10 @@ public class Members extends HttpServlet {
             }
             HttpSession seas = request.getSession();
             Connection c = DBConnector.getConnection();
+
+            /*
+             * Abfragen des query strings
+             */
             if (request.getParameter("deleteEmail") != null) {
                 String email = request.getParameter("deleteEmail");
                 deleteUser(email, c);
@@ -81,7 +86,11 @@ public class Members extends HttpServlet {
             names = new ArrayList<String>();
             emails = new ArrayList<String>();
             status = new ArrayList<String>();
-            getMembers(seas.getAttribute("projectname").toString(), names, emails, status, c);
+            getMembers(seas.getAttribute("projectname").toString(), names, emails, status, c);  //ArrayListen(s. o.) füllen
+
+            /*
+             * Die Mitgliederlieste erzeugen
+             */
             String htmlOutput = "<div id=\"userDescription\"></div>" + "<table border=\"0\" style=\"border-collapse:collapse\">" + "<tr><td align=\"center\">Name</td><td align=\"center\">Status</td></tr>";
             for (int i = 0; i < names.size(); i++) {
                 htmlOutput += "<tr onmouseover=\"fillColor(this, '#9f9fFF')\" onmouseout=\"fillColor(this, 'white')\" onmousedown=\"fillColor(this, '#6c6ccc')\">" + "<td style=\"border: 1px solid; padding-left: 10px;  padding-right: 10px; cursor:pointer;\" onclick=\"showUserDescription('" + emails.get(i) + "')\">" + names.get(i) + "</td>" + "<td style=\"border: 1px solid; padding-left: 10px; padding-right: 10px;\">" + setStatus(status.get(i), emails.get(i)) + "</td>";

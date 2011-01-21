@@ -11,9 +11,9 @@ import java.sql.SQLException;
 
 /**
  *
- * @author Christan Rech, Tim Bartsch, Yassir Klos
+ * @author Stanislaw Tartakowski, Thomas Altmeyer
  *
- * Erstellt mit den Verbindungsdaten aus db.properties eine Connection
+ * Erstellt mit den Verbindungsdaten aus der pw.txt Datei eine Connection
  * zu einem Datenbank Server.
  *
  */
