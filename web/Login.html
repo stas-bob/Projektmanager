@@ -10,12 +10,14 @@
           }
         </script>
     </head><body>
-        <div style="background-image: url(&quot;grafik/bg-login.png&quot;); width: 887px; margin-left: 15%; position: absolute; margin-top: -122px; height: 516px;">
-            <div id="login" style="position: absolute; padding-top: 230px; padding-left: 280px;" align="center">
+        <div id="wrapper" style="margin: auto; width: 900px;">
+<div style="background-image: url(&quot;grafik/bg-login.png&quot;); width: 887px; height: 516px;">
+            <div id="login" style="position: relative; padding-top: 205px;" align="center">
                 <h1 align="center">Projektmanagmentool</h1>
                 <form action="/Projektmanager/MainServlet" method="post" name="login">
                     <table>
-                        <tbody><tr>
+                        <tbody>
+                            <tr>
                                 <th align="left">
                                     E-Mail:
                                 </th>
@@ -28,17 +30,18 @@
                                     Passwort:
                                 </th>
                                 <th align="left">
-                                    <input name="passwordClear" size="30" maxlength="20" type="password">
+                                    <input name="passwordClear" size="30" maxlength="40" type="password">
                                     <input name="password" size="30" type="hidden">
-                                    <br>
                                 </th>
                             </tr>
                         </tbody></table>
-                    <input onClick="transformPassword()" value="Login" type="submit">
+                    <input onclick="transformPassword()" value="Login" type="submit">
                 </form>
                 <input name="btnRegestrierung" value="Projekt anlegen" onclick="window.location.replace('Registrierung.html')" type="button">
                 <input name="btnPasswordForget" value="Passwort vergessen ..." onclick="window.location.replace('PasswordForget.html')" type="button">
             </div>
         </div>
+</div>
+    
     </body>
 </html>
