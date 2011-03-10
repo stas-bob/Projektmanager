@@ -1,7 +1,7 @@
 /*
  * Author: Stanislaw Tartakowski, Thomas Altmeyer
  *
- * Diese Datei enthält alle Funktionen und Schnittstellen, die das serverseitige Programm benötigt.
+ * Diese Datei enthält alle Funktionen und Schnittstellen, die zum  Aufruf des serverseitige Programms benötigt werden.
  *
  */
 
